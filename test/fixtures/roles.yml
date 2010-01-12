@@ -52,6 +52,7 @@ roles_001:
     - :manage_repository
     - :view_changesets
     - :manage_project_activities
+    - :edit_issue_author
 
   position: 1
 roles_002: 

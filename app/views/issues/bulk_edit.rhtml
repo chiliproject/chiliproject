@@ -67,6 +67,7 @@
 	<label><%= l(:field_start_date) %></label>
 	<%= text_field_tag 'issue[start_date]', '', :size => 10 %><%= calendar_for('issue_start_date') %>
 </p>
+
 <p>
 	<label><%= l(:field_due_date) %></label> 
 	<%= text_field_tag 'issue[due_date]', '', :size => 10 %><%= calendar_for('issue_due_date') %>
@@ -75,6 +76,18 @@
 <p>
 	<label><%= l(:field_done_ratio) %></label> 
 	<%= select_tag 'issue[done_ratio]', options_for_select([[l(:label_no_change_option), '']] + (0..10).to_a.collect {|r| ["#{r*10} %", r*10] }) %>
+</p>
+<% end %>
+
+<% if User.current.allowed_to?(:edit_issue_author, @project) %>
+<p>
+<label><%= l(:field_author) %>
+  <%= text_field_tag 'author_login', l(:label_no_change_option), :id => 'issue_author_login' %>
+  <div id="issue_author_results" class="autocomplete"></div>
+
+<%= javascript_tag("new Ajax.Autocompleter('issue_author_login', 'issue_author_results', '#{ url_for(:controller => 'users', :action => 'autocomplete') }', { minChars: 1, frequency: 0.5, paramName: 'q', select: 'field' });") %>
+
+</label>
 </p>
 <% end %>
 </div>

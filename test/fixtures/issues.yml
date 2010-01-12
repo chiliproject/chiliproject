@@ -12,6 +12,7 @@ issues_001:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   start_date: <%= 1.day.ago.to_date.to_s(:db) %>
   due_date: <%= 10.day.from_now.to_date.to_s(:db) %>
@@ -31,6 +32,7 @@ issues_002:
   tracker_id: 2
   assigned_to_id: 3
   author_id: 2
+  entered_by_id: 2
   status_id: 2
   start_date: <%= 2.day.ago.to_date.to_s(:db) %>
   due_date: 
@@ -52,6 +54,7 @@ issues_003:
   tracker_id: 1
   assigned_to_id: 3
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   start_date: <%= 15.day.ago.to_date.to_s(:db) %>
   due_date: <%= 5.day.ago.to_date.to_s(:db) %>
@@ -71,6 +74,7 @@ issues_004:
   tracker_id: 1
   assigned_to_id: 2
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   root_id: 4
   lft: 1
@@ -88,6 +92,7 @@ issues_005:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   root_id: 5
   lft: 1
@@ -105,6 +110,7 @@ issues_006:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   start_date: <%= Date.today.to_s(:db) %>
   due_date: <%= 1.days.from_now.to_date.to_s(:db) %>
@@ -124,6 +130,7 @@ issues_007:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   start_date: <%= 10.days.ago.to_s(:db) %>
   due_date: <%= Date.today.to_s(:db) %>
@@ -144,6 +151,7 @@ issues_008:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 5
   start_date: 
   due_date: 
@@ -164,6 +172,7 @@ issues_009:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   start_date: <%= Date.today.to_s(:db) %>
   due_date: <%= 1.days.from_now.to_date.to_s(:db) %>
@@ -183,6 +192,7 @@ issues_010:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   start_date: <%= Date.today.to_s(:db) %>
   due_date: <%= 1.days.from_now.to_date.to_s(:db) %>
@@ -202,6 +212,7 @@ issues_011:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 5
   start_date: <%= 1.day.ago.to_date.to_s(:db) %>
   due_date:
@@ -220,7 +231,8 @@ issues_012:
   description:
   tracker_id: 1
   assigned_to_id: 
-  author_id: 3
+  author_id: 2
+  entered_by_id: 2
   status_id: 5
   start_date: <%= 1.day.ago.to_date.to_s(:db) %>
   due_date:
@@ -240,6 +252,7 @@ issues_013:
   tracker_id: 1
   assigned_to_id: 
   author_id: 2
+  entered_by_id: 2
   status_id: 1
   root_id: 13
   lft: 1

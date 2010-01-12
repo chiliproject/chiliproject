@@ -10,6 +10,9 @@
 </div>
         <p class="author">
         <%= authoring @issue.created_on, @issue.author %>.
+        <% unless @issue.entered_by_author? %>
+        <%= l(:label_entered_by, :who => link_to_user(@issue.entered_by)) %>
+        <% end %>
         <% if @issue.created_on != @issue.updated_on %>
         <%= l(:label_updated_time, time_tag(@issue.updated_on)) %>.
         <% end %>

@@ -28,6 +28,8 @@ class IssueTest < ActiveSupport::TestCase
            :custom_fields, :custom_fields_projects, :custom_fields_trackers, :custom_values,
            :time_entries
 
+  should_belong_to :entered_by
+  
   def test_create
     issue = Issue.new(:project_id => 1, :tracker_id => 1, :author_id => 3, :status_id => 1, :priority => IssuePriority.all.first, :subject => 'test_create', :description => 'IssueTest#test_create', :estimated_hours => '1:30')
     assert issue.save
@@ -903,4 +905,5 @@ class IssueTest < ActiveSupport::TestCase
     assert issue.save
     assert_equal 0, ActionMailer::Base.deliveries.size
   end
+  
 end

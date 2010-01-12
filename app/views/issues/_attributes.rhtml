@@ -9,6 +9,15 @@
 
 <p><%= f.select :priority_id, (@priorities.collect {|p| [p.name, p.id]}), {:required => true}, :disabled => !@issue.leaf? %></p>
 <p><%= f.select :assigned_to_id, (@issue.assignable_users.collect {|m| [m.name, m.id]}), :include_blank => true %></p>
+<% if User.current.allowed_to?(:edit_issue_author, @project) %>
+<p>
+  <%= label_tag('issue[author_login]', l(:field_author)) %>
+  <%= text_field_tag 'issue[author_login]', @issue.author_login, :id => 'issue_author_login' %>
+</p>
+<div id="issue_author_results" class="autocomplete"></div>
+
+<%= javascript_tag("new Ajax.Autocompleter('issue_author_login', 'issue_author_results', '#{ url_for(:controller => 'users', :action => 'autocomplete') }', { minChars: 1, frequency: 0.5, paramName: 'q', select: 'field' });") %>
+<% end %>
 <% unless @project.issue_categories.empty? %>
 <p><%= f.select :category_id, (@project.issue_categories.collect {|c| [c.name, c.id]}), :include_blank => true %>
 <%= prompt_to_remote(image_tag('add.png', :style => 'vertical-align: middle;'),

@@ -295,7 +295,7 @@ private
         @issue.watcher_user_ids = params[:issue]['watcher_user_ids']
       end
     end
-    @issue.author = User.current
+    @issue.entered_by ||= User.current
     @priorities = IssuePriority.all
     @allowed_statuses = @issue.new_statuses_allowed_to(User.current, true)
   end

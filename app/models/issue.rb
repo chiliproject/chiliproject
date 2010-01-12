@@ -22,6 +22,7 @@ class Issue < ActiveRecord::Base
   belongs_to :tracker
   belongs_to :status, :class_name => 'IssueStatus', :foreign_key => 'status_id'
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
+  belongs_to :entered_by, :class_name => 'User', :foreign_key => 'entered_by_id'
   belongs_to :assigned_to, :class_name => 'User', :foreign_key => 'assigned_to_id'
   belongs_to :fixed_version, :class_name => 'Version', :foreign_key => 'fixed_version_id'
   belongs_to :priority, :class_name => 'IssuePriority', :foreign_key => 'priority_id'
@@ -213,6 +214,21 @@ class Issue < ActiveRecord::Base
   
   def estimated_hours=(h)
     write_attribute :estimated_hours, (h.is_a?(String) ? h.to_hours : h)
+  end
+
+  def author_login
+    @author.present? ? @author.login : nil
+  end
+
+  def author_login=(login)
+    if login && User.current.allowed_to?(:edit_issue_author, @project)
+      self.author = User.find_by_login(login)
+    end
+    self.author ||= User.current
+  end
+
+  def entered_by_author?
+    self.author_id == self.entered_by_id
   end
   
   safe_attributes 'tracker_id',
@@ -878,6 +894,4 @@ class Issue < ActiveRecord::Base
                                                 and i.project_id=#{project.id}
                                               group by s.id, s.is_closed, j.id")
   end
-  
-
 end

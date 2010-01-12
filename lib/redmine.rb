@@ -76,6 +76,7 @@ Redmine::AccessControl.map do |map|
     map.permission :edit_own_issue_notes, {:journals => :edit}, :require => :loggedin
     map.permission :move_issues, {:issue_moves => [:new, :create]}, :require => :loggedin
     map.permission :delete_issues, {:issues => :destroy}, :require => :member
+    map.permission :edit_issue_author, {}
     # Queries
     map.permission :manage_public_queries, {:queries => [:new, :edit, :destroy]}, :require => :member
     map.permission :save_queries, {:queries => [:new, :edit, :destroy]}, :require => :loggedin

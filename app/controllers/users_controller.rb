@@ -18,7 +18,7 @@
 class UsersController < ApplicationController
   layout 'admin'
   
-  before_filter :require_admin, :except => :show
+  before_filter :require_admin, :except => [:show, :autocomplete]
   before_filter :find_user, :only => [:show, :edit, :update, :edit_membership, :destroy_membership]
   accept_key_auth :index, :show, :create, :update
 
@@ -214,6 +214,11 @@ class UsersController < ApplicationController
     end
   end
   
+  def autocomplete
+    @users = User.active.like(params[:q]).all(:limit => 20)
+    render :layout => false
+  end
+
   private
   
   def find_user
