@@ -77,8 +77,11 @@ class JournalsController < ApplicationController
   
   def edit
     (render_403; return false) unless @journal.editable_by?(User.current)
+    @journal.indice = params[:indice]
     if request.post?
-      @journal.update_attributes(:notes => params[:notes]) if params[:notes]
+      @journal.notes = params[:notes] if params[:notes]
+      @journal.user_login = params[:user_login] if params[:user_login].present?
+      @journal.save
       @journal.destroy if @journal.details.empty? && @journal.notes.blank?
       call_hook(:controller_journals_edit_post, { :journal => @journal, :params => params})
       respond_to do |format|

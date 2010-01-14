@@ -268,6 +268,8 @@ private
     @notes = params[:notes] || (params[:issue].present? ? params[:issue][:notes] : nil)
     @issue.init_journal(User.current, @notes)
     @issue.safe_attributes = params[:issue]
+    journal = @issue.init_journal(User.current, @notes)
+    journal.user_login ||= params[:user_login] if params[:user_login].present?
   end
 
   # TODO: Refactor, lots of extra code in here

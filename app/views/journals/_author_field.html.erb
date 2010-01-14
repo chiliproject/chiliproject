@@ -1,0 +1,9 @@
+    <% if User.current.allowed_to?(:edit_issue_notes_author, @project) %>
+    <p>
+      <%= label_tag('user_login', l(:field_author)) %>
+      <%= text_field_tag 'user_login', user_login, :id => 'journal_user_login' %>
+    </p>
+    <div id="journal_user_results" class="autocomplete"></div>
+
+    <%= javascript_tag("new Ajax.Autocompleter('journal_user_login', 'journal_user_results', '#{ url_for(:controller => 'users', :action => 'autocomplete') }', { minChars: 1, frequency: 0.5, paramName: 'q', select: 'field' });") %>
+    <% end %>

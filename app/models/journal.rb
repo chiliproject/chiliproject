@@ -22,6 +22,7 @@ class Journal < ActiveRecord::Base
   belongs_to :issue, :foreign_key => :journalized_id
   
   belongs_to :user
+  belongs_to :entered_by, :class_name => 'User', :foreign_key => 'entered_by_id'
   has_many :details, :class_name => "JournalDetail", :dependent => :delete_all
   attr_accessor :indice
   
@@ -77,5 +78,27 @@ class Journal < ActiveRecord::Base
     s << ' has-notes' unless notes.blank?
     s << ' has-details' unless details.blank?
     s
+  end
+  
+  def user_login
+    user.present? ? user.login : nil
+  end
+
+  def user_login=(login)
+    if login && User.current.allowed_to?(:edit_issue_notes_author, project)
+      self.user = User.find_by_login(login)
+      self.entered_by_id ||= User.current.id
+    end
+    self.user ||= User.current
+  end
+
+  def entered_by_author?
+    self.user_id == self.entered_by_id
+  end
+
+  private
+
+  def set_entered_by
+    self.entered_by_id ||= self.user_id
   end
 end

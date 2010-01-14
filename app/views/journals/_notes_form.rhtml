@@ -1,4 +1,5 @@
-<% form_remote_tag(:url => {}, :html => { :id => "journal-#{@journal.id}-form" }) do %>
+<% form_remote_tag(:url => {:indice => h(@journal.indice)}, :html => { :id => "journal-#{@journal.id}-form" }) do %>
+  <fieldset>
     <%= text_area_tag :notes, @journal.notes,
           :id => "journal_#{@journal.id}_notes",
           :class => 'wiki-edit', 
@@ -15,7 +16,7 @@
     |
     <%= link_to l(:button_cancel), '#', :onclick => "Element.remove('journal-#{@journal.id}-form'); " +
                                                     "Element.show('journal-#{@journal.id}-notes'); return false;" %></p>
-
-    <div id="journal_<%= @journal.id %>_preview" class="wiki"></div>
+    <%= render :partial => 'author_field', :locals => {:user_login => @journal.user_login} %>
+  </fieldset>
 <% end %>
 <%= wikitoolbar_for "journal_#{@journal.id}_notes" %>

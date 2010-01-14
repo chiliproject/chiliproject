@@ -86,7 +86,7 @@ class JournalsControllerTest < ActionController::TestCase
     @request.session[:user_id] = 1
     xhr :post, :edit, :id => 2, :notes => 'Updated notes'
     assert_response :success
-    assert_select_rjs :replace, 'journal-2-notes'
+    assert_select_rjs :replace, 'change-2'
     assert_equal 'Updated notes', Journal.find(2).notes
   end
   
@@ -96,5 +96,22 @@ class JournalsControllerTest < ActionController::TestCase
     assert_response :success
     assert_select_rjs :remove, 'change-2'
     assert_nil Journal.find_by_id(2)
+  end
+
+  context "POST :edit" do
+    context "with a change to the user" do
+      setup do
+        @request.session[:user_id] = 1
+        xhr :post, :edit, :id => 2, :notes => 'Updated notes', :user_login => 'jsmith'
+      end
+
+      should_respond_with :success
+      should_assign_to :journal
+
+      should "change the journal's author" do
+        assert_equal User.find_by_login('jsmith'), Journal.find(2).user
+      end
+
+    end
   end
 end

@@ -1019,6 +1019,67 @@ class IssuesControllerTest < ActionController::TestCase
     assert ActionMailer::Base.deliveries.empty?
   end
 
+  test 'POST to :edit should allow setting the issue author' do
+    @request.session[:user_id] = 2
+    post :edit,
+         :id => 1,
+         :issue => {:author_login => 'dlopper'}
+
+    assert_redirected_to :action => 'show', :id => '1'
+    
+    issue = Issue.find(1)
+    assert_equal 3, issue.author_id
+    journal = issue.journals.last
+    assert_equal 1, journal.details.size
+    assert_equal 'author_id', journal.details.first.prop_key
+    assert_equal '3', journal.details.first.value
+
+  end
+
+  test 'POST to :edit should allow setting the journal author' do
+    @request.session[:user_id] = 2
+    post :edit,
+         :id => 1,
+         :notes => 'A comment',
+         :user_login => 'dlopper'
+
+    assert_redirected_to :action => 'show', :id => '1'
+    
+    issue = Issue.find(1)
+    journal = issue.journals.last
+    assert_equal 'A comment', journal.notes
+    assert_equal User.find(3), journal.user, "Journal's user was not change"
+    assert_equal User.find(2), journal.entered_by, "Journal's entered by was not updated to the creator"
+  end
+
+  context "POST to :edit as the issue author" do
+    setup do
+      # Allow Non-Members to change the status from Closed to Assigned
+      Workflow.generate!(:tracker_id => 1, :old_status_id => 5, :new_status_id => 2, :role_id => Role.non_member.id)
+      # Becomes the issue autor
+      Issue.find(8).update_attributes(:author_id => 4)
+
+      @request.session[:user_id] = 4 # Non-Member
+      post(:edit,
+           :id => 8,
+           :issue => {:status_id => 2, :subject => 'Changed'})
+    end
+    
+    should_respond_with :redirect
+    should_redirect_to('issue page') {{:action => 'show', :id => '8'}}
+    should_set_the_flash_to /update/i
+
+    should "change the issue status" do
+      issue = Issue.find(8)
+      assert_equal 2, issue.status_id
+    end
+
+    should "change the subject attribute" do
+      issue = Issue.find(8)
+      assert_equal 'Changed', issue.subject
+    end
+  end
+
   def test_put_update_should_send_a_notification
     @request.session[:user_id] = 2
     ActionMailer::Base.deliveries.clear

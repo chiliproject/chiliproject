@@ -35,6 +35,7 @@
     <fieldset><legend><%= l(:field_notes) %></legend>
     <%= text_area_tag 'notes', @notes, :cols => 60, :rows => 10, :class => 'wiki-edit' %>
     <%= wikitoolbar_for 'notes' %>
+    <%= render :partial => 'journals/author_field', :locals => {:user_login => ''} %>
     <%= call_hook(:view_issues_edit_notes_bottom, { :issue => @issue, :notes => @notes, :form => f }) %>
     </fieldset>
     

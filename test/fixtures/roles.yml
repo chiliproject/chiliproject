@@ -53,6 +53,7 @@ roles_001:
     - :view_changesets
     - :manage_project_activities
     - :edit_issue_author
+    - :edit_issue_notes_author
 
   position: 1
 roles_002: 

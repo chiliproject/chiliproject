@@ -20,6 +20,8 @@ require File.expand_path('../../test_helper', __FILE__)
 class JournalTest < ActiveSupport::TestCase
   fixtures :projects, :issues, :issue_statuses, :journals, :journal_details, :users, :members, :member_roles
 
+  should_belong_to :entered_by
+
   def setup
     @journal = Journal.find 1
   end
