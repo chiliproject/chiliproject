@@ -13,7 +13,13 @@
 
 module Redmine #:nodoc:
 
-  class PluginNotFound < StandardError; end
+  class PluginNotFound < StandardError
+    attr_reader :plugin_id
+    def initialize(plug_id=nil)
+      super
+      @plugin_id = plug_id
+    end
+  end
   class PluginRequirementError < StandardError; end
 
   # Base class for Redmine plugins.
@@ -40,8 +46,10 @@ module Redmine #:nodoc:
   # When rendered, the plugin settings value is available as the local variable +settings+
   class Plugin
     @registered_plugins = {}
+    @deferred_plugins   = {}
+
     class << self
-      attr_reader :registered_plugins
+      attr_reader :registered_plugins, :deferred_plugins
       private :new
 
       def def_field(*names)
@@ -59,14 +67,36 @@ module Redmine #:nodoc:
 
     # Plugin constructor
     def self.register(id, &block)
-      p = new(id)
-      p.instance_eval(&block)
-      # Set a default name if it was not provided during registration
-      p.name(id.to_s.humanize) if p.name.nil?
-      # Adds plugin locales if any
-      # YAML translation files should be found under <plugin>/config/locales/
-      ::I18n.load_path += Dir.glob(File.join(RAILS_ROOT, 'vendor', 'plugins', id.to_s, 'config', 'locales', '*.yml'))
-      registered_plugins[id] = p
+      begin
+        id = id.to_sym
+        p = new(id)
+        p.instance_eval(&block)
+        # Set a default name if it was not provided during registration
+        p.name(id.to_s.humanize) if p.name.nil?
+        # Adds plugin locales if any
+        # YAML translation files should be found under <plugin>/config/locales/
+        ::I18n.load_path += Dir.glob(File.join(RAILS_ROOT, 'vendor', 'plugins', id.to_s, 'config', 'locales', '*.yml'))
+        registered_plugins[id] = p
+
+        # If there are plugins waiting for us to be loaded, we try loading those, again
+        if deferred_plugins[id]
+          deferred_plugins[id].each do |ary|
+            plugin_id, block = ary
+            register(plugin_id, &block)
+          end
+          deferred_plugins.delete(id)
+        end
+
+        return p
+      rescue PluginNotFound => e
+        if RedminePluginLocator.instance.has_plugin? e.plugin_id
+          # The required plugin is going to be loaded later, defer loading this plugin
+          (deferred_plugins[e.plugin_id] ||= []) << [id, block]
+          return p
+        else
+          raise e
+        end
+      end
     end
 
     # Returns an array off all registered plugins
@@ -77,7 +107,7 @@ module Redmine #:nodoc:
     # Finds a plugin by its id
     # Returns a PluginNotFound exception if the plugin doesn't exist
     def self.find(id)
-      registered_plugins[id.to_sym] || raise(PluginNotFound)
+      registered_plugins[id.to_sym] || raise(PluginNotFound.new(id.to_sym))
     end
 
     # Clears the registered plugins hash
