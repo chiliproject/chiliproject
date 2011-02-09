@@ -7,6 +7,39 @@
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 
+#This is for the deprecation warning on older rubygem versions on version_requirements
+module Rails
+    #See lib/gems/1.8/gems/rails-2.3.5/lib/rails/gem_dependency.rb
+    class GemDependency < Gem::Dependency
+      def dependencies
+        return [] if framework_gem?
+        return [] unless installed?
+        specification.dependencies.reject do |dependency|
+          dependency.type == :development
+        end.map do |dependency|
+          GemDependency.new(dependency.name,
+                            :requirement => (dependency.respond_to?(:requirement) ?
+                             dependency.requirement :
+                             dependency.version_requirements))
+        end
+      end
+
+      if method_defined?(:requirement)
+        #rubygem > 1.5
+        def requirement
+          req = super
+          req unless req == Gem::Requirement.default
+        end
+      else
+        #rubygem < 1.5
+        def requirement
+          req = version_requirements
+          req unless req == Gem::Requirement.default
+        end
+      end
+    end
+end
+
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
