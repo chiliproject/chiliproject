@@ -1049,3 +1049,6 @@ ru:
   setting_commit_logtime_enabled: Enable time logging
   notice_gantt_chart_truncated: The chart was truncated because it exceeds the maximum number of items that can be displayed (%{max})
   setting_gantt_items_limit: Maximum number of items displayed on the gantt chart
+  label_forum_threads_i_participated_in: Forum threads I participated in
+  label_watched_forum_threads: Watched forum threads
+  label_forum_threads_i_started: Forum threads I started
