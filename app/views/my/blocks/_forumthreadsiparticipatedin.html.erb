@@ -1,0 +1,11 @@
+<% created_thread_ids = Message.visible.all(:conditions => {:parent_id => nil, :author_id => User.current.id}).collect(&:id)
+   answered_thread_ids = Message.visible.all(:conditions => {:author_id => User.current.id}).collect(&:parent_id)
+   participated_thread_ids = (created_thread_ids + answered_thread_ids).uniq.compact -%>
+
+<h3><%=l :label_forum_threads_i_participated_in %> (<%= participated_thread_ids.size %>)</h3>
+
+<% participated_threads = Message.visible.find_all_by_id participated_thread_ids,
+                                                         :limit => 10, 
+                                                         :include => [:author, :board, :last_reply], 
+                                                         :order => "#{Message.table_name}.updated_on DESC" -%>
+<%= render :partial => 'messages/list_threads', :locals => {:threads => participated_threads, :author_column => true} %>

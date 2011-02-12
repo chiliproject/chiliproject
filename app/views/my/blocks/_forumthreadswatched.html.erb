@@ -1,0 +1,6 @@
+<h3><%=l :label_watched_forum_threads %> (<%= Message.visible.watched_by(User.current.id).count %>)</h3>
+
+<% watched_threads = Message.visible.watched_by(User.current.id).all :limit => 10, 
+                                                                     :include => [:author, :board, :last_reply], 
+                                                                     :order => "#{Message.table_name}.updated_on DESC" -%>
+<%= render :partial => 'messages/list_threads', :locals => {:threads => watched_threads, :author_column => true} %>

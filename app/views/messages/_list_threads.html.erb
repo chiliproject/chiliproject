@@ -1,0 +1,29 @@
+<% if threads.present? && threads.any? -%>
+<table class="list messages">
+  <thead><tr>
+    <th><%=l :field_subject %></th>
+    <% if author_column -%><th><%=l :field_author %></th><% end -%>
+    <th><%=l :field_created_on %></th>
+    <th><%=l :label_reply_plural %></th>
+    <th><%=l :label_message_last %></th>
+  </tr></thead>  
+  <tbody>
+  <% threads.each do |thread| -%>
+    <tr class="message <%= cycle 'odd', 'even' %><%= ' sticky' if thread.sticky? %><%= ' locked' if thread.locked? %>">
+      <td class="subject"><%= link_to h(thread.subject), { :controller => 'messages', :action => 'show', :board_id => thread.board, :id => thread } %></td>
+      <% if author_column -%><td class="author" align="center"><%= thread.author %></td><% end -%>
+      <td class="created_on" align="center"><%= format_time(thread.created_on) %></td>
+      <td class="replies" align="center"><%= thread.replies_count %></td>
+      <td class="last_message">
+        <% if thread.last_reply -%>
+        <%= authoring thread.last_reply.created_on, thread.last_reply.author %><br />
+        <%= link_to_message thread.last_reply %>
+        <% end -%>
+      </td>
+    </tr>
+  <% end -%>
+  </tbody>
+</table>
+<% else %>
+<p class="nodata"><%=l :label_no_data %></p>
+<% end -%>

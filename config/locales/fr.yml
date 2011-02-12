@@ -496,6 +496,9 @@ fr:
   label_help: Aide
   label_reported_issues: "Demandes soumises "
   label_assigned_to_me_issues: Demandes qui me sont assignées
+  label_forum_threads_i_started: Discussions que j'ai commencées
+  label_forum_threads_i_participated_in: Discusions auxquelles j'ai participé
+  label_watched_forum_threads: Discussions surveillées
   label_last_login: "Dernière connexion "
   label_registered_on: "Inscrit le "
   label_activity: Activité

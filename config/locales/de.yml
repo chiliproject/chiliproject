@@ -499,6 +499,9 @@ de:
   label_help: Hilfe
   label_reported_issues: Gemeldete Tickets
   label_assigned_to_me_issues: Mir zugewiesen
+  label_forum_threads_i_started: Von mir begonnene Forum Themen
+  label_forum_threads_i_participated_in: Forum Themen an denen ich teilnahm
+  label_watched_forum_threads: Von mir beobachtete Forum Themen
   label_last_login: Letzte Anmeldung
   label_registered_on: Angemeldet am
   label_activity: Aktivität

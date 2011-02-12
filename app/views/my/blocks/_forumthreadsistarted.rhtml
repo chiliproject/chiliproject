@@ -1,0 +1,7 @@
+<h3><%=l :label_forum_threads_i_started %> (<%= Message.visible.count :conditions => {:parent_id => nil, :author_id => User.current.id} %>)</h3>
+
+<% started_threads = Message.visible.all :conditions => {:parent_id => nil, :author_id => User.current.id},
+                                         :limit => 10, 
+                                         :include => [:author, :board, :last_reply], 
+                                         :order => "#{Message.table_name}.updated_on DESC" -%>
+<%= render :partial => 'messages/list_threads', :locals => {:threads => started_threads, :author_column => false} %>
