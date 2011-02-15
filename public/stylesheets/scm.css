@@ -90,9 +90,44 @@ div.action_D { background: #f88 }
 div.action_A { background: #bfb }
 
 /************* CodeRay styles *************/
-.syntaxhl div {display: inline;}
-.syntaxhl .no { padding: 2px 4px 2px 4px; background-color: #eee; margin:0 }
-.syntaxhl .code pre { overflow: auto }
+
+div.syntaxhl {
+  display: inline;
+  background-color: #f8f8f8;
+}
+
+div.syntaxhl pre {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+div.syntaxhl table {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  float: left;
+}
+
+.syntaxhl table td {
+  border: 0;
+  vertical-align: top;
+}
+
+.syntaxhl .line_numbers {
+  background-color: #ddeeff;
+  color: gray;
+  text-align: right;
+}
+
+.syntaxhl .line_numbers tt { font-weight: bold; }
+.syntaxhl .code { width: 100%; }
+.syntaxhl .code pre {
+  overflow: auto;
+  border: 0;
+}
+
 .syntaxhl .debug { color:white ! important; background:blue ! important; }
 
 .syntaxhl .af { color:#00C }
