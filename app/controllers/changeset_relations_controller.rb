@@ -13,11 +13,13 @@ class ChangesetRelationsController < ApplicationController
       @changeset.save if request.post?
     end
     @issue.reload
+    @changesets = @issue.changesets.visible.all
+    @changesets.reverse! if User.current.wants_comments_in_reverse_order?
     respond_to do |format|
       format.html { redirect_to :controller => 'issues', :action => 'show', :id => @issue }
       format.js do
         render :update do |page|
-          page.replace_html "issue-changesets-list", :partial => 'issues/changesets', :locals => { :changesets => @issue.changesets }
+          page.replace_html "issue-changesets-list", :partial => 'issues/changesets', :locals => { :changesets => @changesets }
           if @changeset.errors.empty?
             page << "$('changeset_revision').value = ''"
           end
@@ -32,11 +34,13 @@ class ChangesetRelationsController < ApplicationController
       changeset.issues.delete(@issue)
       @issue.reload
     end
+    @changesets = @issue.changesets.visible.all
+    @changesets.reverse! if User.current.wants_comments_in_reverse_order?
     respond_to do |format|
       format.html { redirect_to :controller => 'issues', :action => 'show', :id => @issue }
       format.js do
         render(:update) do |page|
-          page.replace_html "issue-changesets-list", :partial => 'issues/changesets', :locals => { :changesets => @issue.changesets }
+          page.replace_html "issue-changesets-list", :partial => 'issues/changesets', :locals => { :changesets => @changesets }
         end
       end
     end
