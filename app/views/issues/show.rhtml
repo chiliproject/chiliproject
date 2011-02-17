@@ -82,11 +82,18 @@
 
 </div>
 
-<% if @changesets.present? %>
-<div id="issue-changesets">
-<h3><%=l(:label_associated_revisions)%></h3>
-<%= render :partial => 'changesets', :locals => { :changesets => @changesets} %>
-</div>
+<% if !@project.repository.nil? && (@changesets.present? || authorize_for('changeset_relations', 'new')) %>
+  <div id="issue-changesets">
+    <div class="contextual">
+      <% if authorize_for('changeset_relations', 'new') %>
+        <%= toggle_link l(:button_add), 'new-changeset-form'%>
+      <% end %>
+    </div>
+    <h3><%=l(:label_associated_revisions)%></h3>
+    <div id="issue-changesets-list">
+      <%= render :partial => 'changesets', :locals => { :changesets => @changesets } %>
+    </div>
+  </div>
 <% end %>
 
 <% if @journals.present? %>

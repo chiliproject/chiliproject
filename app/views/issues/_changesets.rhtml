@@ -1,3 +1,11 @@
+<% remote_form_for(:changeset, @changeset,
+                 :url => {:controller => 'changeset_relations', :action => 'new', :issue_id => @issue},
+                 :method => :post,
+                 :html => {:id => 'new-changeset-form', :style => (@changeset ? '' : 'display: none;')}) do |f| %>
+<%= render :partial => 'changeset_relations/form', :locals => {:f => f}%>
+<% end %>
+
+<% if !changesets.empty? %>
 <% changesets.each do |changeset| %>
     <div class="changeset <%= cycle('odd', 'even') %>">
     <p><%= link_to_revision(changeset, changeset.project,
@@ -7,4 +15,5 @@
         <%= textilizable(changeset, :comments) %>
     </div>
     </div>
+<% end %>
 <% end %>
