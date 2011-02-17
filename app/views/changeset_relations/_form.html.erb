@@ -1,0 +1,8 @@
+<%= error_messages_for 'changeset' %>
+
+<p><%= l(:label_revision) %> <%= f.text_field :revision, :size => 6 %>
+  <%= submit_tag l(:button_add) %>
+  <%= toggle_link l(:button_cancel), 'new-changeset-form'%>
+</p>
+
+<%= javascript_tag "setPredecessorFieldsVisibility();" %>
