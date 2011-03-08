@@ -59,7 +59,20 @@ class Repository::Git < Repository
     c = changesets.find(:first, :order => 'committed_on DESC')
     since = (c ? c.committed_on - 7.days : nil)
 
-    revisions = scm.revisions('', nil, nil, :all => true, :since => since)
+    hash = {}
+    scm.branches.each do |branch|
+      revs = scm.revisions('', nil, branch, :since => since)
+      revs.each do |r|
+        if hash.has_key? r.scmid
+          hash[r.scmid].branches << branch
+        else
+          hash[r.scmid] = r
+          r.branches = [branch]
+        end
+      end
+    end
+
+    revisions = hash.values
     return if revisions.nil? || revisions.empty?
 
     recent_changesets = changesets.find(:all, :conditions => ['committed_on >= ?', since])

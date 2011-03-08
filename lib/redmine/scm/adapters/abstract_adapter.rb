@@ -271,7 +271,7 @@ module Redmine
       end
       
       class Revision
-        attr_accessor :scmid, :name, :author, :time, :message, :paths, :revision, :branch
+        attr_accessor :scmid, :name, :author, :time, :message, :paths, :revision, :branches
         attr_writer :identifier
 
         def initialize(attributes={})
@@ -283,7 +283,7 @@ module Redmine
           self.message = attributes[:message] || ""
           self.paths = attributes[:paths]
           self.revision = attributes[:revision]
-          self.branch = attributes[:branch]
+          self.branches = attributes[:branches]
         end
 
         # Returns the identifier of this revision; see also Changeset model
@@ -305,6 +305,8 @@ module Redmine
               :committer => author, 
               :committed_on => time,
               :comments => message)
+
+            changeset.branches = branches
             
             if changeset.save
               paths.each do |file|
