@@ -12,8 +12,6 @@
 # See doc/COPYRIGHT.rdoc for more details.
 #++
 
-require 'tree' # gem install rubytree
-
 class Redmine::MenuManager::TreeNode < Tree::TreeNode
   attr_reader :last_items_count
 
