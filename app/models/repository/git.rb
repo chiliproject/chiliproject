@@ -88,6 +88,29 @@ class Repository::Git < Repository
     revisions.each{|r| r.save(self)} unless revisions.nil?
   end
 
+  def refresh_branches
+    hash = {}
+    scm.branches.each do |branch|
+      revs = scm.revisions('', nil, branch)
+      revs.each do |r|
+        if hash.has_key? r.scmid
+          hash[r.scmid].branches << branch
+        else
+          hash[r.scmid] = r
+          r.branches = [branch]
+        end
+      end
+    end
+
+    hash.each do |key, revision|
+      changeset = Changeset.find_by_scmid key
+      if changeset
+        changeset.branches = revision.branches
+        changeset.save!
+      end
+    end
+  end
+
   def latest_changesets(path,rev,limit=10)
     revisions = scm.revisions(path, nil, rev, :limit => limit, :all => false)
     return [] if revisions.nil? || revisions.empty?
