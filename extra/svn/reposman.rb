@@ -235,14 +235,6 @@ end
 projects.each do |project|
   log("treating project #{project.name}", :level => 1)
 
-  if project.identifier.empty?
-    log("\tno identifier for project #{project.name}")
-    next
-  elsif not project.identifier.match(/^[a-z0-9\-_]+$/)
-    log("\tinvalid identifier for project #{project.name} : #{project.identifier}");
-    next;
-  end
-
   repos_path = File.join($repos_base, project.identifier).gsub(File::SEPARATOR, File::ALT_SEPARATOR || File::SEPARATOR)
 
   if File.directory?(repos_path)
