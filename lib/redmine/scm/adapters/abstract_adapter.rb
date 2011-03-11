@@ -105,6 +105,10 @@ module Redmine
           return nil
         end
 
+        def get_branches(scmid)
+          []
+        end
+
         def tags 
           return nil
         end

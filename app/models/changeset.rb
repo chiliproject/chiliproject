@@ -174,7 +174,11 @@ class Changeset < ActiveRecord::Base
                   :from_path => change[:from_path],
                   :from_revision => change[:from_revision])
   end
-  
+
+  def branches
+    repository.scm.get_branches(scmid)
+  end
+
   private
 
   # Finds an issue that can be referenced by the commit message

@@ -44,6 +44,19 @@ module Redmine
           @branches.sort!
         end
 
+        def get_branches(scmid)
+          result = []
+          cmd = "#{GIT_BIN} --git-dir #{target('')} branch --no-color --contains #{scmid}"
+          shellout(cmd) do |io|
+            io.each_line do |line|
+              line = line[1..-1] if line =~ /^\*/ # current branch marked by star
+              result << line.strip
+            end
+          end
+
+          result.sort!
+        end
+
         def tags
           return @tags if @tags
           cmd = "#{GIT_BIN} --git-dir #{target('')} tag"
