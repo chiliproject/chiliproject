@@ -64,6 +64,12 @@ class GitAdapterTest < ActiveSupport::TestCase
       assert_equal "Felix Schäfer <felix@fachschaften.org>", last_rev.author
       assert_equal "2010-09-18 19:59:46".to_time, last_rev.time
     end
+
+    def test_get_branches
+      assert_equal @adapter.get_branches('fba357b886984ee71185ad2065e65fc0417d9b92').sort, ['master', 'test_branch']
+      assert_equal @adapter.get_branches('7234cb2750b63f47bff735edc50a1c0a433c2518').sort, ['master', 'test_branch']
+      assert_equal @adapter.get_branches('83ca5fd546063a3c7dc2e568ba3355661a9e2b2c'), ['master']
+    end
   else
     puts "Git test repository NOT FOUND. Skipping unit tests !!!"
     def test_fake; assert true end

@@ -223,4 +223,9 @@ class ChangesetTest < ActiveSupport::TestCase
     c = Changeset.find_by_revision('1')
     assert_equal c.revision, c.identifier
   end
+
+  def test_branches
+    c = Changeset.find_by_revision('1')
+    assert_equal c.branches, []
+  end
 end
