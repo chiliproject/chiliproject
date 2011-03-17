@@ -50,12 +50,16 @@ class RepositoryGitTest < ActiveSupport::TestCase
       change = commit.changes.sort_by(&:path).first
       assert_equal "README", change.path
       assert_equal "A", change.action
+
+      assert @repository.scm_metadata.is_a? Hash
+      assert_equal @repository.scm_metadata['master'], '83ca5fd546063a3c7dc2e568ba3355661a9e2b2c'
     end
     
     def test_fetch_changesets_incremental
       @repository.fetch_changesets
       # Remove the 3 latest changesets
       @repository.changesets.find(:all, :order => 'committed_on DESC', :limit => 3).each(&:destroy)
+      @repository.update_attributes :scm_metadata => {'master' => 'deff712f05a90d96edbd70facc47d944be5897e3'}
       @repository.reload
       assert_equal 12, @repository.changesets.count
       

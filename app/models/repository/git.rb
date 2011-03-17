@@ -51,25 +51,26 @@ class Repository::Git < Repository
   # clever and only fetch changesets going forward from the most recent one
   # it knows about.  However, with git, you never know if people have merged
   # commits into the middle of the repository history, so we should parse
-  # the entire log. Since it's way too slow for large repositories, we only
-  # parse 1 week before the last known commit.
+  # the entire log. But now we store last branches heads in scm_metadata serialized
+  # field.
+  # But if somebody rewrite some branch in git this could cause unpredictable problems.
   # The repository can still be fully reloaded by calling #clear_changesets
   # before fetching changesets (eg. for offline resync)
   def fetch_changesets
-    c = changesets.find(:first, :order => 'committed_on DESC')
-    since = (c ? c.committed_on - 7.days : nil)
+    self.scm_metadata ||= {}
+    revisions = []
+    branches.each do |branch|
+      last_checked_revision = scm_metadata[branch]
+      branch_revisions = scm.revisions('', last_checked_revision, branch)
 
-    revisions = scm.revisions('', nil, nil, :all => true, :since => since)
+      revisions += branch_revisions
+      scm_metadata[branch] = branch_revisions.first.scmid if branch_revisions && branch_revisions.first
+    end
+
     return if revisions.nil? || revisions.empty?
 
-    recent_changesets = changesets.find(:all, :conditions => ['committed_on >= ?', since])
-
-    # Clean out revisions that are no longer in git
-    recent_changesets.each {|c| c.destroy unless revisions.detect {|r| r.scmid.to_s == c.scmid.to_s }}
-
-    # Subtract revisions that redmine already knows about
-    recent_revisions = recent_changesets.map{|c| c.scmid}
-    revisions.reject!{|r| recent_revisions.include?(r.scmid)}
+    # Save scm metadata
+    save
 
     # Save the remaining ones to the database
     revisions.each{|r| r.save(self)} unless revisions.nil?
