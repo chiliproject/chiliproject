@@ -221,6 +221,15 @@ module ApplicationHelper
     end
   end
   
+  # Renders tabs (using a MenuManager) and their content
+  def render_menu_tabs(tabs)
+    if tabs.any?
+      render :partial => 'common/menu_tabs', :locals => {:tabs => tabs}
+    else
+      content_tag 'p', l(:label_no_data), :class => "nodata"
+    end
+  end
+  
   # Renders the project quick-jump box
   def render_project_jump_box
     # Retrieve them now to avoid a COUNT query

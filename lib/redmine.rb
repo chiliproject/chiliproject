@@ -205,6 +205,18 @@ Redmine::MenuManager.map :project_menu do |menu|
   menu.push :settings, { :controller => 'projects', :action => 'settings' }, :last => true
 end
 
+Redmine::MenuManager.map :project_settings_menu do |menu|
+  menu.push :info, {:action => :edit_project}, :html => {:partial => 'projects/edit'}, :caption => :label_information_plural
+  menu.push :modules, {:action => :select_project_modules}, :html => {:partial => 'projects/settings/modules'}, :caption => :label_module_plural
+  menu.push :members, {:action => :manage_members}, :html => {:partial => 'projects/settings/members'}, :caption => :label_member_plural
+  menu.push :versions, {:action => :manange_versions}, :html => {:partial => 'projects/settings/versions'}, :caption => :label_version_plural
+  menu.push :categories, {:action => :manage_categories}, :html => {:partial => 'projects/settings/issue_categories'}, :caption => :label_issue_status_plural
+  menu.push :wiki, {:action => :manage_wiki}, :html => {:partial => 'projects/settings/wiki'}, :caption => :label_wiki
+  menu.push :repository, {:action => :manage_repository}, :html => {:partial => 'projects/settings/repository'}, :caption => :label_repository
+  menu.push :boards, {:action => :manage_boards}, :html => {:partial => 'projects/settings/boards'}, :caption => :label_board_plural
+  menu.push :activities, {:action => :manage_project_activities}, :html => {:partial => 'projects/settings/activities'}, :caption => :enumeration_activities
+end
+
 Redmine::Activity.map do |activity|
   activity.register :issues, :class_name => %w(Issue Journal)
   activity.register :changesets
