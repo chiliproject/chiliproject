@@ -46,9 +46,4 @@ class CalendarsController < ApplicationController
 
     render :action => 'show', :layout => false if request.xhr?
   end
-
-  def update
-    show
-  end
-
 end

@@ -58,10 +58,15 @@ ActionController::Routing::Routes.draw do |map|
   map.quoted_issue '/issues/:id/quoted', :controller => 'journals', :action => 'new', :id => /\d+/, :conditions => { :method => :post }
   map.journal_diff '/journals/:id/diff/:field', :controller => 'journals', :action => 'diff', :conditions => { :method => :get }
 
-  map.resource :gantt, :path_prefix => '/issues', :controller => 'gantts', :only => [:show, :update]
-  map.resource :gantt, :path_prefix => '/projects/:project_id/issues', :controller => 'gantts', :only => [:show, :update]
-  map.resource :calendar, :path_prefix => '/issues', :controller => 'calendars', :only => [:show, :update]
-  map.resource :calendar, :path_prefix => '/projects/:project_id/issues', :controller => 'calendars', :only => [:show, :update]
+  map.with_options :controller => 'gantts', :action => 'show' do |gantts_routes|
+    gantts_routes.connect '/projects/:project_id/issues/gantt'
+    gantts_routes.connect '/issues/gantt'
+  end
+
+  map.with_options :controller => 'calendars', :action => 'show' do |calendars_routes|
+    calendars_routes.connect '/projects/:project_id/issues/calendar'
+    calendars_routes.connect '/issues/calendar'
+  end
 
   map.with_options :controller => 'reports', :conditions => {:method => :get} do |reports|
     reports.connect 'projects/:id/issues/report', :action => 'issue_report'
@@ -168,7 +173,7 @@ ActionController::Routing::Routes.draw do |map|
 
     repositories.connect 'projects/:id/repository/:action', :conditions => {:method => :post}
   end
-  
+
   map.resources :attachments, :only => [:show, :destroy]
   # additional routes for having the file name at the end of url
   map.connect 'attachments/:id/:filename', :controller => 'attachments', :action => 'show', :id => /\d+/, :filename => /.*/
@@ -181,6 +186,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :roles, :except => :show, :collection => {:permissions => [:get, :post]}
 
   #left old routes at the bottom for backwards compat
+  map.connect 'projects/:project_id/queries/:action', :controller => 'queries'
   map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
 
   map.with_options :controller => 'sys' do |sys|
