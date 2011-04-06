@@ -18,7 +18,6 @@
 module ChiliProject
   class Configuration < Hash
     def initialize(options={})
-      super nil
       load(options || {})
     end
 
@@ -44,12 +43,12 @@ module ChiliProject
       @defaults ||= {}
     end
 
-  private
     def load(options={})
       filename = options[:file] || File.join(Rails.root, 'config', 'configuration.yml')
       env = options[:env] || Rails.env
 
-      self.deep_merge! load_from_yaml(filename, env) if File.file?(filename)
+      self.clear
+      self.merge! load_from_yaml(filename, env) if File.file?(filename)
       load_deprecated_email_configuration(env)
 
       # initialize email configuration
@@ -61,7 +60,7 @@ module ChiliProject
         end
       end
     end
-
+  private
     def load_from_yaml(filename, env)
       yaml = YAML::load_file(filename)
 
