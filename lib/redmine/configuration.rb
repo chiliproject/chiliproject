@@ -1,5 +1,5 @@
-# Redmine - project management software
-# Copyright (C) 2006-2011  Jean-Philippe Lang
+# ChiliProject is a project management system.
+# Copyright (C) 2010-2011 The ChiliProject Team
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,5 +16,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 module Redmine
-  Configuration = ::ChiliProject::Configuration
+  module Configuration
+    def self.[](key)
+      # TODO: enable deprecation?
+      #warn "Redmine::Configuration is deprecated. Please use ChiliProject.config."
+      ChiliProject.config[key]
+    end
+  end
 end

@@ -16,85 +16,92 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 module ChiliProject
-  module Configuration
-    # Configuration default values
-    @defaults = {
-      'email_delivery' => nil,
-      # Autologin cookie defaults:
-      'autologin_cookie_name'   => 'autologin',
-      'autologin_cookie_path'   => '/',
-      'autologin_cookie_secure' => false,
-    }
+  class Configuration < Hash
+    def initialize(options={})
+      super nil
+      load(options || {})
+    end
 
-    @config = nil
-
-    class << self
-      # Loads the Redmine configuration file
-      # Valid options:
-      # * <tt>:file</tt>: the configuration file to load (default: config/configuration.yml)
-      # * <tt>:env</tt>: the environment to load the configuration for (default: Rails.env)
-      def load(options={})
-        filename = options[:file] || File.join(Rails.root, 'config', 'configuration.yml')
-        env = options[:env] || Rails.env
-
-        @config = @defaults.dup
-
-        load_deprecated_email_configuration(env)
-        if File.file?(filename)
-          @config.merge!(load_from_yaml(filename, env))
-        end
-
-        # Compatibility mode for those who copy email.yml over configuration.yml
-        %w(delivery_method smtp_settings sendmail_settings).each do |key|
-          if value = @config.delete(key)
-            @config['email_delivery'] ||= {}
-            @config['email_delivery'][key] = value
-          end
-        end
-
-        if @config['email_delivery']
-          ActionMailer::Base.perform_deliveries = true
-          @config['email_delivery'].each do |k, v|
-            v.symbolize_keys! if v.respond_to?(:symbolize_keys!)
-            ActionMailer::Base.send("#{k}=", v)
-          end
-        end
-
-        @config
+    def [](key)
+      if self.has_key?(key) && defaults[key]
+        defaults[key].deep_merge(super)
+      else
+        super || defaults[key]
       end
+    end
 
-      # Returns a configuration setting
-      def [](name)
-        load unless @config
-        @config[name]
+    def all
+      # This a rather slow operation. This should only be used for
+      # introspection or debugging.
+      defaults.deep_merge(self)
+    end
+
+    def defaults
+      self.class.defaults
+    end
+
+    def self.defaults
+      @defaults ||= {}
+    end
+
+  private
+    def load(options={})
+      filename = options[:file] || File.join(Rails.root, 'config', 'configuration.yml')
+      env = options[:env] || Rails.env
+
+      self.deep_merge! load_from_yaml(filename, env) if File.file?(filename)
+      load_deprecated_email_configuration(env)
+
+      # initialize email configuration
+      if self['email_delivery']
+        ActionMailer::Base.perform_deliveries = true
+        self['email_delivery'].each_pair do |k, v|
+          v.symbolize_keys! if v.respond_to?(:symbolize_keys!)
+          ActionMailer::Base.send("#{k}=", v)
+        end
       end
+    end
 
-      private
+    def load_from_yaml(filename, env)
+      yaml = YAML::load_file(filename)
 
-      def load_from_yaml(filename, env)
-        yaml = YAML::load_file(filename)
-        conf = {}
-        if yaml.is_a?(Hash)
-          if yaml['default']
-            conf.merge!(yaml['default'])
-          end
-          if yaml[env]
-            conf.merge!(yaml[env])
-          end
+      if yaml.is_a?(Hash)
+        yaml[env] || {}
+      else
+        $stderr.puts "#{filename} is not a valid ChiliProject configuration file"
+        exit 1
+      end
+    end
+
+    def load_deprecated_email_configuration(env)
+      deprecated_email_conf = File.join(Rails.root, 'config', 'email.yml')
+      if File.file?(deprecated_email_conf)
+        if self['email_delivery']
+          warn "Ignoring deprecated email configuration in config/email.yml as we already have a configuration in config/configuration.yml"
         else
-          $stderr.puts "#{filename} is not a valid Redmine configuration file"
-          exit 1
+          warn "Storing outgoing emails configuration in config/email.yml is deprecated. You should now store it in config/configuration.yml using the email_delivery setting."
+          self.merge!({'email_delivery' => load_from_yaml(deprecated_email_conf, env)})
         end
-        conf
       end
 
-      def load_deprecated_email_configuration(env)
-        deprecated_email_conf = File.join(Rails.root, 'config', 'email.yml')
-        if File.file?(deprecated_email_conf)
-          warn "Storing outgoing emails configuration in config/email.yml is deprecated. You should now store it in config/configuration.yml using the email_delivery setting."
-          @config.merge!({'email_delivery' => load_from_yaml(deprecated_email_conf, env)})
+      # Compatibility mode for those who copy email.yml over configuration.yml
+      %w(delivery_method smtp_settings sendmail_settings).each do |key|
+        if value = self.delete(key)
+          self['email_delivery'] ||= {}
+          self['email_delivery'][key] = value
         end
       end
     end
   end
+
+  def self.config
+    @config ||= Configuration.new
+  end
+
+  Configuration.defaults.deep_merge!({
+    # Autologin cookie defaults:
+    'autologin_cookie_name' => 'autologin',
+    'autologin_cookie_path' => '/',
+    'autologin_cookie_secure' => false
+  })
 end
