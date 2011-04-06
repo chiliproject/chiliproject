@@ -21,21 +21,22 @@ require 'rexml/document'
 module Redmine
   module Scm
     module Adapters
-      class DarcsAdapter < AbstractAdapter      
-        # Darcs executable name
-        DARCS_BIN = Redmine::Configuration['scm_darcs_command'] || "darcs"
+      class DarcsAdapter < AbstractAdapter
+
+        # Default Darcs executable name
+        ChiliProject.config.defaults['scm_darcs_command'] = "darcs"
 
         class << self
           def client_command
-            @@bin    ||= DARCS_BIN
+            @bin ||= ChiliProject.config['scm_darcs_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(DARCS_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_darcs_command'])
           end
 
           def client_version
-            @@client_version ||= (darcs_binary_version || [])
+            @client_version ||= (darcs_binary_version || [])
           end
 
           def darcs_binary_version

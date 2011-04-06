@@ -98,12 +98,12 @@ module Redmine
       end.sort
     end
 
+    ChiliProject.config.defaults['themes_storage_path'] = ["#{Rails.public_path}/themes"]
     def self.theme_paths
-      paths = Redmine::Configuration['themes_storage_path']
+      paths = ChiliProject.config['themes_storage_path']
       paths = [paths] unless paths.is_a?(Array)
       paths.flatten!; paths.compact!
 
-      paths = ["#{Rails.public_path}/themes"] if paths.empty?
       paths.collect { |p| File.expand_path(p, Rails.root) }
     end
   end

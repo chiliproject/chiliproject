@@ -17,30 +17,34 @@
 
 require File.expand_path('../../../../test_helper', __FILE__)
 
-class Redmine::ConfigurationTest < ActiveSupport::TestCase
+class ChiliProject::ConfigurationTest < ActiveSupport::TestCase
   def setup
-    @conf = Redmine::Configuration
+    @conf = ChiliProject::Configuration.new
   end
 
-  def test_empty
-    assert_kind_of Hash, load_conf('empty.yml', 'test')
-  end
-  
   def test_default
-    assert_kind_of Hash, load_conf('default.yml', 'test')
+    @conf.defaults['somesetting'] = 'foo'
+    load_conf('empty.yml', 'test')
     assert_equal 'foo', @conf['somesetting']
   end
   
   def test_no_default
-    assert_kind_of Hash, load_conf('no_default.yml', 'test')
+    load_conf('no_default.yml', 'test')
     assert_equal 'foo', @conf['somesetting']
   end
   
   def test_overrides
-    assert_kind_of Hash, load_conf('overrides.yml', 'test')
+    @conf.defaults['somesetting'] = 'foo'
+    load_conf('overrides.yml', 'test')
     assert_equal 'bar', @conf['somesetting']
   end
-  
+
+  def test_deep_merge
+    @conf.defaults['somesetting'] = {'foo' => {'bar' => 'baz'}}
+    load_conf('deep_merge.yml', 'test')
+    assert_equal ({'foo' => {'bar' => 'baz'}, 'bar' => 'foobar'}), @conf['somesetting']
+  end
+
   private
   
   def load_conf(file, env)

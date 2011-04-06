@@ -21,16 +21,17 @@ module Redmine
   module Scm
     module Adapters
       class GitAdapter < AbstractAdapter
-        # Git executable name
-        GIT_BIN = Redmine::Configuration['scm_git_command'] || "git"
+
+        # Default Git executable name
+        ChiliProject.config.defaults['scm_git_command'] = "git"
 
         class << self
           def client_command
-            @@bin    ||= GIT_BIN
+            @bin ||= ChiliProject.config['scm_git_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(GIT_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_git_command'])
           end
 
           def client_available

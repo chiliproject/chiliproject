@@ -129,7 +129,7 @@ class AccountController < ApplicationController
   
   def logout_user
     if User.current.logged?
-      cookies.delete Redmine::Configuration['autologin_cookie_name']
+      cookies.delete ChiliProject.config['autologin_cookie_name']
       Token.delete_all(["user_id = ? AND action = ?", User.current.id, 'autologin'])
       self.logged_user = nil
     end
@@ -214,11 +214,11 @@ class AccountController < ApplicationController
     cookie_options = {
       :value => token.value,
       :expires => 1.year.from_now,
-      :path => Redmine::Configuration['autologin_cookie_path'],
-      :secure => Redmine::Configuration['autologin_cookie_secure'],
+      :path => ChiliProject.config['autologin_cookie_path'],
+      :secure => ChiliProject.config['autologin_cookie_secure'],
       :httponly => true
     }
-    cookies[Redmine::Configuration['autologin_cookie_name']] = cookie_options
+    cookies[ChiliProject.config['autologin_cookie_name']] = cookie_options
   end
 
   # Onthefly creation failed, display the registration form to fill/fix attributes

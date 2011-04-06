@@ -23,23 +23,24 @@ module Redmine
     module Adapters
       class MercurialAdapter < AbstractAdapter
 
-        # Mercurial executable name
-        HG_BIN = Redmine::Configuration['scm_mercurial_command'] || "hg"
+        # Default Mercurial executable name
+        ChiliProject.config.defaults['scm_mercurial_command'] = "hg"
+
         TEMPLATES_DIR = File.dirname(__FILE__) + "/mercurial"
         TEMPLATE_NAME = "hg-template"
         TEMPLATE_EXTENSION = "tmpl"
 
         class << self
           def client_command
-            @@bin    ||= HG_BIN
+            @bin ||= ChiliProject.config['scm_mercurial_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(HG_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_mercurial_command'])
           end
 
           def client_version
-            @@client_version ||= (hgversion || [])
+            @client_version ||= (hgversion || [])
           end
 
           def client_available

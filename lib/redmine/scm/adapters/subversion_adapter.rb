@@ -23,20 +23,20 @@ module Redmine
     module Adapters
       class SubversionAdapter < AbstractAdapter
 
-        # SVN executable name
-        SVN_BIN = Redmine::Configuration['scm_subversion_command'] || "svn"
+        # Default Subversion executable name
+        ChiliProject.config.defaults['scm_subversion_command'] = "svn"
 
         class << self
           def client_command
-            @@bin    ||= SVN_BIN
+            @bin ||= ChiliProject.config['scm_subversion_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(SVN_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_subversion_command'])
           end
 
           def client_version
-            @@client_version ||= (svn_binary_version || [])
+            @client_version ||= (svn_binary_version || [])
           end
 
           def svn_binary_version

@@ -22,16 +22,16 @@ module Redmine
     module Adapters
       class CvsAdapter < AbstractAdapter
 
-        # CVS executable name
-        CVS_BIN = Redmine::Configuration['scm_cvs_command'] || "cvs"
+        # Default CVS executable name
+        ChiliProject.config.defaults['scm_cvs_command'] = "cvs"
 
         class << self
           def client_command
-            @@bin    ||= CVS_BIN
+            @bin ||= ChiliProject.config['scm_cvs_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(CVS_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_cvs_command'])
           end
         end
 

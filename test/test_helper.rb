@@ -80,7 +80,7 @@ class ActiveSupport::TestCase
   def set_tmp_attachments_directory
     Dir.mkdir "#{RAILS_ROOT}/tmp/test" unless File.directory?("#{RAILS_ROOT}/tmp/test")
     Dir.mkdir "#{RAILS_ROOT}/tmp/test/attachments" unless File.directory?("#{RAILS_ROOT}/tmp/test/attachments")
-    Attachment.storage_path = "#{RAILS_ROOT}/tmp/test/attachments"
+    ChiliProject.config['attachments_storage_path'] = "#{RAILS_ROOT}/tmp/test/attachments"
   end
   
   def with_settings(options, &block)

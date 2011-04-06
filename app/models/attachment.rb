@@ -42,9 +42,11 @@ class Attachment < ActiveRecord::Base
                                               :joins => "LEFT JOIN #{Document.table_name} ON #{Attachment.table_name}.container_type='Document' AND #{Document.table_name}.id = #{Attachment.table_name}.container_id " +
                                                         "LEFT JOIN #{Project.table_name} ON #{Document.table_name}.project_id = #{Project.table_name}.id"}
 
-  cattr_accessor :storage_path
-  @@storage_path = Redmine::Configuration['attachments_storage_path'] || "#{RAILS_ROOT}/files"
-  
+  ChiliProject.config.defaults['attachments_storage_path'] = "#{RAILS_ROOT}/files"
+  def self.storage_path
+    ChiliProject.config['attachments_storage_path']
+  end
+
   def validate
     if self.filesize > Setting.attachment_max_size.to_i.kilobytes
       errors.add(:base, :too_long, :count => Setting.attachment_max_size.to_i.kilobytes)
@@ -98,7 +100,7 @@ class Attachment < ActiveRecord::Base
 
   # Returns file's location on disk
   def diskfile
-    "#{@@storage_path}/#{self.disk_filename}"
+    "#{self.class.storage_path}/#{self.disk_filename}"
   end
   
   def increment_download
@@ -183,7 +185,7 @@ private
       # keep the extension if any
       ascii << $1 if filename =~ %r{(\.[a-zA-Z0-9]+)$}
     end
-    while File.exist?(File.join(@@storage_path, "#{timestamp}_#{ascii}"))
+    while File.exist?(File.join(self.storage_path, "#{timestamp}_#{ascii}"))
       timestamp.succ!
     end
     "#{timestamp}_#{ascii}"

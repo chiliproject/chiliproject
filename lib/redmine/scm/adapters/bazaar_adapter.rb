@@ -22,16 +22,16 @@ module Redmine
     module Adapters
       class BazaarAdapter < AbstractAdapter
 
-        # Bazaar executable name
-        BZR_BIN = Redmine::Configuration['scm_bazaar_command'] || "bzr"
+        # Default Bazaar executable name
+        ChiliProject.config.defaults['scm_bazaar_command'] = "bzr"
 
         class << self
           def client_command
-            @@bin    ||= BZR_BIN
+            @bin ||= ChiliProject.config['scm_bazaar_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(BZR_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_bazaar_command'])
           end
         end
 
