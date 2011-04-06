@@ -5,12 +5,12 @@
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -21,21 +21,22 @@ require 'rexml/document'
 module Redmine
   module Scm
     module Adapters
-      class DarcsAdapter < AbstractAdapter      
-        # Darcs executable name
-        DARCS_BIN = Redmine::Configuration['scm_darcs_command'] || "darcs"
+      class DarcsAdapter < AbstractAdapter
+
+        # Default Darcs executable name
+        ChiliProject.config.defaults['scm_darcs_command'] = "darcs"
 
         class << self
           def client_command
-            @@bin    ||= DARCS_BIN
+            @bin ||= ChiliProject.config['scm_darcs_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(DARCS_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_darcs_command'])
           end
 
           def client_version
-            @@client_version ||= (darcs_binary_version || [])
+            @client_version ||= (darcs_binary_version || [])
           end
 
           def darcs_binary_version
@@ -73,7 +74,7 @@ module Redmine
           if path.blank?
             path = ( self.class.client_version_above?([2, 2, 0]) ? @url : '.' )
           end
-          entries = Entries.new          
+          entries = Entries.new
           cmd = "#{self.class.sq_bin} annotate --repodir #{shell_quote @url} --xml-output"
           cmd << " --match #{shell_quote("hash #{identifier}")}" if identifier
           cmd << " #{shell_quote path}"
@@ -164,7 +165,7 @@ module Redmine
           if modified_element.elements['modified_how'].text.match(/removed/)
             return nil
           end
-          
+
           Entry.new({:name => element.attributes['name'],
                      :path => path_prefix + element.attributes['name'],
                      :kind => element.name == 'file' ? 'file' : 'dir',
@@ -173,7 +174,7 @@ module Redmine
                        :identifier => nil,
                        :scmid => modified_element.elements['patch'].attributes['hash']
                        })
-                     })        
+                     })
         end
 
         def get_paths_for_patch(hash)

@@ -5,12 +5,12 @@
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -23,20 +23,20 @@ module Redmine
     module Adapters
       class SubversionAdapter < AbstractAdapter
 
-        # SVN executable name
-        SVN_BIN = Redmine::Configuration['scm_subversion_command'] || "svn"
+        # Default Subversion executable name
+        ChiliProject.config.defaults['scm_subversion_command'] = "svn"
 
         class << self
           def client_command
-            @@bin    ||= SVN_BIN
+            @bin ||= ChiliProject.config['scm_subversion_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(SVN_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_subversion_command'])
           end
 
           def client_version
-            @@client_version ||= (svn_binary_version || [])
+            @client_version ||= (svn_binary_version || [])
           end
 
           def svn_binary_version
@@ -62,7 +62,7 @@ module Redmine
             output = io.read
             begin
               doc = ActiveSupport::XmlMini.parse(output)
-              #root_url = doc.elements["info/entry/repository/root"].text          
+              #root_url = doc.elements["info/entry/repository/root"].text
               info = Info.new({:root_url => doc['info']['entry']['repository']['root']['__content__'],
                                :lastrev => Revision.new({
                                  :identifier => doc['info']['entry']['commit']['revision'],
@@ -122,7 +122,7 @@ module Redmine
         def properties(path, identifier=nil)
           # proplist xml output supported in svn 1.5.0 and higher
           return nil unless self.class.client_version_above?([1, 5, 0])
-          
+
           identifier = (identifier and identifier.to_i > 0) ? identifier.to_i : "HEAD"
           cmd = "#{self.class.sq_bin} proplist --verbose --xml #{target(path)}@#{identifier}"
           cmd << credentials_string
@@ -165,7 +165,7 @@ module Redmine
                             }
                 end if logentry['paths'] && logentry['paths']['path']
                 paths.sort! { |x,y| x[:path] <=> y[:path] }
-                
+
                 revisions << Revision.new({:identifier => logentry['revision'],
                               :author => (logentry['author'] ? logentry['author']['__content__'] : ""),
                               :time => Time.parse(logentry['date']['__content__'].to_s).localtime,
@@ -227,9 +227,9 @@ module Redmine
           return nil if $? && $?.exitstatus != 0
           blame
         end
-        
+
         private
-        
+
         def credentials_string
           str = ''
           str << " --username #{shell_quote(@login)}" unless @login.blank?
@@ -237,7 +237,7 @@ module Redmine
           str << " --no-auth-cache --non-interactive"
           str
         end
-        
+
         # Helper that iterates over the child elements of a xml node
         # MiniXml returns a hash when a single child is found or an array of hashes for multiple children
         def each_xml_element(node, name)

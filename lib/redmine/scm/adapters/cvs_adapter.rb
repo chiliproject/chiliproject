@@ -5,12 +5,12 @@
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -22,16 +22,16 @@ module Redmine
     module Adapters
       class CvsAdapter < AbstractAdapter
 
-        # CVS executable name
-        CVS_BIN = Redmine::Configuration['scm_cvs_command'] || "cvs"
+        # Default CVS executable name
+        ChiliProject.config.defaults['scm_cvs_command'] = "cvs"
 
         class << self
           def client_command
-            @@bin    ||= CVS_BIN
+            @bin ||= ChiliProject.config['scm_cvs_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(CVS_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_cvs_command'])
           end
         end
 
@@ -123,7 +123,7 @@ module Redmine
           cmd << " #{shell_quote path_with_project}"
           shellout(cmd) do |io|
             state="entry_start"
-            
+
             commit_log=String.new
             revision=nil
             date=nil
@@ -132,15 +132,15 @@ module Redmine
             entry_name=nil
             file_state=nil
             branch_map=nil
-            
+
             io.each_line() do |line|
-              
+
               if state!="revision" && /^#{ENDLOG}/ =~ line
                 commit_log=String.new
                 revision=nil
                 state="entry_start"
               end
-              
+
               if state=="entry_start"
                 branch_map=Hash.new
                 if /^RCS file: #{Regexp.escape(root_url_path)}\/#{Regexp.escape(path_with_project)}(.+),v$/ =~ line
@@ -154,15 +154,15 @@ module Redmine
                 elsif /^#{STARTLOG}/ =~ line
                   commit_log=String.new
                   state="revision"
-                end  
+                end
                 next
               elsif state=="symbolic"
-                if /^(.*):\s(.*)/ =~ (line.strip) 
+                if /^(.*):\s(.*)/ =~ (line.strip)
                   branch_map[$1]=$2
                 else
                   state="tags"
                   next
-                end          
+                end
               elsif state=="tags"
                 if /^#{STARTLOG}/ =~ line
                   commit_log = ""
@@ -177,15 +177,15 @@ module Redmine
 
                     revHelper=CvsRevisionHelper.new(revision)
                     revBranch="HEAD"
-                    
+
                     branch_map.each() do |branch_name,branch_point|
                       if revHelper.is_in_branch_with_symbol(branch_point)
                         revBranch=branch_name
                       end
                     end
-                    
+
                     logger.debug("********** YIELD Revision #{revision}::#{revBranch}")
-                    
+
                     yield Revision.new({
                       :time => date,
                       :author => author,
@@ -203,7 +203,7 @@ module Redmine
 
                   commit_log=String.new
                   revision=nil
-                  
+
                   if /^#{ENDLOG}/ =~ line
                     state="entry_start"
                   end
@@ -213,7 +213,7 @@ module Redmine
                 if /^branches: (.+)$/ =~ line
                   #TODO: version.branch = $1
                 elsif /^revision (\d+(?:\.\d+)+).*$/ =~ line
-                  revision = $1   
+                  revision = $1
                 elsif /^date:\s+(\d+.\d+.\d+\s+\d+:\d+:\d+)/ =~ line
                   date      = Time.parse($1)
                   author    = /author: ([^;]+)/.match(line)[1]
@@ -295,7 +295,7 @@ module Redmine
         def time_to_cvstime(time)
           return nil if time.nil?
           return Time.now if time == 'HEAD'
-          
+
           unless time.kind_of? Time
             time = Time.parse(time)
           end
@@ -307,63 +307,63 @@ module Redmine
           t1 = time.clone.localtime
           return t1.strftime("%Y-%m-%d %H:%M:%S")
         end
-          
+
         def normalize_cvs_path(path)
           normalize_path(path.gsub(/Attic\//,''))
         end
-          
+
         def normalize_path(path)
           path.sub(/^(\/)*(.*)/,'\2').sub(/(.*)(,v)+/,'\1')
-        end   
-      end  
-  
+        end
+      end
+
       class CvsRevisionHelper
         attr_accessor :complete_rev, :revision, :base, :branchid
-        
+
         def initialize(complete_rev)
           @complete_rev = complete_rev
           parseRevision()
         end
-    
+
         def branchPoint
           return @base
         end
-      
+
         def branchVersion
           if isBranchRevision
             return @base+"."+@branchid
           end
           return @base
         end
-      
+
         def isBranchRevision
           !@branchid.nil?
         end
-        
+
         def prevRev
           unless @revision==0
             return buildRevision(@revision-1)
           end
-          return buildRevision(@revision)    
+          return buildRevision(@revision)
         end
-        
+
         def is_in_branch_with_symbol(branch_symbol)
           bpieces=branch_symbol.split(".")
           branch_start="#{bpieces[0..-3].join(".")}.#{bpieces[-1]}"
           return (branchVersion==branch_start)
         end
-    
+
         private
         def buildRevision(rev)
           if rev== 0
             @base
-          elsif @branchid.nil? 
+          elsif @branchid.nil?
             @base+"."+rev.to_s
           else
             @base+"."+@branchid+"."+rev.to_s
           end
         end
-        
+
         # Interpretiert die cvs revisionsnummern wie z.b. 1.14 oder 1.3.0.15
         def parseRevision()
           pieces=@complete_rev.split(".")
@@ -373,7 +373,7 @@ module Redmine
           @base=pieces[0..-baseSize].join(".")
           if baseSize > 2
             @branchid=pieces[-2]
-          end     
+          end
         end
       end
     end

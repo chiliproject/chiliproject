@@ -5,12 +5,12 @@
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -23,23 +23,24 @@ module Redmine
     module Adapters
       class MercurialAdapter < AbstractAdapter
 
-        # Mercurial executable name
-        HG_BIN = Redmine::Configuration['scm_mercurial_command'] || "hg"
+        # Default Mercurial executable name
+        ChiliProject.config.defaults['scm_mercurial_command'] = "hg"
+
         TEMPLATES_DIR = File.dirname(__FILE__) + "/mercurial"
         TEMPLATE_NAME = "hg-template"
         TEMPLATE_EXTENSION = "tmpl"
 
         class << self
           def client_command
-            @@bin    ||= HG_BIN
+            @bin ||= ChiliProject.config['scm_mercurial_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(HG_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_mercurial_command'])
           end
 
           def client_version
-            @@client_version ||= (hgversion || [])
+            @client_version ||= (hgversion || [])
           end
 
           def client_available
@@ -114,9 +115,9 @@ module Redmine
           entries.sort_by_name
         end
 
-        # Fetch the revisions by using a template file that 
+        # Fetch the revisions by using a template file that
         # makes Mercurial produce a xml output.
-        def revisions(path=nil, identifier_from=nil, identifier_to=nil, options={})  
+        def revisions(path=nil, identifier_from=nil, identifier_to=nil, options={})
           revisions = Revisions.new
           cmd = "#{self.class.sq_bin} --debug --encoding utf8 -R #{target('')} log -C --style #{shell_quote self.class.template_path}"
           if identifier_from && identifier_to

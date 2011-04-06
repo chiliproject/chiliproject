@@ -22,8 +22,12 @@ module ChiliProject
     end
 
     def [](key)
-      if self.has_key?(key) && defaults[key]
-        defaults[key].deep_merge(super)
+      if self.has_key?(key) && defaults[key] && defaults[key].respond_to?(:deep_merge)
+        if defaults[key].respond_to?(:deep_merge)
+          defaults[key].deep_merge(super)
+        else
+          super
+        end
       else
         super || defaults[key]
       end

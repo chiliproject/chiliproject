@@ -5,12 +5,12 @@
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -22,16 +22,16 @@ module Redmine
     module Adapters
       class BazaarAdapter < AbstractAdapter
 
-        # Bazaar executable name
-        BZR_BIN = Redmine::Configuration['scm_bazaar_command'] || "bzr"
+        # Default Bazaar executable name
+        ChiliProject.config.defaults['scm_bazaar_command'] = "bzr"
 
         class << self
           def client_command
-            @@bin    ||= BZR_BIN
+            @bin ||= ChiliProject.config['scm_bazaar_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(BZR_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_bazaar_command'])
           end
         end
 
@@ -60,8 +60,8 @@ module Redmine
           path ||= ''
           entries = Entries.new
           cmd = "#{self.class.sq_bin} ls -v --show-ids"
-          identifier = -1 unless identifier && identifier.to_i > 0 
-          cmd << " -r#{identifier.to_i}" 
+          identifier = -1 unless identifier && identifier.to_i > 0
+          cmd << " -r#{identifier.to_i}"
           cmd << " #{target(path)}"
           shellout(cmd) do |io|
             prefix = "#{url}/#{path}".gsub('\\', '/')
@@ -98,7 +98,7 @@ module Redmine
                 parsing = nil
               else
                 next unless revision
-                
+
                 if line =~ /^revno: (\d+)($|\s\[merge\]$)/
                   revision.identifier = $1.to_i
                 elsif line =~ /^committer: (.+)$/
@@ -146,7 +146,7 @@ module Redmine
         def diff(path, identifier_from, identifier_to=nil)
           path ||= ''
           if identifier_to
-            identifier_to = identifier_to.to_i 
+            identifier_to = identifier_to.to_i
           else
             identifier_to = identifier_from.to_i - 1
           end

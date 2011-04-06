@@ -5,12 +5,12 @@
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -21,16 +21,17 @@ module Redmine
   module Scm
     module Adapters
       class GitAdapter < AbstractAdapter
-        # Git executable name
-        GIT_BIN = Redmine::Configuration['scm_git_command'] || "git"
+
+        # Default Git executable name
+        ChiliProject.config.defaults['scm_git_command'] = "git"
 
         class << self
           def client_command
-            @@bin    ||= GIT_BIN
+            @bin ||= ChiliProject.config['scm_git_command']
           end
 
           def sq_bin
-            @@sq_bin ||= shell_quote(GIT_BIN)
+            @sq_bin ||= shell_quote(ChiliProject.config['scm_git_command'])
           end
 
           def client_available
@@ -67,9 +68,9 @@ module Redmine
         end
 
         def default_branch
-          branches.include?('master') ? 'master' : branches.first 
+          branches.include?('master') ? 'master' : branches.first
         end
-        
+
         def entries(path=nil, identifier=nil)
           path ||= ''
           entries = Entries.new
@@ -101,7 +102,7 @@ module Redmine
         def lastrev(path,rev)
           return nil if path.nil?
           cmd = "#{self.class.sq_bin} --git-dir #{target('')} log --no-color --date=iso --pretty=fuller --no-merges -n 1 "
-          cmd << " #{shell_quote rev} " if rev 
+          cmd << " #{shell_quote rev} " if rev
           cmd <<  "-- #{shell_quote path} " unless path.empty?
           lines = []
           shellout(cmd) { |io| lines = io.readlines }
@@ -114,10 +115,10 @@ module Redmine
               Revision.new({
                 :identifier => id,
                 :scmid => id,
-                :author => author, 
+                :author => author,
                 :time => time,
-                :message => nil, 
-                :paths => nil 
+                :message => nil,
+                :paths => nil
               })
           rescue NoMethodError => e
               logger.error("The revision '#{path}' has a wrong format")
@@ -195,7 +196,7 @@ module Redmine
               elsif (parsing_descr == 1)
                 changeset[:description] << line[4..-1]
               end
-            end 
+            end
 
             if changeset[:commit]
               revision = Revision.new({
@@ -223,7 +224,7 @@ module Redmine
           path ||= ''
 
           if identifier_to
-            cmd = "#{self.class.sq_bin} --git-dir #{target('')} diff --no-color #{shell_quote identifier_to} #{shell_quote identifier_from}" 
+            cmd = "#{self.class.sq_bin} --git-dir #{target('')} diff --no-color #{shell_quote identifier_to} #{shell_quote identifier_from}"
           else
             cmd = "#{self.class.sq_bin} --git-dir #{target('')} show --no-color #{shell_quote identifier_from}"
           end
@@ -238,7 +239,7 @@ module Redmine
           return nil if $? && $?.exitstatus != 0
           diff
         end
-        
+
         def annotate(path, identifier=nil)
           identifier = 'HEAD' if identifier.blank?
           cmd = "#{self.class.sq_bin} --git-dir #{target('')} blame -p #{shell_quote identifier} -- #{shell_quote path}"
@@ -264,7 +265,7 @@ module Redmine
           end
           blame
         end
-        
+
         def cat(path, identifier=nil)
           if identifier.nil?
             identifier = 'HEAD'
