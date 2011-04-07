@@ -98,7 +98,6 @@ module Redmine
       end.sort
     end
 
-    ChiliProject.config.defaults['themes_storage_path'] = ["#{Rails.public_path}/themes"]
     def self.theme_paths
       paths = ChiliProject.config['themes_storage_path']
       paths = [paths] unless paths.is_a?(Array)

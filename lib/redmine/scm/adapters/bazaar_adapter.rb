@@ -22,9 +22,6 @@ module Redmine
     module Adapters
       class BazaarAdapter < AbstractAdapter
 
-        # Default Bazaar executable name
-        ChiliProject.config.defaults['scm_bazaar_command'] = "bzr"
-
         class << self
           def client_command
             @bin ||= ChiliProject.config['scm_bazaar_command']

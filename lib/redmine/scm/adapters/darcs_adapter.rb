@@ -23,9 +23,6 @@ module Redmine
     module Adapters
       class DarcsAdapter < AbstractAdapter
 
-        # Default Darcs executable name
-        ChiliProject.config.defaults['scm_darcs_command'] = "darcs"
-
         class << self
           def client_command
             @bin ||= ChiliProject.config['scm_darcs_command']

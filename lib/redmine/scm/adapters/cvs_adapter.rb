@@ -22,9 +22,6 @@ module Redmine
     module Adapters
       class CvsAdapter < AbstractAdapter
 
-        # Default CVS executable name
-        ChiliProject.config.defaults['scm_cvs_command'] = "cvs"
-
         class << self
           def client_command
             @bin ||= ChiliProject.config['scm_cvs_command']

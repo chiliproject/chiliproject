@@ -42,7 +42,6 @@ class Attachment < ActiveRecord::Base
                                               :joins => "LEFT JOIN #{Document.table_name} ON #{Attachment.table_name}.container_type='Document' AND #{Document.table_name}.id = #{Attachment.table_name}.container_id " +
                                                         "LEFT JOIN #{Project.table_name} ON #{Document.table_name}.project_id = #{Project.table_name}.id"}
 
-  ChiliProject.config.defaults['attachments_storage_path'] = "#{RAILS_ROOT}/files"
   def self.storage_path
     ChiliProject.config['attachments_storage_path']
   end

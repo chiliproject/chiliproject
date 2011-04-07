@@ -102,6 +102,18 @@ module ChiliProject
   end
 
   Configuration.defaults.deep_merge!({
+    # Some external storage paths
+    'attachments_storage_path' => "#{RAILS_ROOT}/files",
+    'themes_storage_path' => ["#{Rails.public_path}/themes"],
+
+    # Database adapter commands
+    'scm_bazaar_command' => 'bzr',
+    'scm_cvs_command' => 'cvs',
+    'scm_darcs_command' => 'darcs',
+    'scm_git_command' => 'git',
+    'scm_mercurial_command' => 'hg',
+    'scm_subversion_command' => 'svn',
+
     # Autologin cookie defaults:
     'autologin_cookie_name' => 'autologin',
     'autologin_cookie_path' => '/',

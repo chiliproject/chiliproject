@@ -22,9 +22,6 @@ module Redmine
     module Adapters
       class GitAdapter < AbstractAdapter
 
-        # Default Git executable name
-        ChiliProject.config.defaults['scm_git_command'] = "git"
-
         class << self
           def client_command
             @bin ||= ChiliProject.config['scm_git_command']

@@ -23,9 +23,6 @@ module Redmine
     module Adapters
       class MercurialAdapter < AbstractAdapter
 
-        # Default Mercurial executable name
-        ChiliProject.config.defaults['scm_mercurial_command'] = "hg"
-
         TEMPLATES_DIR = File.dirname(__FILE__) + "/mercurial"
         TEMPLATE_NAME = "hg-template"
         TEMPLATE_EXTENSION = "tmpl"

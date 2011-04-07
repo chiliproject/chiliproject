@@ -23,9 +23,6 @@ module Redmine
     module Adapters
       class SubversionAdapter < AbstractAdapter
 
-        # Default Subversion executable name
-        ChiliProject.config.defaults['scm_subversion_command'] = "svn"
-
         class << self
           def client_command
             @bin ||= ChiliProject.config['scm_subversion_command']
