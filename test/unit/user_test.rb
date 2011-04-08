@@ -546,7 +546,8 @@ class UserTest < ActiveSupport::TestCase
     user.hashed_password = User.hash_password_with_sha1("unsalted")
     user.save!
     
-    User.salt_unsalted_passwords!
+    # This should salt the user's password
+    User.try_to_login(user.login, "unsalted")
     
     user.reload
     # Salt added

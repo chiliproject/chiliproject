@@ -227,6 +227,7 @@ class User < Principal
   def salt_password(clear_password)
     self.salt = User.generate_salt
     self.hashed_password = User.hash_password_with_sha256("#{salt}#{clear_password}")
+    self.hashed_password_algorithm = "SHA256"
   end
 
   # Does the backend storage allow this user to change their password?
@@ -493,20 +494,6 @@ class User < Principal
     end
     anonymous_user
   end
-
-  # Salts all existing unsalted passwords
-  # It changes password storage scheme from SHA1(password) to SHA1(salt + SHA1(password))
-  # This method is used in the SaltPasswords migration and is to be kept as is
-  def self.salt_unsalted_passwords!
-    transaction do
-      User.find_each(:conditions => "salt IS NULL OR salt = ''") do |user|
-        next if user.hashed_password.blank?
-        salt = User.generate_salt
-        hashed_password = User.hash_password_with_sha1("#{salt}#{user.hashed_password}")
-        User.update_all("salt = '#{salt}', hashed_password = '#{hashed_password}'", ["id = ?", user.id] )
-      end
-    end
-  end
   
   protected
   
@@ -521,7 +508,7 @@ class User < Principal
     
   # Return password digest
   def self.hash_password(clear_password)
-    hash_password_with_sha256(clear_password)
+    hash_password_with_sha1(clear_password)
   end
   
   def self.hash_password_with_sha1(clear_password)
