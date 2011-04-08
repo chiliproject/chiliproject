@@ -543,7 +543,7 @@ class UserTest < ActiveSupport::TestCase
     # Restore a user with an unsalted password
     user = User.find(1)
     user.salt = nil
-    user.hashed_password = User.hash_password("unsalted")
+    user.hashed_password = User.hash_password_with_sha1("unsalted")
     user.save!
     
     User.salt_unsalted_passwords!

@@ -122,6 +122,8 @@ class User < Principal
       else
         # authentication with local password
         return nil unless user.check_password?(password)
+        # if the password is not salted yet, it will be salted now
+        user.salt_password(password) if user.salt.blank?
       end
     else
       # user is not yet registered, try to authenticate with available sources
@@ -203,17 +205,28 @@ class User < Principal
   # Returns true if +clear_password+ is the correct user's password, otherwise false
   def check_password?(clear_password)
     if auth_source_id.present?
-      auth_source.authenticate(self.login, clear_password)
+      return auth_source.authenticate(self.login, clear_password)
     else
-      User.hash_password("#{salt}#{User.hash_password clear_password}") == hashed_password
+      if hashed_password_algorithm.blank?
+        if salt.blank?
+          # For compatibility with unsalted passwords
+          return User.hash_password_with_sha1(clear_password) == hashed_password
+        else
+          # For compatiblity with salted passwords from Redmine
+          return User.hash_password_with_sha1("#{salt}#{User.hash_password_with_sha1 clear_password}") == hashed_password
+        end
+      elsif hashed_password_algorithm == "SHA256"
+        return User.hash_password_with_sha256("#{salt}#{clear_password}") == hashed_password
+      end
     end
+    false
   end
   
   # Generates a random salt and computes hashed_password for +clear_password+
-  # The hashed password is stored in the following form: SHA1(salt + SHA1(password))
+  # The hashed password is stored in the following form: SHA256(salt + password)
   def salt_password(clear_password)
     self.salt = User.generate_salt
-    self.hashed_password = User.hash_password("#{salt}#{User.hash_password clear_password}")
+    self.hashed_password = User.hash_password_with_sha256("#{salt}#{clear_password}")
   end
 
   # Does the backend storage allow this user to change their password?
@@ -489,7 +502,7 @@ class User < Principal
       User.find_each(:conditions => "salt IS NULL OR salt = ''") do |user|
         next if user.hashed_password.blank?
         salt = User.generate_salt
-        hashed_password = User.hash_password("#{salt}#{user.hashed_password}")
+        hashed_password = User.hash_password_with_sha1("#{salt}#{user.hashed_password}")
         User.update_all("salt = '#{salt}', hashed_password = '#{hashed_password}'", ["id = ?", user.id] )
       end
     end
@@ -508,9 +521,17 @@ class User < Principal
     
   # Return password digest
   def self.hash_password(clear_password)
-    Digest::SHA1.hexdigest(clear_password || "")
+    hash_password_with_sha256(clear_password)
   end
   
+  def self.hash_password_with_sha1(clear_password)
+    Digest::SHA1.hexdigest(clear_password || "")
+  end
+
+  def self.hash_password_with_sha256(clear_password)
+    Digest::SHA256.hexdigest(clear_password || "")
+  end
+
   # Returns a 128bits random salt as a hex string (32 chars long)
   def self.generate_salt
     ActiveSupport::SecureRandom.hex(16)
