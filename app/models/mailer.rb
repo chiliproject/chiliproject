@@ -365,7 +365,7 @@ class Mailer < ActionMailer::Base
   private
   # override from address to use project-specific setting
   def from_project(container)
-    unless container.nil? or container.project.nil? or container.project.mail_from.empty?
+    unless container.nil? || container.project.nil? || container.project.mail_from.nil? || container.project.mail_from.empty?
       from container.project.mail_from
     end  
   end
