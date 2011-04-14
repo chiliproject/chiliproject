@@ -207,6 +207,7 @@ uk:
   field_fixed_version: Target version
   field_user: Користувач
   field_role: Роль
+  field_mail_from: email адреса для передачі інформації
   field_homepage: Домашня сторінка
   field_is_public: Публічний
   field_parent: Підпроект

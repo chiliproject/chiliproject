@@ -232,6 +232,7 @@ hr:
   field_fixed_version: Verzija
   field_user: Korisnik
   field_role: Uloga
+  field_mail_from: Izvorna adresa e-pošte
   field_homepage: Naslovnica
   field_is_public: Javni projekt
   field_parent: Potprojekt od

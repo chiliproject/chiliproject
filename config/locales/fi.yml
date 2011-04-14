@@ -238,6 +238,7 @@ fi:
   field_fixed_version: Kohdeversio
   field_user: Käyttäjä
   field_role: Rooli
+  field_mail_from: Lähettäjän sähköpostiosoite
   field_homepage: Kotisivu
   field_is_public: Julkinen
   field_parent: Aliprojekti

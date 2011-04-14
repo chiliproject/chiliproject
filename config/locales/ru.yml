@@ -325,6 +325,7 @@ ru:
   field_firstname: Имя
   field_fixed_version: Версия
   field_hide_mail: Скрывать мой email
+  field_mail_from: email адрес для передачи информации
   field_homepage: Стартовая страница
   field_host: Компьютер
   field_hours: час(а,ов)

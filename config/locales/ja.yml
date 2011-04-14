@@ -265,6 +265,7 @@ ja:
   field_user: ユーザ
   field_principal: 主体
   field_role: ロール
+  field_mail_from: 送信元メールアドレス
   field_homepage: ホームページ
   field_is_public: 公開
   field_parent: 親プロジェクト名

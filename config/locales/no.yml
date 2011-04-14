@@ -207,6 +207,7 @@
   field_fixed_version: Mål-versjon
   field_user: Bruker
   field_role: Rolle
+  field_mail_from: Avsenders e-post
   field_homepage: Hjemmeside
   field_is_public: Offentlig
   field_parent: Underprosjekt til

@@ -243,6 +243,7 @@ en:
   field_user: User
   field_principal: Principal
   field_role: Role
+  field_mail_from: Emission email address
   field_homepage: Homepage
   field_is_public: Public
   field_parent: Subproject of

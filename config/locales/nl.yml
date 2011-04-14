@@ -224,6 +224,7 @@ nl:
   field_firstname: Voornaam
   field_fixed_version: Versie
   field_hide_mail: Verberg mijn e-mailadres
+  field_mail_from: Afzender e-mail adres
   field_homepage: Homepage
   field_host: Host
   field_hours: Uren

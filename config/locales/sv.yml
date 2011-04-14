@@ -285,6 +285,7 @@ sv:
   field_user: Användare
   field_principal: Principal
   field_role: Roll
+  field_mail_from: Avsändaradress
   field_homepage: Hemsida
   field_is_public: Publik
   field_parent: Underprojekt till

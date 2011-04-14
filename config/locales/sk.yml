@@ -211,6 +211,7 @@ sk:
   field_fixed_version: Priradené k verzii
   field_user: Užívateľ
   field_role: Rola
+  field_mail_from: Odosielať emaily z adresy
   field_homepage: Domovská stránka
   field_is_public: Verejný
   field_parent: Nadradený projekt

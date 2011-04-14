@@ -236,6 +236,7 @@ eu:
   field_fixed_version: Helburuko bertsioa
   field_user: Erabiltzilea
   field_role: Rola
+  field_mail_from: Igorlearen eposta helbidea
   field_homepage: Orri nagusia
   field_is_public: Publikoa
   field_parent: "Honen azpiproiektua:"

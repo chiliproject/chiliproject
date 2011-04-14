@@ -227,6 +227,7 @@ el:
   field_fixed_version: Στόχος έκδοσης
   field_user: Χρήστης
   field_role: Ρόλος
+  field_mail_from: Μετάδοση διεύθυνσης email
   field_homepage: Αρχική σελίδα
   field_is_public: Δημόσιο
   field_parent: Επιμέρους έργο του

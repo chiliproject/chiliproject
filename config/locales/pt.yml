@@ -225,6 +225,7 @@ pt:
   field_fixed_version: Versão
   field_user: Utilizador
   field_role: Função
+  field_mail_from: E-mail enviado de
   field_homepage: Página
   field_is_public: Público
   field_parent: Sub-projecto de

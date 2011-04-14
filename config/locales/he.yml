@@ -246,6 +246,7 @@ he:
   field_user: מתשמש
   field_principal: מנהל
   field_role: תפקיד
+  field_mail_from: כתובת שליחת דוא"ל
   field_homepage: דף הבית
   field_is_public: פומבי
   field_parent: תת פרויקט של

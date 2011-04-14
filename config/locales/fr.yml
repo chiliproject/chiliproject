@@ -250,6 +250,7 @@ fr:
   field_fixed_version: Version cible
   field_user: Utilisateur
   field_role: Rôle
+  field_mail_from: Adresse d'émission
   field_homepage: "Site web "
   field_is_public: Public
   field_parent: Sous-projet de

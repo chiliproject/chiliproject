@@ -275,6 +275,7 @@ ko:
   field_fixed_version: 목표버전
   field_user: 사용자
   field_role: 역할
+  field_mail_from: 발신 메일 주소
   field_homepage: 홈페이지
   field_is_public: 공개
   field_parent: 상위 프로젝트

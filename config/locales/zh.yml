@@ -248,6 +248,7 @@ zh:
   field_fixed_version: 目标版本
   field_user: 用户
   field_role: 角色
+  field_mail_from: 邮件发件人地址
   field_homepage: 主页
   field_is_public: 公开
   field_parent: 上级项目

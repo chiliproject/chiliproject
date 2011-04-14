@@ -38,6 +38,7 @@ class Mailer < ActionMailer::Base
   #   issue_add(issue) => tmail object
   #   Mailer.deliver_issue_add(issue) => sends an email to issue recipients
   def issue_add(issue)
+    from_project issue
     redmine_headers 'Project' => issue.project.identifier,
                     'Issue-Id' => issue.id,
                     'Issue-Author' => issue.author.login,
@@ -59,6 +60,7 @@ class Mailer < ActionMailer::Base
   #   Mailer.deliver_issue_edit(journal) => sends an email to issue recipients
   def issue_edit(journal)
     issue = journal.journalized.reload
+    from_project issue
     redmine_headers 'Project' => issue.project.identifier,
                     'Issue-Id' => issue.id,
                     'Issue-Author' => issue.author.login,
@@ -98,6 +100,7 @@ class Mailer < ActionMailer::Base
   #   document_added(document) => tmail object
   #   Mailer.deliver_document_added(document) => sends an email to the document's project recipients
   def document_added(document)
+    from_project document
     redmine_headers 'Project' => document.project.identifier,
                     'Type' => "Document"
     recipients document.recipients
@@ -130,6 +133,7 @@ class Mailer < ActionMailer::Base
       added_to = "#{l(:label_document)}: #{container.title}"
       recipients container.recipients
     end
+    from_project container
     redmine_headers 'Project' => container.project.identifier,
                     'Type' => "Attachment"
     subject "[#{container.project.name}] #{l(:label_attachment_new)}"
@@ -145,6 +149,7 @@ class Mailer < ActionMailer::Base
   #   news_added(news) => tmail object
   #   Mailer.deliver_news_added(news) => sends an email to the news' project recipients
   def news_added(news)
+    from_project news
     redmine_headers 'Project' => news.project.identifier,
                     'Type' => "News"
     message_id news
@@ -161,6 +166,7 @@ class Mailer < ActionMailer::Base
   #   message_posted(message) => tmail object
   #   Mailer.deliver_message_posted(message) => sends an email to the recipients
   def message_posted(message)
+    from_project message
     redmine_headers 'Project' => message.project.identifier,
                     'Topic-Id' => (message.parent_id || message.id),
                     'Type' => "Forum"
@@ -180,6 +186,7 @@ class Mailer < ActionMailer::Base
   #   wiki_content_added(wiki_content) => tmail object
   #   Mailer.deliver_wiki_content_added(wiki_content) => sends an email to the project's recipients
   def wiki_content_added(wiki_content)
+    from_project wiki_content
     redmine_headers 'Project' => wiki_content.project.identifier,
                     'Wiki-Page-Id' => wiki_content.page.id,
                     'Type' => "Wiki"
@@ -198,6 +205,7 @@ class Mailer < ActionMailer::Base
   #   wiki_content_updated(wiki_content) => tmail object
   #   Mailer.deliver_wiki_content_updated(wiki_content) => sends an email to the project's recipients
   def wiki_content_updated(wiki_content)
+    from_project wiki_content
     redmine_headers 'Project' => wiki_content.project.identifier,
                     'Wiki-Page-Id' => wiki_content.page.id,
                     'Type' => "Wiki"
@@ -355,6 +363,13 @@ class Mailer < ActionMailer::Base
   end
 
   private
+  # override from address to use project-specific setting
+  def from_project(container)
+    unless container.nil? or container.project.nil? or container.project.mail_from.empty?
+      from container.project.mail_from
+    end  
+  end
+  
   def initialize_defaults(method_name)
     super
     @initial_language = current_language

@@ -228,6 +228,7 @@ lv:
   field_fixed_version: Mērķa versija
   field_user: Lietotājs
   field_role: Loma
+  field_mail_from: E-pasta adrese informācijas nosūtīšanai
   field_homepage: Vietne
   field_is_public: Publisks
   field_parent: Apakšprojekts projektam

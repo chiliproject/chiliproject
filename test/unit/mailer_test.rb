@@ -165,6 +165,14 @@ class MailerTest < ActiveSupport::TestCase
     assert_nil mail.references
   end
   
+  def test_mail_from_overridden_by_project
+    issue = Issue.find(14)
+    Mailer.deliver_issue_add(issue)
+    mail = ActionMailer::Base.deliveries.last
+    assert_not_nil mail
+    assert_equal 'chiliproject@chiliproject.org', mail.from_addrs[0].address
+  end
+ 
   def test_issue_edit_message_id
     journal = Journal.find(1)
     Mailer.deliver_issue_edit(journal)

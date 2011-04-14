@@ -285,6 +285,7 @@ lt:
   field_fixed_version: Tikslinė versija
   field_user: Vartotojas
   field_role: Vaidmuo
+  field_mail_from: Emisijos elektroninio pašto adresas
   field_homepage: Pagrindinis puslapis
   field_is_public: Viešas
   field_parent: Priklauso projektui

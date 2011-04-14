@@ -254,6 +254,7 @@ gl:
   field_firstname: Nome
   field_fixed_version: Versión prevista
   field_hide_mail: Ocultar a miña dirección de correo
+  field_mail_from: Correo dende o que enviar mensaxes
   field_homepage: Sitio web
   field_host: Anfitrión
   field_hours: Horas
