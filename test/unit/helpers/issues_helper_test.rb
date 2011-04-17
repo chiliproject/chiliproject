@@ -61,6 +61,25 @@ class IssuesHelperTest < ActionView::TestCase
     set_language_if_valid('en')
     User.current = nil
   end
+  
+  def test_issues_destroy_confirmation_message_with_one_root_issue
+    assert_equal l(:text_issues_destroy_confirmation), issues_destroy_confirmation_message(Issue.find(1))
+  end
+  
+  def test_issues_destroy_confirmation_message_with_an_arrayt_of_root_issues
+    assert_equal l(:text_issues_destroy_confirmation), issues_destroy_confirmation_message(Issue.find([1, 2]))
+  end
+  
+  def test_issues_destroy_confirmation_message_with_one_parent_issue
+    Issue.find(2).update_attribute :parent_issue_id, 1
+    assert_equal l(:text_issues_destroy_confirmation) + "\n" + l(:text_issues_destroy_descendants_confirmation, :count => 1),
+      issues_destroy_confirmation_message(Issue.find(1))
+  end
+  
+  def test_issues_destroy_confirmation_message_with_one_parent_issue_and_its_child
+    Issue.find(2).update_attribute :parent_issue_id, 1
+    assert_equal l(:text_issues_destroy_confirmation), issues_destroy_confirmation_message(Issue.find([1, 2]))
+  end
 
   # TODO: Move test code to Journal class
   context "IssuesHelper#show_detail" do
