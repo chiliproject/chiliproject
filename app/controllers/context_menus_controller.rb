@@ -13,7 +13,6 @@
 #++
 
 class ContextMenusController < ApplicationController
-
   def issues
     @issues = Issue.visible.all(:conditions => {:id => params[:ids]}, :include => :project)
 
