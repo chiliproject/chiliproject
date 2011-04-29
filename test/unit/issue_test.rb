@@ -486,6 +486,8 @@ class IssueTest < ActiveSupport::TestCase
   def test_recipients_should_not_include_users_that_cannot_view_the_issue
     issue = Issue.find(12)
     assert issue.recipients.include?(issue.author.mail)
+    # Remove the author's membership on a private project
+    Project.find(5).members.first(:conditions => {:user_id => issue.author_id}).destroy
     # move the issue to a private project
     copy  = issue.move_to_project(Project.find(5), Tracker.find(2), :copy => true)
     # author is not a member of project anymore
@@ -805,7 +807,7 @@ class IssueTest < ActiveSupport::TestCase
 
   test "#by_author" do
     groups = Issue.by_author(Project.find(1))
-    assert_equal 4, groups.size
+    assert_equal 3, groups.size
     assert_equal 7, groups.inject(0) {|sum, group| sum + group['total'].to_i}
   end
 

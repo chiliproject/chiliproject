@@ -43,7 +43,15 @@ class Journal < ActiveRecord::Base
     :include => {:issue => :project},
     :conditions => Issue.visible_condition(args.first || User.current)
   }}
-  
+
+  def after_initialize
+    if new_record?
+      # set default values for new records only
+      self.user ||= User.current
+      self.entered_by ||= User.current
+    end
+  end
+
   def save(*args)
     # Do not save an empty journal
     (details.empty? && notes.blank?) ? false : super

@@ -195,6 +195,7 @@ class IssuesController < ApplicationController
       issue.reload
       journal = issue.init_journal(User.current, params[:notes])
       issue.safe_attributes = attributes
+      issue.author_login = attributes[:author_login] if attributes[:author_login].present?
       call_hook(:controller_issues_bulk_edit_before_save, { :params => params, :issue => issue })
       JournalObserver.instance.send_notification = params[:send_notification] == '0' ? false : true
       unless issue.save
@@ -266,10 +267,10 @@ private
     @time_entry.attributes = params[:time_entry]
     
     @notes = params[:notes] || (params[:issue].present? ? params[:issue][:notes] : nil)
-    @issue.init_journal(User.current, @notes)
-    @issue.safe_attributes = params[:issue]
     journal = @issue.init_journal(User.current, @notes)
-    journal.user_login ||= params[:user_login] if params[:user_login].present?
+    journal.user_login = params[:user_login] if params[:user_login].present?
+    @issue.safe_attributes = params[:issue]
+    @issue.author_login = params[:issue][:author_login] if params[:issue] && params[:issue][:author_login].present?
   end
 
   # TODO: Refactor, lots of extra code in here
@@ -296,6 +297,7 @@ private
       if User.current.allowed_to?(:add_issue_watchers, @project) && @issue.new_record?
         @issue.watcher_user_ids = params[:issue]['watcher_user_ids']
       end
+      @issue.author_login = params[:issue][:author_login] if params[:issue][:author_login].present?
     end
     @issue.entered_by ||= User.current
     @priorities = IssuePriority.all

@@ -17,6 +17,7 @@
     <%= link_to l(:button_cancel), '#', :onclick => "Element.remove('journal-#{@journal.id}-form'); " +
                                                     "Element.show('journal-#{@journal.id}-notes'); return false;" %></p>
     <%= render :partial => 'author_field', :locals => {:user_login => @journal.user_login} %>
+    <div id="journal_<%= @journal.id %>_preview" class="wiki"></div>
   </fieldset>
 <% end %>
 <%= wikitoolbar_for "journal_#{@journal.id}_notes" %>

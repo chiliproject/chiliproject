@@ -102,6 +102,7 @@ class Issue < ActiveRecord::Base
       # set default values for new records only
       self.status ||= IssueStatus.default
       self.priority ||= IssuePriority.default
+      self.author ||= User.current
     end
   end
   

@@ -178,11 +178,13 @@ class IssuesTest < ActionController::IntegrationTest
     # Update issue
     new_tester = users[1]
     assert_difference 'Journal.count' do
-      put "/issues/#{issue.id}",
-        :notes => 'Updating custom field',
-        :issue => {
-          :custom_field_values => {@field.id.to_s => new_tester.id.to_s}
-        }
+      assert_difference 'JournalDetail.count' do
+        put "/issues/#{issue.id}",
+          :notes => 'Updating custom field',
+          :issue => {
+            :custom_field_values => {@field.id.to_s => new_tester.id.to_s}
+          }
+      end
     end
     assert_response 302
     
