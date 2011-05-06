@@ -20,7 +20,7 @@ require File.expand_path('../../../test_helper', __FILE__)
 module RedmineMenuTestHelper
   # Assertions
   def assert_number_of_items_in_menu(menu_name, count)
-    assert Redmine::MenuManager.items(menu_name).size >= count, "Menu has less than #{count} items"
+    assert Redmine::MenuManager.items(menu_name).size >= count, "Menu expected to have at least #{count} items. It had #{Redmine::MenuManager.items(menu_name).size}"
   end
 
   def assert_menu_contains_item_named(menu_name, item_name)
@@ -82,5 +82,18 @@ class RedmineTest < ActiveSupport::TestCase
   def test_new_issue_should_have_root_as_a_parent
     new_issue = get_menu_item(:project_menu, :new_issue)
     assert_equal :root, new_issue.parent.name
+  end
+  
+  def test_project_settings_menu
+    assert_number_of_items_in_menu :project_settings_menu, 10
+    assert_menu_contains_item_named :project_settings_menu, :info
+    assert_menu_contains_item_named :project_settings_menu, :modules
+    assert_menu_contains_item_named :project_settings_menu, :members
+    assert_menu_contains_item_named :project_settings_menu, :versions
+    assert_menu_contains_item_named :project_settings_menu, :categories
+    assert_menu_contains_item_named :project_settings_menu, :wiki
+    assert_menu_contains_item_named :project_settings_menu, :repository
+    assert_menu_contains_item_named :project_settings_menu, :boards
+    assert_menu_contains_item_named :project_settings_menu, :activities
   end
 end
