@@ -21,7 +21,7 @@ require 'iconv'
 class AuthSourceLdap < AuthSource 
   validates_presence_of :host, :port, :attr_login
   validates_length_of :name, :host, :account_password, :maximum => 60, :allow_nil => true
-  validates_length_of :account, :base_dn, :maximum => 255, :allow_nil => true
+  validates_length_of :account, :base_dn, :filter, :maximum => 255, :allow_nil => true
   validates_length_of :attr_login, :attr_firstname, :attr_lastname, :attr_mail, :maximum => 30, :allow_nil => true
   validates_numericality_of :port, :only_integer => true
   
@@ -104,10 +104,22 @@ class AuthSourceLdap < AuthSource
     ldap_con = initialize_ldap_con(self.account, self.account_password)
     login_filter = Net::LDAP::Filter.eq( self.attr_login, login ) 
     object_filter = Net::LDAP::Filter.eq( "objectClass", "*" ) 
+
+    filter = login_filter & object_filter
+    if not self.filter.blank?
+      begin
+        custom_filter = Net::LDAP::Filter.construct( self.filter )
+        filter = filter & custom_filter
+      rescue Net::LDAP::LdapError => e
+        logger.error "Error during authentication: #{e.message}"
+        return nil
+      end
+    end
+
     attrs = {}
     
     ldap_con.search( :base => self.base_dn, 
-                     :filter => object_filter & login_filter, 
+                     :filter => filter, 
                      :attributes=> search_attributes) do |entry|
 
       if onthefly_register?
