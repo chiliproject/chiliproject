@@ -230,6 +230,7 @@ id:
   field_fixed_version: Versi target
   field_user: Pengguna
   field_role: Peran
+  field_mail_from: Emisi alamat email
   field_homepage: Halaman web
   field_is_public: Publik
   field_parent: Subproyek dari

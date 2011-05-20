@@ -241,6 +241,7 @@ mk:
   field_user: Корисник
   field_principal: Principal
   field_role: Улога
+  field_mail_from: Emission email address
   field_homepage: Веб страна
   field_is_public: Јавен
   field_parent: Подпроект на

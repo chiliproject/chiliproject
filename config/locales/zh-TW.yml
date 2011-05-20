@@ -324,6 +324,7 @@
   field_user: 用戶
   field_principal: 原則
   field_role: 角色
+  field_mail_from: 寄件者電子郵件
   field_homepage: 網站首頁
   field_is_public: 公開
   field_parent: 父專案

@@ -277,6 +277,7 @@ es:
   field_firstname: Nombre
   field_fixed_version: Versión prevista
   field_hide_mail: Ocultar mi dirección de correo
+  field_mail_from: Correo desde el que enviar mensajes
   field_homepage: Sitio web
   field_host: Anfitrión
   field_hours: Horas

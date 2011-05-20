@@ -230,6 +230,7 @@ da:
   field_fixed_version: Target version
   field_user: Bruger
   field_role: Rolle
+  field_mail_from: Afsender-email
   field_homepage: Hjemmeside
   field_is_public: Offentlig
   field_parent: Underprojekt af

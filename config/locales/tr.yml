@@ -236,6 +236,7 @@ tr:
   field_fixed_version: Hedef Version
   field_user: Kullanıcı
   field_role: Rol
+  field_mail_from: Gönderici e-posta adresi
   field_homepage: Anasayfa
   field_is_public: Genel
   field_parent: 'Üst proje: '

@@ -240,6 +240,7 @@ pt-BR:
   field_fixed_version: Versão
   field_user: Usuário
   field_role: Cargo
+  field_mail_from: E-mail enviado de
   field_homepage: Página do projeto
   field_is_public: Público
   field_parent: Sub-projeto de

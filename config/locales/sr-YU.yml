@@ -241,6 +241,7 @@ sr-YU:
   field_user: Korisnik
   field_principal: Glavni
   field_role: Uloga
+  field_mail_from: E-adresa pošiljaoca
   field_homepage: Početna stranica
   field_is_public: Javno objavljivanje
   field_parent: Potprojekat od

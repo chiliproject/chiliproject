@@ -216,6 +216,7 @@ sl:
   field_fixed_version: Ciljna verzija
   field_user: Uporabnik
   field_role: Vloga
+  field_mail_from: E-naslov za emisijo
   field_homepage: Domača stran
   field_is_public: Javno
   field_parent: Podprojekt projekta

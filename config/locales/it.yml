@@ -209,6 +209,7 @@ it:
   field_fixed_version: Versione prevista
   field_user: Utente
   field_role: Ruolo
+  field_mail_from: Indirizzo sorgente email
   field_homepage: Homepage
   field_is_public: Pubblico
   field_parent: Sottoprogetto di

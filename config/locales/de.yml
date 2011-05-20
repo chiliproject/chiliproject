@@ -258,6 +258,7 @@ de:
   field_user: Benutzer
   field_principal: Auftraggeber
   field_role: Rolle
+  field_mail_from: E-Mail-Absender
   field_homepage: Projekt-Homepage
   field_is_public: Öffentlich
   field_parent: Unterprojekt von

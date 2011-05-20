@@ -270,6 +270,7 @@ vi:
   field_fixed_version: Phiên bản
   field_user: Người dùng
   field_role: Quyền
+  field_mail_from: Emission email address
   field_homepage: Trang chủ
   field_is_public: Công cộng
   field_parent: Dự án con của

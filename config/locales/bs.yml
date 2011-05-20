@@ -232,6 +232,7 @@ bs:
   field_fixed_version: Ciljna verzija
   field_user: Korisnik
   field_role: Uloga
+  field_mail_from: Mail adresa - pošaljilac
   field_homepage: Naslovna strana
   field_is_public: Javni
   field_parent: Podprojekt od

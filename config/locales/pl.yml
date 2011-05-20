@@ -241,6 +241,7 @@ pl:
   field_firstname: Imię
   field_fixed_version: Wersja docelowa
   field_hide_mail: Ukryj mój adres email
+  field_mail_from: Adres email wysyłki
   field_homepage: Strona www
   field_host: Host
   field_hours: Godzin

@@ -232,6 +232,7 @@ mn:
   field_fixed_version: Хувилбар
   field_user: Хэрэглэгч
   field_role: Хандалтын эрх
+  field_mail_from: Ямар имэйл хаяг үүсгэх
   field_homepage: Нүүр хуудас
   field_is_public: Олон нийтийн
   field_parent: Эцэг төсөл нь

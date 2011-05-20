@@ -236,6 +236,7 @@
   field_fixed_version: Cél verzió
   field_user: Felhasználó
   field_role: Szerepkör
+  field_mail_from: Kibocsátó e-mail címe
   field_homepage: Weboldal
   field_is_public: Nyilvános
   field_parent: Szülő projekt

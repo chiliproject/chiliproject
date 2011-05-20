@@ -213,6 +213,7 @@ th:
   field_fixed_version: รุ่น
   field_user: ผู้ใช้
   field_role: บทบาท
+  field_mail_from: อีเมล์ที่ใช้ส่ง
   field_homepage: หน้าแรก
   field_is_public: สาธารณะ
   field_parent: โครงการย่อยของ

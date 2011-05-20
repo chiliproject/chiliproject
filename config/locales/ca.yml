@@ -244,6 +244,7 @@ ca:
   field_user: Usuari
   field_principal: Principal
   field_role: Rol
+  field_mail_from: Adreça de correu electrònic d'emissió
   field_homepage: Pàgina web
   field_is_public: Públic
   field_parent: Subprojecte de

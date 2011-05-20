@@ -217,6 +217,7 @@ cs:
   field_fixed_version: Cílová verze
   field_user: Uživatel
   field_role: Role
+  field_mail_from: Odesílat emaily z adresy
   field_homepage: Domovská stránka
   field_is_public: Veřejný
   field_parent: Nadřazený projekt

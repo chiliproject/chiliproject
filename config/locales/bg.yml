@@ -243,6 +243,7 @@ bg:
   field_user: Потребител
   field_principal: Principal
   field_role: Роля
+  field_mail_from: E-mail адрес за емисии
   field_homepage: Начална страница
   field_is_public: Публичен
   field_parent: Подпроект на
