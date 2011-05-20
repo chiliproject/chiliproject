@@ -22,3 +22,4 @@
 /vendor/rails
 *.rbc
 doc/app
+*.swp
