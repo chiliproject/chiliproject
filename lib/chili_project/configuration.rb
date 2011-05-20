@@ -69,7 +69,13 @@ module ChiliProject
       yaml = YAML::load_file(filename)
 
       if yaml.is_a?(Hash)
-        yaml[env] || {}
+        data = yaml[env] || {}
+        # Load deprecated default section
+        if yaml.has_key?('default') && yaml['default'].is_a?(Hash)
+          warn "Using the default section is deprecated. Use YAML array merges instead. See http://en.wikipedia.org/wiki/YAML#Data_merge_and_references"
+          data = yaml['default'].deep_merge(data)
+        end
+        data
       else
         $stderr.puts "#{filename} is not a valid ChiliProject configuration file"
         exit 1
