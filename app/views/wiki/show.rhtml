@@ -1,25 +1,25 @@
 <div class="contextual">
 <% if @editable %>
-<%= link_to_if_authorized(l(:button_edit), {:action => 'edit', :id => @page.title}, :class => 'icon icon-edit', :accesskey => accesskey(:edit)) if @content.version == @page.content.version %>
+  <%= link_to_if_authorized(l(:button_edit), {:controller => 'wiki', :action => 'edit', :id => @page.title}, :class => 'icon icon-edit', :accesskey => accesskey(:edit)) if @content.version == @page.content.version %>
 <%= watcher_tag(@page, User.current) %>
-<%= link_to_if_authorized(l(:button_lock), {:action => 'protect', :id => @page.title, :protected => 1}, :method => :post, :class => 'icon icon-lock') if !@page.protected? %>
-<%= link_to_if_authorized(l(:button_unlock), {:action => 'protect', :id => @page.title, :protected => 0}, :method => :post, :class => 'icon icon-unlock') if @page.protected? %>
-<%= link_to_if_authorized(l(:button_rename), {:action => 'rename', :id => @page.title}, :class => 'icon icon-move') if @content.version == @page.content.version %>
-<%= link_to_if_authorized(l(:button_delete), {:action => 'destroy', :id => @page.title}, :method => :delete, :confirm => l(:text_are_you_sure), :class => 'icon icon-del') %>
-<%= link_to_if_authorized(l(:button_rollback), {:action => 'edit', :id => @page.title, :version => @content.version }, :class => 'icon icon-cancel') if @content.version < @page.content.version %>
+<%= link_to_if_authorized(l(:button_lock), {:controller => 'wiki', :action => 'protect', :id => @page.title, :protected => 1}, :method => :post, :class => 'icon icon-lock') if !@page.protected? %>
+<%= link_to_if_authorized(l(:button_unlock), {:controller => 'wiki', :action => 'protect', :id => @page.title, :protected => 0}, :method => :post, :class => 'icon icon-unlock') if @page.protected? %>
+<%= link_to_if_authorized(l(:button_rename), {:controller => 'wiki', :action => 'rename', :id => @page.title}, :class => 'icon icon-move') if @content.version == @page.content.version %>
+<%= link_to_if_authorized(l(:button_delete), {:controller => 'wiki', :action => 'destroy', :id => @page.title}, :method => :delete, :confirm => l(:text_are_you_sure), :class => 'icon icon-del') %>
+<%= link_to_if_authorized(l(:button_rollback), {:controller => 'wiki', :action => 'edit', :id => @page.title, :version => @content.version }, :class => 'icon icon-cancel') if @content.version < @page.content.version %>
 <% end %>
-<%= link_to_if_authorized(l(:label_history), {:action => 'history', :id => @page.title}, :class => 'icon icon-history') %>
+<%= link_to_if_authorized(l(:label_history), {:controller => 'wiki', :action => 'history', :id => @page.title}, :class => 'icon icon-history') %>
 </div>
 
 <%= breadcrumb(@page.ancestors.reverse.collect {|parent| link_to h(parent.pretty_title), {:id => parent.title, :project_id => parent.project}}) %>
 
 <% if @content.version != @page.content.version %>
-    <p>    
-    <%= link_to(('&#171; ' + l(:label_previous)), :action => 'show', :id => @page.title, :project_id => @page.project, :version => (@content.version - 1)) + " - " if @content.version > 1 %>
+    <p>
+    <%= link_to(('&#171; ' + l(:label_previous)), :controller => 'wiki', :action => 'show', :id => @page.title, :project_id => @page.project, :version => (@content.version - 1)) + " - " if @content.version > 1 %>
     <%= "#{l(:label_version)} #{@content.version}/#{@page.content.version}" %>
-    <%= '(' + link_to('diff', :controller => 'wiki', :action => 'diff', :id => @page.title, :project_id => @page.project, :version => @content.version) + ')' if @content.version > 1 %> - 
-    <%= link_to((l(:label_next) + ' &#187;'), :action => 'show', :id => @page.title, :project_id => @page.project, :version => (@content.version + 1)) + " - " if @content.version < @page.content.version %>
-    <%= link_to(l(:label_current_version), :action => 'show', :id => @page.title, :project_id => @page.project) %>
+    <%= '(' + link_to('diff', :controller => 'wiki', :action => 'diff', :id => @page.title, :project_id => @page.project, :version => @content.version) + ')' if @content.version > 1 %> -
+    <%= link_to((l(:label_next) + ' &#187;'), :controller => 'wiki', :action => 'show', :id => @page.title, :project_id => @page.project, :version => (@content.version + 1)) + " - " if @content.version < @page.content.version %>
+    <%= link_to(l(:label_current_version), :controller => 'wiki', :action => 'show', :id => @page.title, :project_id => @page.project) %>
     <br />
     <em><%= @content.author ? @content.author.name : "anonyme" %>, <%= format_time(@content.updated_on) %> </em><br />
     <%=h @content.comments %>
@@ -47,8 +47,8 @@
 
 <% other_formats_links do |f| %>
   <%= f.link_to 'Atom', :url => {:controller => 'activities', :action => 'index', :id => @project, :show_wiki_edits => 1, :key => User.current.rss_key} %>
-  <%= f.link_to 'HTML', :url => {:id => @page.title, :version => @content.version} %>
-  <%= f.link_to 'TXT', :url => {:id => @page.title, :version => @content.version} %>
+  <%= f.link_to 'HTML', :url => {:controller => 'wiki', :action => 'show', :id => @page.title, :version => @content.version} %>
+  <%= f.link_to 'TXT', :url => {:controller => 'wiki', :action => 'show', :id => @page.title, :version => @content.version} %>
 <% end if User.current.allowed_to?(:export_wiki_pages, @project) %>
 
 <% content_for :header_tags do %>
