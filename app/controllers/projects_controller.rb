@@ -176,7 +176,6 @@ class ProjectsController < ApplicationController
     @trackers = Tracker.all
     @repository ||= @project.repository
     @wiki ||= @project.wiki
-    p @project
   end
   
   def edit
