@@ -85,9 +85,15 @@ module I18n
   module Backend
     module Base
       def warn_syntax_deprecation!(*args)
-        return if @skip_syntax_deprecation
-        ActiveSupport::Deprecation.warn "The {{key}} interpolation syntax in I18n messages is deprecated and will be removed in ChiliProject 2.0. Please use %{key} instead. See the notice at https://www.chiliproject.org/boards/2/topics/243 for more information."
-        @skip_syntax_deprecation = true
+        @already_warned ||= {}
+        root = File.expand_path(Rails.root)
+        offending_line = caller.find { |line| line.starts_with? root } || caller.first
+        return if @already_warned[offending_line]
+
+        ActiveSupport::Deprecation.warn <<WARNING, [offending_line]
+The {{key}} interpolation syntax in I18n messages is deprecated and will be removed in ChiliProject 2.0. Please use %{key} instead. See the notice at https://www.chiliproject.org/boards/2/topics/243 for more information.
+WARNING
+        @already_warned[offending_line] = true
       end
     end
   end
