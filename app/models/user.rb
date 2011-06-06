@@ -81,7 +81,9 @@ class User < Principal
   
   def before_save
     # update hashed_password if password was set
-    self.hashed_password = User.hash_password(self.password) if self.password && self.auth_source_id.blank?
+    if self.password && self.auth_source_id.blank?
+      salt_password(password)
+    end
   end
   
   def reload(*args)
@@ -119,7 +121,9 @@ class User < Principal
         return nil unless user.auth_source.authenticate(login, password)
       else
         # authentication with local password
-        return nil unless User.hash_password(password) == user.hashed_password        
+        return nil unless user.check_password?(password)
+        # if the password is not salted yet, it will be salted now
+        user.salt_password(password) if user.salt.blank?
       end
     else
       # user is not yet registered, try to authenticate with available sources
@@ -198,12 +202,32 @@ class User < Principal
     update_attribute(:status, STATUS_LOCKED)
   end
 
+  # Returns true if +clear_password+ is the correct user's password, otherwise false
   def check_password?(clear_password)
     if auth_source_id.present?
-      auth_source.authenticate(self.login, clear_password)
+      return auth_source.authenticate(self.login, clear_password)
     else
-      User.hash_password(clear_password) == self.hashed_password
+      if hashed_password_algorithm.blank?
+        if salt.blank?
+          # For compatibility with unsalted passwords
+          return User.hash_password_with_sha1(clear_password) == hashed_password
+        else
+          # For compatiblity with salted passwords from Redmine
+          return User.hash_password_with_sha1("#{salt}#{User.hash_password_with_sha1 clear_password}") == hashed_password
+        end
+      elsif hashed_password_algorithm == "SHA256"
+        return User.hash_password_with_sha256("#{salt}#{clear_password}") == hashed_password
+      end
     end
+    false
+  end
+  
+  # Generates a random salt and computes hashed_password for +clear_password+
+  # The hashed password is stored in the following form: SHA256(salt + password)
+  def salt_password(clear_password)
+    self.salt = User.generate_salt
+    self.hashed_password = User.hash_password_with_sha256("#{salt}#{clear_password}")
+    self.hashed_password_algorithm = "SHA256"
   end
 
   # Does the backend storage allow this user to change their password?
@@ -484,8 +508,22 @@ class User < Principal
     
   # Return password digest
   def self.hash_password(clear_password)
+    hash_password_with_sha1(clear_password)
+  end
+  
+  def self.hash_password_with_sha1(clear_password)
     Digest::SHA1.hexdigest(clear_password || "")
   end
+
+  def self.hash_password_with_sha256(clear_password)
+    Digest::SHA256.hexdigest(clear_password || "")
+  end
+
+  # Returns a 128bits random salt as a hex string (32 chars long)
+  def self.generate_salt
+    ActiveSupport::SecureRandom.hex(16)
+  end
+  
 end
 
 class AnonymousUser < User
