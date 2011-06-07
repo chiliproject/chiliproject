@@ -5,6 +5,7 @@
           :class => 'wiki-edit', 
           :rows => (@journal.notes.blank? ? 10 : [[10, @journal.notes.length / 50].max, 100].min) %>
     <%= call_hook(:view_journals_notes_form_after_notes, { :journal => @journal}) %>
+    <%= render :partial => 'author_field', :locals => {:user_login => @journal.user_login} %>
     <p><%= submit_tag l(:button_save) %>
     <%= link_to_remote l(:label_preview), 
                        { :url => preview_issue_path(:project_id => @project, :id => @journal.issue),
@@ -16,7 +17,6 @@
     |
     <%= link_to l(:button_cancel), '#', :onclick => "Element.remove('journal-#{@journal.id}-form'); " +
                                                     "Element.show('journal-#{@journal.id}-notes'); return false;" %></p>
-    <%= render :partial => 'author_field', :locals => {:user_login => @journal.user_login} %>
     <div id="journal_<%= @journal.id %>_preview" class="wiki"></div>
   </fieldset>
 <% end %>
