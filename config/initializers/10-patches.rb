@@ -135,19 +135,16 @@ module AsynchronousMailer
       end
     end
   end
+
+  # Adds a delivery method that writes emails in tmp/emails for testing purpose
+  def perform_delivery_tmp_file(mail)
+    dest_dir = File.join(Rails.root, 'tmp', 'emails')
+    Dir.mkdir(dest_dir) unless File.directory?(dest_dir)
+    File.open(File.join(dest_dir, mail.message_id.gsub(/[<>]/, '') + '.eml'), 'wb') {|f| f.write(mail.encoded) }
+  end
 end
 
 ActionMailer::Base.send :include, AsynchronousMailer
-
-# TMail::Unquoter.convert_to_with_fallback_on_iso_8859_1 introduced in TMail 1.2.7
-# triggers a test failure in test_add_issue_with_japanese_keywords(MailHandlerTest)
-module TMail
-  class Unquoter
-    class << self
-      alias_method :convert_to, :convert_to_without_fallback_on_iso_8859_1
-    end
-  end
-end
 
 module ActionController
   module MimeResponds
@@ -158,14 +155,3 @@ module ActionController
     end
   end
 end
-
-require 'action_view/helpers/tag_helper'
-module ActionView::Helpers::TagHelper
-  def escape_once(html)
-    ActiveSupport::Multibyte.clean(html.to_s).gsub(/[\"\'><]|&(?!([a-zA-Z]+|(#\d+));)/) { |special| ERB::Util::HTML_ESCAPE[special] }
-  end
-end
-
-# Workaround for CVE-2013-0333
-# https://groups.google.com/forum/?fromgroups=#!msg/rubyonrails-security/1h2DR63ViGo/GOUVafeaF1IJ
-ActiveSupport::JSON.backend = "JSONGem"
