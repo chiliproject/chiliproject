@@ -9,11 +9,9 @@
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
 #
-# See doc/COPYRIGHT.rdoc for more details.
-#++
 require File.expand_path('../../../test_helper', __FILE__)
 
-class RepositoryHelperTest < HelperTestCase
+class RepositoryHelperTest < ActionView::TestCase
   include RepositoriesHelper
 
   def test_from_latin1_to_utf8_for_repositories
