@@ -15,11 +15,11 @@
 class InsertBuiltinRoles < ActiveRecord::Migration
   def self.up
     nonmember = Role.new(:name => 'Non member', :position => 0)
-    nonmember.builtin = Role::BUILTIN_NON_MEMBER
+    nonmember.send(:attributes=, { :builtin => Role::BUILTIN_NON_MEMBER }, false)
     nonmember.save
 
     anonymous = Role.new(:name => 'Anonymous', :position => 0)
-    anonymous.builtin = Role::BUILTIN_ANONYMOUS
+    anonymous.send(:attributes=, { :builtin => Role::BUILTIN_ANONYMOUS }, false)
     anonymous.save
   end
 
