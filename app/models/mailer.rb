@@ -21,7 +21,7 @@ class Mailer < ActionMailer::Base
   helper :journals
   helper :custom_fields
 
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   include Redmine::I18n
 
   def self.default_url_options
