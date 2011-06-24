@@ -85,7 +85,8 @@ module Redmine
       include ActionView::Helpers::FormTagHelper
       include ActionView::Helpers::FormOptionsHelper
       include ActionView::Helpers::JavaScriptHelper
-      include ActionView::Helpers::PrototypeHelper
+      # Rails 3.1
+      # include ActionView::Helpers::PrototypeHelper
       include ActionView::Helpers::NumberHelper
       include ActionView::Helpers::UrlHelper
       include ActionView::Helpers::AssetTagHelper
