@@ -45,6 +45,17 @@ class AccountControllerTest < ActionController::TestCase
                :attributes => { :class => "flash error" },
                :content => /Invalid user or password/
   end
+  
+  def test_login
+    get :login
+    assert_template 'login'
+  end
+  
+  def test_login_with_logged_account
+    @request.session[:user_id] = 2
+    get :login
+    assert_redirected_to home_url
+  end
 
   if Object.const_defined?(:OpenID)
 
