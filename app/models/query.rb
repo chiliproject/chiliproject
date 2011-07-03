@@ -80,6 +80,16 @@ class Query < ActiveRecord::Base
   ]
   cattr_reader :available_columns
 
+  named_scope :visible, lambda {|*args|
+    user = args.shift || User.current
+    base = Project.allowed_to_condition(user, :view_issues, *args)
+    user_id = user.logged? ? user.id : 0
+    {
+      :conditions => ["(#{table_name}.project_id IS NULL OR (#{base})) AND (#{table_name}.is_public = ? OR #{table_name}.user_id = ?)", true, user_id],
+      :include => :project
+    }
+  }
+
   def initialize(attributes = nil)
     super attributes
     self.filters ||= { 'status_id' => {:operator => "o", :values => [""]} }
