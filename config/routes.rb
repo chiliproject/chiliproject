@@ -69,13 +69,12 @@ ActionController::Routing::Routes.draw do |map|
     reports.connect 'projects/:id/issues/report/:detail', :action => 'issue_report_details'
   end
 
-  map.resources :issues, :collection => {:bulk_edit => :get, :bulk_update => :post} do |issues|
-    issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
+  map.resources :issues, :member => { :edit => :post }, :collection => {} do |issues|
+    issues.resources :relations, :controller => 'issue_relations', :only => [:show, :create, :destroy]
   end
 
-  map.with_options  :controller => 'issue_relations', :conditions => {:method => :post} do |relations|
-    relations.connect 'issues/:issue_id/relations/:id', :action => 'new'
-    relations.connect 'issues/:issue_id/relations/:id/destroy', :action => 'destroy'
+  map.resources :issues do |issues|
+    issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
   end
 
   map.connect 'projects/:id/members/new', :controller => 'members', :action => 'new'
@@ -182,7 +181,11 @@ ActionController::Routing::Routes.draw do |map|
 
   #left old routes at the bottom for backwards compat
   map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
+<<<<<<< HEAD
   map.connect 'issues/:issue_id/relations/:action/:id', :controller => 'issue_relations'
+=======
+  map.connect 'wiki/:id/:page/:action', :page => nil, :controller => 'wiki'
+>>>>>>> add REST API for issue relations
   map.connect 'projects/:project_id/news/:action', :controller => 'news'
 
   map.with_options :controller => 'sys' do |sys|
