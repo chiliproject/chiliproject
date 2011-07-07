@@ -43,7 +43,11 @@ platforms :mri do
   end
   
   group :sqlite do
-    gem "sqlite3-ruby", "< 1.3", :require => "sqlite3"
+    if RUBY_VERSION.split('.')[0..1] == ['1','8']
+      gem "sqlite3-ruby", "< 1.3", :require => "sqlite3"
+    else
+      gem 'sqlite3'
+    end
     #   please tell me, if you are fond of a pure ruby sqlite3 binding
   end
 end
