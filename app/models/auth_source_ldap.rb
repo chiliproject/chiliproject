@@ -98,7 +98,6 @@ class AuthSourceLdap < AuthSource
   # Get the user's dn and any attributes for them, given their login
   def get_user_dn(login)
     ldap_con = initialize_ldap_con(self.account, self.account_password)
-<<<<<<< HEAD
     login_filter = Net::LDAP::Filter.eq( self.attr_login, login ) 
     object_filter = Net::LDAP::Filter.eq( "objectClass", "*" ) 
 
@@ -114,17 +113,9 @@ class AuthSourceLdap < AuthSource
     end
 
     attrs = {}
-    
+ 
     ldap_con.search( :base => self.base_dn, 
                      :filter => filter, 
-=======
-    login_filter = Net::LDAP::Filter.eq( self.attr_login, login )
-    object_filter = Net::LDAP::Filter.eq( "objectClass", "*" )
-    attrs = {}
-
-    ldap_con.search( :base => self.base_dn,
-                     :filter => object_filter & login_filter,
->>>>>>> master
                      :attributes=> search_attributes) do |entry|
 
       if onthefly_register?
