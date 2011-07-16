@@ -1,4 +1,16 @@
 #!/usr/bin/env ruby
+#-- copyright
+# ChiliProject is a project management system.
+#
+# Copyright (C) 2010-2011 the ChiliProject Team
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# See doc/COPYRIGHT.rdoc for more details.
+#++
 
 # == Synopsis
 #
@@ -65,6 +77,10 @@ require 'getoptlong'
 require 'rdoc/usage'
 require 'find'
 require 'etc'
+
+# working around deprecation in RubyGems 1.6
+# needed for rails <2.3.9 only, don't merge to unstable!
+require 'thread'
 
 Version = "1.3"
 SUPPORTED_SCM = %w( Subversion Darcs Mercurial Bazaar Git Filesystem )
@@ -205,7 +221,7 @@ end
 log("retrieved #{projects.size} projects", :level => 1)
 
 def set_owner_and_rights(project, repos_path, &block)
-  if RUBY_PLATFORM =~ /mswin/
+  if mswin?
     yield if block_given?
   else
     uid, gid = Etc.getpwnam($svn_owner).uid, ($use_groupid ? Etc.getgrnam(project.identifier).gid : Etc.getgrnam($svn_group).gid)
