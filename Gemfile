@@ -41,10 +41,17 @@ platforms :mri do
     gem "pg", "~> 0.9.0"
     #   gem "postgres-pr"
   end
-  
+end
+
+platforms :mri_18 do
   group :sqlite do
     gem "sqlite3-ruby", "< 1.3", :require => "sqlite3"
-    #   please tell me, if you are fond of a pure ruby sqlite3 binding
+  end
+end
+
+platforms :mri_19 do
+  group :sqlite do
+    gem "sqlite3"
   end
 end
 
@@ -62,6 +69,13 @@ platforms :jruby do
   group :sqlite do
     gem "activerecord-jdbcsqlite3-adapter"
   end
+end
+
+# Load a "local" Gemfile
+gemfile_local = File.join(File.dirname(__FILE__), "Gemfile.local")
+if File.readable?(gemfile_local)
+  puts "Loading #{gemfile_local} ..." if $DEBUG
+  instance_eval(File.read(gemfile_local))
 end
 
 # Load plugins' Gemfiles
