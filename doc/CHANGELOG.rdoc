@@ -1,5 +1,10 @@
 = ChiliProject changelog
 
+== 2011-07-29 v1.5.1
+
+* Bug #536: CSRF Protection
+* Bug #544: XSS in app/views/issues/show.rhtml
+
 == 2011-06-27 v1.5.0
 
 * Bug #490: XSS in app/views/auth_sources/index.html.erb

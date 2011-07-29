@@ -26,7 +26,13 @@ class ApplicationController < ActionController::Base
 
   layout 'base'
   exempt_from_layout 'builder', 'rsb'
-  
+
+  protect_from_forgery
+  def handle_unverified_request
+    super
+    cookies.delete(:autologin)
+  end
+
   # Remove broken cookie after upgrade from 0.8.x (#4292)
   # See https://rails.lighthouseapp.com/projects/8994/tickets/3360
   # TODO: remove it when Rails is fixed
@@ -41,8 +47,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :user_setup, :check_if_login_required, :set_localization
   filter_parameter_logging :password
-  protect_from_forgery
-  
+
   rescue_from ActionController::InvalidAuthenticityToken, :with => :invalid_authenticity_token
   
   include Redmine::Search::Controller
