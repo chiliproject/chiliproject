@@ -48,11 +48,11 @@ module IssuesHelper
 
     link_to_issue(issue) + "<br /><br />" +
       "<strong>#{@cached_label_project}</strong>: #{link_to_project(issue.project)}<br />" +
-      "<strong>#{@cached_label_status}</strong>: #{issue.status.name}<br />" +
+      "<strong>#{@cached_label_status}</strong>: #{h(issue.status.name)}<br />" +
       "<strong>#{@cached_label_start_date}</strong>: #{format_date(issue.start_date)}<br />" +
       "<strong>#{@cached_label_due_date}</strong>: #{format_date(issue.due_date)}<br />" +
-      "<strong>#{@cached_label_assigned_to}</strong>: #{issue.assigned_to}<br />" +
-      "<strong>#{@cached_label_priority}</strong>: #{issue.priority.name}"
+      "<strong>#{@cached_label_assigned_to}</strong>: #{h(issue.assigned_to)}<br />" +
+      "<strong>#{@cached_label_priority}</strong>: #{h(issue.priority.name)}"
   end
     
   def render_issue_subject_with_tree(issue)
