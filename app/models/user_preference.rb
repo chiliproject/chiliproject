@@ -44,6 +44,9 @@ class UserPreference < ActiveRecord::Base
       value
     end
   end
+  
+  def ui_theme; self[:ui_theme] || Setting.ui_theme end
+  def ui_theme=(ui_theme); self[:ui_theme]=ui_theme end
 
   def comments_sorting; self[:comments_sorting] end
   def comments_sorting=(order); self[:comments_sorting]=order end
