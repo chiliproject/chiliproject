@@ -18,4 +18,4 @@ dirs.each do |dir|
 
 <%= "@ #{h format_revision(@changeset)}" if @changeset %>
 
-<% html_title(with_leading_slash(path)) -%>
+<% html_title(h(with_leading_slash(path))) -%>

@@ -1,5 +1,9 @@
 = ChiliProject changelog
 
+== 2011-08-01 v1.5.2
+
+* Bug #547: Multiple XSS vulnerabilities
+
 == 2011-07-29 v1.5.1
 
 * Bug #536: CSRF Protection

@@ -206,7 +206,7 @@ module SortHelper
      # Add project_id to url_options
     url_options = url_options.merge(:project_id => params[:project_id]) if params.has_key?(:project_id)
 
-    link_to_remote(caption,
+    link_to_remote(h(caption),
                   {:update => "content", :url => url_options, :method => :get},
                   {:href => url_for(url_options),
                    :class => css})
