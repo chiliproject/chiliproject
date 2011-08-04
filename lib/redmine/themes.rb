@@ -35,6 +35,11 @@ module Redmine
       end
       found
     end
+    
+    # Return list of themes id and default theme
+    def self.valid_themes
+      [themes.collect{|t| t.id}, ""].flatten!
+    end
 
     # Class used to represent a theme
     class Theme
