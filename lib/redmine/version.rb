@@ -16,8 +16,8 @@ require 'rexml/document'
 module Redmine
   module VERSION #:nodoc:
     MAJOR = 2
-    MINOR = 0
-    PATCH = 0
+    MINOR = 1
+    PATCH = 1
     TINY  = PATCH # Redmine compat
 
     # Used by semver to define the special version (if any).
