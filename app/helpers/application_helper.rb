@@ -598,6 +598,8 @@ module ApplicationHelper
   #     export:some/file -> Force the download of the file
   #   Forum messages:
   #     message#1218 -> Link to message with id 1218
+  #   Users:
+  #     @username
   #
   #   Links can refer other objects from other projects, using project identifier:
   #     identifier:r52
