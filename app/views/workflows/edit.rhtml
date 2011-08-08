@@ -44,6 +44,7 @@
       <%= javascript_tag "hideFieldset($('assignee_workflows'))" unless @workflows['assignee'].present? %>
     </div>
     <%= submit_tag l(:button_save) %>
+    <%= link_to l(:button_cancel), :back %>
   <% end %>
 <% end %>
 
