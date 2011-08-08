@@ -3,5 +3,6 @@
 <% labelled_tabular_form_for :project, @project, :url => { :action => "create" } do |f| %>
 <%= render :partial => 'form', :locals => { :f => f } %>
 <%= submit_tag l(:button_save) %>
+<%= link_to l(:button_cancel), :back %>
 <%= javascript_tag "Form.Element.focus('project_name');" %>
 <% end %>
