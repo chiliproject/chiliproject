@@ -605,7 +605,7 @@ module ApplicationHelper
   #     identifier:version:1.0.0
   #     identifier:source:some/file
   def parse_redmine_links(text, project, obj, attr, only_path, options)
-    text.gsub!(%r{([\s\(,\-\[\>]|^)(!)?(([a-z0-9\-]+):)?(attachment|document|version|commit|source|export|message|project)?((#|r)(\d+)|(:)([^"\s<>][^\s<>]*?|"[^"]+?"))(?=(?=[[:punct:]]\W)|,|\s|\]|<|$)}) do |m|
+    text.gsub!(%r{([\s\(,\-\[\>]|^)(!)?(([a-z0-9\-]+):)?(attachment|document|version|commit|source|export|message|project)?((#|r)(\d+)|(:|@)([^"\s<>][^\s<>]*?|"[^"]+?"))(?=(?=[[:punct:]]\W)|,|\s|\]|<|$)}) do |m|
       leading, esc, project_prefix, project_identifier, prefix, sep, identifier = $1, $2, $3, $4, $5, $7 || $9, $8 || $10
       link = nil
       if project_identifier
@@ -646,6 +646,12 @@ module ApplicationHelper
             if p = Project.visible.find_by_id(oid)
               link = link_to_project(p, {:only_path => only_path}, :class => 'project')
             end
+          end
+        elsif sep == '@'
+          name = identifier.gsub(%r{^"(.*)"$}, "\\1")
+          user = User.find_by_login(name)
+          if user
+            link = link_to_user(user)            
           end
         elsif sep == ':'
           # removes the double quotes if any
