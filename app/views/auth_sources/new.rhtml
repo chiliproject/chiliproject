@@ -3,4 +3,5 @@
 <% form_tag({:action => 'create'}, :class => "tabular") do %>
   <%= render :partial => 'form' %>
   <%= submit_tag l(:button_create) %>
+  <%= link_to l(:button_cancel), :back %>
 <% end %>
