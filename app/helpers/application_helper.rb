@@ -649,8 +649,7 @@ module ApplicationHelper
           end
         elsif sep == '@'
           name = identifier.gsub(%r{^"(.*)"$}, "\\1")
-          user = User.find_by_login(name)
-          if user
+          if user = User.find_by_login(name)
             link = link_to_user(user)            
           end
         elsif sep == ':'
