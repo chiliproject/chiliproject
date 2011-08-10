@@ -45,7 +45,7 @@ module Redmine #:nodoc:
   #
   # When rendered, the plugin settings value is available as the local variable +settings+
   class Plugin
-    @registered_plugins = {}
+    @registered_plugins = ActiveSupport::OrderedHash.new
     @deferred_plugins   = {}
 
     class << self
@@ -99,9 +99,14 @@ module Redmine #:nodoc:
       end
     end
 
-    # Returns an array off all registered plugins
+    # Returns an array of all registered plugins
     def self.all
       registered_plugins.values.sort
+    end
+
+    # Returns an array of all registered plugins in load order
+    def self.all_in_load_order
+      registered_plugins.values
     end
 
     # Finds a plugin by its id
