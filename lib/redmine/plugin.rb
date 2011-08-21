@@ -101,11 +101,6 @@ module Redmine #:nodoc:
 
     # Returns an array of all registered plugins
     def self.all
-      registered_plugins.values.sort
-    end
-
-    # Returns an array of all registered plugins in load order
-    def self.all_in_load_order
       registered_plugins.values
     end
 

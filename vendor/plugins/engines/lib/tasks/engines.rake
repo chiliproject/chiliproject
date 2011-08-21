@@ -36,7 +36,7 @@ namespace :db do
     
     desc 'Migrate plugins to current status.'
     task :plugins => :environment do
-      redmine_plugins = Redmine::Plugin.all_in_load_order.collect(&:id)
+      redmine_plugins = Redmine::Plugin.all.collect(&:id)
       engines_plugins = Engines.plugins.collect(&:name).collect(&:to_sym)
       load_order = (engines_plugins - redmine_plugins) + (redmine_plugins & engines_plugins)
       load_order.each do |p|
