@@ -22,30 +22,23 @@
     <div id="search-results-counts">
     <%= render_results_by_type(@results_by_type) unless @scope.size == 1 %>
     </div>
-    
+
     <h3><%= l(:label_result_plural) %> (<%= @results_by_type.values.sum %>)</h3>
+
+    <%= render :partial => 'pagination', :locals => {:pagination_previous_date => @pagination_previous_date, :pagination_next_date => @pagination_next_date } %>
+
     <dl id="search-results">
       <% @results.each do |e| %>
-        <dt class="<%= e.event_type %>"><%= content_tag('span', h(e.project), :class => 'project') unless @project == e.project %> <%= link_to highlight_tokens(truncate(e.event_title, :length => 255), @tokens), e.event_url %></dt>
-        <dd><span class="description"><%= highlight_tokens(e.event_description, @tokens) %></span>
+        <dt class="<%= e.event_type %>">
+          <%= content_tag('span', h(e.project), :class => 'project') unless @project == e.project %>
+          <%= link_to highlight_tokens(truncate(h(e.event_title), :length => 255), @tokens), e.event_url %>
+        </dt>
+        <dd><span class="description"><%= highlight_tokens(h(e.event_description), @tokens) %></span>
         <span class="author"><%= format_time(e.event_datetime) %></span></dd>
       <% end %>
     </dl>
 <% end %>
 
-<p><center>
-<% if @pagination_previous_date %>
-<%= link_to_remote ('&#171; ' + l(:label_previous)),
-                   {:update => :content,
-                    :url => params.merge(:previous => 1, :offset => @pagination_previous_date.strftime("%Y%m%d%H%M%S"))
-                   }, :href => url_for(params.merge(:previous => 1, :offset => @pagination_previous_date.strftime("%Y%m%d%H%M%S"))) %>&nbsp;
-<% end %>
-<% if @pagination_next_date %>
-<%= link_to_remote (l(:label_next) + ' &#187;'),
-                   {:update => :content,
-                    :url => params.merge(:previous => nil, :offset => @pagination_next_date.strftime("%Y%m%d%H%M%S"))
-                   }, :href => url_for(params.merge(:previous => nil, :offset => @pagination_next_date.strftime("%Y%m%d%H%M%S"))) %>
-<% end %>
-</center></p>
+<%= render :partial => 'pagination', :locals => {:pagination_previous_date => @pagination_previous_date, :pagination_next_date => @pagination_next_date } %>
 
 <% html_title(l(:label_search)) -%>

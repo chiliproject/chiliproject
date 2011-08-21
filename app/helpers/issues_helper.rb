@@ -1,19 +1,15 @@
-# redMine - project management software
-# Copyright (C) 2006  Jean-Philippe Lang
+#-- copyright
+# ChiliProject is a project management system.
+#
+# Copyright (C) 2010-2011 the ChiliProject Team
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# See doc/COPYRIGHT.rdoc for more details.
+#++
 
 module IssuesHelper
   include ApplicationHelper
@@ -48,23 +44,24 @@ module IssuesHelper
 
     link_to_issue(issue) + "<br /><br />" +
       "<strong>#{@cached_label_project}</strong>: #{link_to_project(issue.project)}<br />" +
-      "<strong>#{@cached_label_status}</strong>: #{issue.status.name}<br />" +
+      "<strong>#{@cached_label_status}</strong>: #{h(issue.status.name)}<br />" +
       "<strong>#{@cached_label_start_date}</strong>: #{format_date(issue.start_date)}<br />" +
       "<strong>#{@cached_label_due_date}</strong>: #{format_date(issue.due_date)}<br />" +
-      "<strong>#{@cached_label_assigned_to}</strong>: #{issue.assigned_to}<br />" +
-      "<strong>#{@cached_label_priority}</strong>: #{issue.priority.name}"
+      "<strong>#{@cached_label_assigned_to}</strong>: #{h(issue.assigned_to)}<br />" +
+      "<strong>#{@cached_label_priority}</strong>: #{h(issue.priority.name)}"
   end
-    
+
   def render_issue_subject_with_tree(issue)
     s = ''
-    issue.ancestors.each do |ancestor|
+    ancestors = issue.root? ? [] : issue.ancestors.all
+    ancestors.each do |ancestor|
       s << '<div>' + content_tag('p', link_to_issue(ancestor))
     end
     s << '<div>' + content_tag('h3', h(issue.subject))
-    s << '</div>' * (issue.ancestors.size + 1)
+    s << '</div>' * (ancestors.size + 1)
     s
   end
-  
+
   def render_descendants_tree(issue)
     s = '<form><table class="list issues">'
     issue_list(issue.descendants.sort_by(&:lft)) do |child, level|
@@ -79,7 +76,7 @@ module IssuesHelper
     s << '</form></table>'
     s
   end
-  
+
   def render_custom_fields_rows(issue)
     return if issue.custom_field_values.empty?
     ordered_values = []
@@ -98,86 +95,38 @@ module IssuesHelper
     s << "</tr>\n"
     s
   end
-  
+
   def sidebar_queries
     unless @sidebar_queries
       # User can see public queries and his own queries
       visible = ARCondition.new(["is_public = ? OR user_id = ?", true, (User.current.logged? ? User.current.id : 0)])
       # Project specific queries and global queries
       visible << (@project.nil? ? ["project_id IS NULL"] : ["project_id IS NULL OR project_id = ?", @project.id])
-      @sidebar_queries = Query.find(:all, 
-                                    :select => 'id, name',
+      @sidebar_queries = Query.find(:all,
+                                    :select => 'id, name, is_public',
                                     :order => "name ASC",
                                     :conditions => visible.conditions)
     end
     @sidebar_queries
   end
 
-  def show_detail(detail, no_html=false)
-    case detail.property
-    when 'attr'
-      field = detail.prop_key.to_s.gsub(/\_id$/, "")
-      label = l(("field_" + field).to_sym)
-      case
-      when ['due_date', 'start_date'].include?(detail.prop_key)
-        value = format_date(detail.value.to_date) if detail.value
-        old_value = format_date(detail.old_value.to_date) if detail.old_value
+  def query_links(title, queries)
+    # links to #index on issues/show
+    url_params = controller_name == 'issues' ? {:controller => 'issues', :action => 'index', :project_id => @project} : params
 
-      when ['project_id', 'status_id', 'tracker_id', 'assigned_to_id', 'priority_id', 'category_id', 'fixed_version_id'].include?(detail.prop_key)
-        value = find_name_by_reflection(field, detail.value)
-        old_value = find_name_by_reflection(field, detail.old_value)
+    content_tag('h3', h(title)) +
+      queries.collect {|query|
+          link_to(h(query.name), url_params.merge(:query_id => query))
+        }.join('<br />')
+  end
 
-      when detail.prop_key == 'estimated_hours'
-        value = "%0.02f" % detail.value.to_f unless detail.value.blank?
-        old_value = "%0.02f" % detail.old_value.to_f unless detail.old_value.blank?
-
-      when detail.prop_key == 'parent_id'
-        label = l(:field_parent_issue)
-        value = "##{detail.value}" unless detail.value.blank?
-        old_value = "##{detail.old_value}" unless detail.old_value.blank?
-      end
-    when 'cf'
-      custom_field = CustomField.find_by_id(detail.prop_key)
-      if custom_field
-        label = custom_field.name
-        value = format_value(detail.value, custom_field.field_format) if detail.value
-        old_value = format_value(detail.old_value, custom_field.field_format) if detail.old_value
-      end
-    when 'attachment'
-      label = l(:label_attachment)
-    end
-    call_hook(:helper_issues_show_detail_after_setting, {:detail => detail, :label => label, :value => value, :old_value => old_value })
-
-    label ||= detail.prop_key
-    value ||= detail.value
-    old_value ||= detail.old_value
-    
-    unless no_html
-      label = content_tag('strong', label)
-      old_value = content_tag("i", h(old_value)) if detail.old_value
-      old_value = content_tag("strike", old_value) if detail.old_value and (!detail.value or detail.value.empty?)
-      if detail.property == 'attachment' && !value.blank? && a = Attachment.find_by_id(detail.prop_key)
-        # Link to the attachment if it has not been removed
-        value = link_to_attachment(a)
-      else
-        value = content_tag("i", h(value)) if value
-      end
-    end
-    
-    if !detail.value.blank?
-      case detail.property
-      when 'attr', 'cf'
-        if !detail.old_value.blank?
-          l(:text_journal_changed, :label => label, :old => old_value, :new => value)
-        else
-          l(:text_journal_set_to, :label => label, :value => value)
-        end
-      when 'attachment'
-        l(:text_journal_added, :label => label, :value => value)
-      end
-    else
-      l(:text_journal_deleted, :label => label, :old => old_value)
-    end
+  def render_sidebar_queries
+    out = ''
+    queries = sidebar_queries.select {|q| !q.is_public?}
+    out << query_links(l(:label_my_queries), queries) if queries.any?
+    queries = sidebar_queries.select {|q| q.is_public?}
+    out << query_links(l(:label_query_plural), queries) if queries.any?
+    out
   end
 
   # Find the name of an associated record stored in the field attribute
@@ -188,7 +137,7 @@ module IssuesHelper
       return record.name if record
     end
   end
-  
+
   # Renders issue children recursively
   def render_api_issue_children(issue, api)
     return if issue.leaf?
@@ -202,14 +151,14 @@ module IssuesHelper
       end
     end
   end
-  
+
   def issues_to_csv(issues, project = nil)
-    ic = Iconv.new(l(:general_csv_encoding), 'UTF-8')    
+    ic = Iconv.new(l(:general_csv_encoding), 'UTF-8')
     decimal_separator = l(:general_csv_decimal_separator)
     export = FCSV.generate(:col_sep => l(:general_csv_separator)) do |csv|
       # csv header fields
       headers = [ "#",
-                  l(:field_status), 
+                  l(:field_status),
                   l(:field_project),
                   l(:field_tracker),
                   l(:field_priority),
@@ -236,9 +185,9 @@ module IssuesHelper
       # csv lines
       issues.each do |issue|
         fields = [issue.id,
-                  issue.status.name, 
+                  issue.status.name,
                   issue.project.name,
-                  issue.tracker.name, 
+                  issue.tracker.name,
                   issue.priority.name,
                   issue.subject,
                   issue.assigned_to,
@@ -250,7 +199,7 @@ module IssuesHelper
                   issue.done_ratio,
                   issue.estimated_hours.to_s.gsub('.', decimal_separator),
                   issue.parent_id,
-                  format_time(issue.created_on),  
+                  format_time(issue.created_on),
                   format_time(issue.updated_on)
                   ]
         custom_fields.each {|f| fields << show_value(issue.custom_value_for(f)) }
@@ -259,5 +208,15 @@ module IssuesHelper
       end
     end
     export
+  end
+
+  def send_notification_option
+    content_tag(:p,
+                content_tag(:label,
+                            l(:label_notify_member_plural)) +
+                hidden_field_tag('send_notification', '0') +
+                check_box_tag('send_notification', '1', true))
+
+
   end
 end

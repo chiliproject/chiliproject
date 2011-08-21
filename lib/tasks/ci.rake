@@ -1,3 +1,16 @@
+#-- copyright
+# ChiliProject is a project management system.
+#
+# Copyright (C) 2010-2011 the ChiliProject Team
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# See doc/COPYRIGHT.rdoc for more details.
+#++
+
 desc "Run the Continous Integration tests for Redmine"
 task :ci do
   # RAILS_ENV and ENV[] can diverge so force them both to test
@@ -16,7 +29,7 @@ namespace :ci do
     Rake::Task["db:drop"].invoke
     Rake::Task["db:create"].invoke
     Rake::Task["db:migrate"].invoke
-    Rake::Task["db:migrate_plugins"].invoke
+    Rake::Task["db:migrate:plugins"].invoke
     Rake::Task["db:schema:dump"].invoke
     Rake::Task["test:scm:update"].invoke
   end
@@ -38,7 +51,7 @@ namespace :ci do
       result = `#{command}`
       "$ #{command}\n#{result}"
     end.join("\n")
-    
+
   end
 end
 
