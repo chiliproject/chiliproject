@@ -77,37 +77,35 @@ module Redmine #:nodoc:
 
     # Plugin constructor
     def self.register(id, &block)
-      begin
-        id = id.to_sym
-        p = new(id)
-        p.instance_eval(&block)
-        # Set a default name if it was not provided during registration
-        p.name(id.to_s.humanize) if p.name.nil?
-        # Adds plugin locales if any
-        # YAML translation files should be found under <plugin>/config/locales/
-        ::I18n.load_path += Dir.glob(File.join(RAILS_ROOT, 'vendor', 'plugins', id.to_s, 'config', 'locales', '*.yml'))
-        registered_plugins[id] = p
+      id = id.to_sym
+      p = new(id)
+      p.instance_eval(&block)
+      # Set a default name if it was not provided during registration
+      p.name(id.to_s.humanize) if p.name.nil?
+      # Adds plugin locales if any
+      # YAML translation files should be found under <plugin>/config/locales/
+      ::I18n.load_path += Dir.glob(File.join(RAILS_ROOT, 'vendor', 'plugins', id.to_s, 'config', 'locales', '*.yml'))
+      registered_plugins[id] = p
 
-        # If there are plugins waiting for us to be loaded, we try loading those, again
-        if deferred_plugins[id]
-          deferred_plugins[id].each do |ary|
-            plugin_id, block = ary
-            register(plugin_id, &block)
-          end
-          deferred_plugins.delete(id)
+      # If there are plugins waiting for us to be loaded, we try loading those, again
+      if deferred_plugins[id]
+        deferred_plugins[id].each do |ary|
+          plugin_id, block = ary
+          register(plugin_id, &block)
         end
+        deferred_plugins.delete(id)
+      end
 
+      return p
+    rescue PluginNotFound => e
+      # find circular dependencies
+      raise PluginCircularDependency.new(id) if self.dependencies_for(e.plugin_id).include?(id)
+      if RedminePluginLocator.instance.has_plugin? e.plugin_id
+        # The required plugin is going to be loaded later, defer loading this plugin
+        (deferred_plugins[e.plugin_id] ||= []) << [id, block]
         return p
-      rescue PluginNotFound => e
-        # find circular dependencies
-        raise PluginCircularDependency.new(id) if self.dependencies_for(e.plugin_id).include?(id)
-        if RedminePluginLocator.instance.has_plugin? e.plugin_id
-          # The required plugin is going to be loaded later, defer loading this plugin
-          (deferred_plugins[e.plugin_id] ||= []) << [id, block]
-          return p
-        else
-          raise e
-        end
+      else
+        raise
       end
     end
 
