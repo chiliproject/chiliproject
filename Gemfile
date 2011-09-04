@@ -14,6 +14,8 @@ gem 'gravatarify', '~> 3.0.0'
 gem "fastercsv", "~> 1.5.0", :platforms => [:ruby_18, :jruby, :mingw_18]
 # TODO rails-3.2: review the core changes to awesome_nested_set and decide on actions
 gem 'awesome_nested_set'
+# TODO rails-3.2: review the core changes to open_id_authentication and decide on actions
+gem 'open_id_authentication'
 
 # Gems used only for assets and not required
 # in production environments by default.
