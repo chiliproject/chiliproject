@@ -17,6 +17,10 @@ gem "prototype_legacy_helper", '0.0.0', :git => 'git://github.com/rails/prototyp
 
 # TODO rails-3.1: review the core changes to awesome_nested_set and decide on actions
 gem "awesome_nested_set"
+## TODO rails-3.1: review the core changes to open_id_authentication and decide on actions
+gem "open_id_authentication",
+    :git => 'git://github.com/ndbradley730/open_id_authentication.git',
+    :branch => 'controllermethods_name_error'
 
 gem "ruby-prof"
 
