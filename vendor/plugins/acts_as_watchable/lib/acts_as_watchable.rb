@@ -15,8 +15,7 @@ module Redmine
           class_eval do
             has_many :watchers, :as => :watchable, :dependent => :delete_all
             has_many :watcher_users, :through => :watchers, :source => :user, :validate => false
-            
-            named_scope :watched_by, lambda { |user_id|
+            scope :watched_by, lambda { |user_id|
               { :include => :watchers,
                 :conditions => ["#{Watcher.table_name}.user_id = ?", user_id] }
             }
