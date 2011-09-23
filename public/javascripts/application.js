@@ -482,6 +482,14 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
+        // show/hide login box
+	$("#account a.login").click(function() {
+		$(this).toggleClass("open");
+		$("#nav-login").slideToggle(animRate);
+
+		return false;
+	});
+        
 	// file table thumbnails
 	$("table a.has-thumb").hover(function() {
 		$(this).removeAttr("title").toggleClass("active");

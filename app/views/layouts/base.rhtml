@@ -30,15 +30,6 @@
 <div id="wrapper">
   <div id="top-menu">
     <div id="account">
-      <% account_items =  menu_items_for(:account_menu) %>
-
-      <ul id="account-info">
-        <%= content_tag('li', "#{l(:label_logged_as)} #{link_to_user(User.current, :format => :username)}", :id => '') if User.current.logged? %>
-        <% account_items.each do |item| %>
-            <%= render_menu_node(item) %>
-        <% end %>
-      </ul>
-
       <%
         items_for_main_level = []
         items_for_more_level = []
@@ -96,10 +87,20 @@
           <%= text_field_tag 'q', @question, :size => 20, :class => 'small', :accesskey => accesskey(:quick_search) %>
         <% end %>
         </li>
+          <% unless User.current.logged? %>
+            <li>
+              <%= link_to l(:label_login), {:controller => 'account', :action => 'login'}, :class => 'login' %>
+              <%= render :partial => 'account/login' %>
+            </li>
+          <% else %>
+            <%= content_tag('li', "#{link_to_user(User.current)}", :id => '') %>
+            <% if User.current.logged? %>
+              <li><%= link_to l(:label_logout),:signout%></li>
+            <% end %>
+          <% end %>
       </ul>
       <% end %>
     </div>
-
   </div>
       
   <% main_menu = render_main_menu(@project) %>

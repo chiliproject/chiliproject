@@ -1,0 +1,26 @@
+<div id="nav-login" style="display:none;">
+  <% form_tag({:controller => "account", :action=> "login"}) do %>
+    <%= text_field_tag 'username', nil, :placeholder => l(:field_login) , :tabindex => '1' %>
+    <%= password_field_tag 'password', nil, :placeholder => l(:field_password), :tabindex => '2' %>
+    <input type="submit" name="login" value="<%=l(:button_login)%>" tabindex="3"/>
+
+    <p>
+    <% if Setting.openid? %>
+      <%= text_field_tag "openid_url", nil, :placeholder => l(:field_identity_url), :tabindex => '4' %>
+    <% end %>
+
+    <% if Setting.autologin? %>
+      <label for="autologin"><%= check_box_tag 'autologin', 1, false, :tabindex => 5 %> <%= l(:label_stay_logged_in) %></label>
+    <% end %>
+
+    <% if Setting.lost_password? %>
+      <%= link_to l(:label_password_lost), :controller => 'account', :action => 'lost_password' %> 
+    <% end %>
+<div style="float:left;">|</div>
+    <% if !User.current.logged? && Setting.self_registration? %>
+       <%= link_to l(:label_register), { :controller => 'account', :action => 'register' } %> </td>
+    <% end %>
+
+    <%= javascript_tag "Form.Element.focus('username');" %>
+  <% end %>
+</div>

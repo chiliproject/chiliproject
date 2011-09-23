@@ -1188,6 +1188,28 @@ a:hover {
 	width:94%;
 }
 
+#nav-login {
+	display:none;
+	position:absolute;
+	right:-1px;
+	top:23px;
+	background: white;
+	border:1px solid #194E60;
+	border-top:0;
+        padding-left:5px;
+        padding-top:5px;
+        padding-top:10px;
+        padding-bottom:8px;
+        overflow:hidden;
+}
+#nav-login input 	{
+	margin:5px 5px;
+        height: 25px;
+}
+#nav-login a{
+        float: left;
+        display: block;
+}
 /*-------------------------------------------------------------------------------
  * =02 - Main Menu
  *
