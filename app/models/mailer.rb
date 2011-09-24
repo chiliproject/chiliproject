@@ -24,6 +24,8 @@ class Mailer < ActionMailer::Base
   include Rails.application.routes.url_helpers
   include Redmine::I18n
 
+  self.prepend_view_path "app/views/mailer"
+
   def self.default_url_options
     h = Setting.host_name
     h = h.to_s.gsub(%r{\/.*$}, '') unless Redmine::Utils.relative_url_root.blank?
