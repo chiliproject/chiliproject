@@ -16,7 +16,7 @@ class NewsObserver < ActiveRecord::Observer
   def after_create(news)
     if Setting.notified_events.include?('news_added')
       news.recipients.each do |recipient|
-        Mailer.deliver_news_added(news, recipient)
+        Mailer.news_added(news, recipient).deliver
       end
     end
   end
