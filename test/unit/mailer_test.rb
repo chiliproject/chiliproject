@@ -70,7 +70,7 @@ class MailerTest < ActiveSupport::TestCase
     Setting.protocol = 'https'
 
     journal = Journal.find(2)
-    assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
+    assert Mailer.issue_edit(journal,'dlopper@somenet.foo').deliver
 
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
@@ -92,7 +92,7 @@ class MailerTest < ActiveSupport::TestCase
     Redmine::Utils.relative_url_root = '/rdm'
 
     journal = Journal.find(2)
-    assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
+    assert Mailer.issue_edit(journal,'dlopper@somenet.foo').deliver
 
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
@@ -117,7 +117,7 @@ class MailerTest < ActiveSupport::TestCase
     Redmine::Utils.relative_url_root = nil
 
     journal = Journal.find(2)
-    assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
+    assert Mailer.issue_edit(journal,'dlopper@somenet.foo').deliver
 
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
@@ -137,7 +137,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_email_headers
     issue = Issue.find(1)
-    Mailer.deliver_issue_add(issue,'dlopper@somenet.foo')
+    Mailer.issue_add(issue,'dlopper@somenet.foo').deliver
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
     assert_equal 'bulk', mail.header_string('Precedence')
@@ -147,7 +147,7 @@ class MailerTest < ActiveSupport::TestCase
   def test_plain_text_mail
     Setting.plain_text_mail = 1
     journal = Journal.find(2)
-    Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
+    Mailer.issue_edit(journal,'dlopper@somenet.foo').deliver
     mail = ActionMailer::Base.deliveries.last
     assert_equal "text/plain", mail.content_type
     assert_equal 0, mail.parts.size
@@ -157,7 +157,7 @@ class MailerTest < ActiveSupport::TestCase
   def test_html_mail
     Setting.plain_text_mail = 0
     journal = Journal.find(2)
-    Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
+    Mailer.issue_edit(journal,'dlopper@somenet.foo').deliver
     mail = ActionMailer::Base.deliveries.last
     assert_equal 2, mail.parts.size
     assert mail.encoded.include?('href')
@@ -165,7 +165,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_mail_from_with_phrase
     with_settings :mail_from => 'Redmine app <redmine@example.net>' do
-      Mailer.deliver_test_email(User.find(1))
+      Mailer.test_email(User.find(1)).deliver
     end
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
@@ -181,7 +181,7 @@ class MailerTest < ActiveSupport::TestCase
     user.pref[:no_self_notified] = false
     user.pref.save
     User.current = user
-    Mailer.deliver_news_added(news.reload, user.mail)
+    Mailer.news_added(news.reload, user.mail).deliver
     assert_equal 1, last_email.to.size
 
     # nobody to notify
@@ -189,13 +189,13 @@ class MailerTest < ActiveSupport::TestCase
     user.pref.save
     User.current = user
     ActionMailer::Base.deliveries.clear
-    Mailer.deliver_news_added(news.reload, user.mail)
+    Mailer.news_added(news.reload, user.mail).deliver
     assert ActionMailer::Base.deliveries.empty?
   end
 
   def test_issue_add_message_id
     issue = Issue.find(1)
-    Mailer.deliver_issue_add(issue, 'dlopper@somenet.foo')
+    Mailer.issue_add(issue, 'dlopper@somenet.foo').deliver
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
     assert_equal Mailer.message_id_for(issue), mail.message_id
@@ -204,7 +204,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_issue_edit_message_id
     journal = Journal.find(1)
-    Mailer.deliver_issue_edit(journal, "jsmith@somenet.foo")
+    Mailer.issue_edit(journal, "jsmith@somenet.foo").deliver
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
     assert_equal Mailer.message_id_for(journal), mail.message_id
@@ -213,7 +213,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_message_posted_message_id
     message = Message.find(1)
-    Mailer.deliver_message_posted(message, "jsmith@somenet.foo")
+    Mailer.message_posted(message, "jsmith@somenet.foo").deliver
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
     assert_equal Mailer.message_id_for(message), mail.message_id
@@ -226,7 +226,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_reply_posted_message_id
     message = Message.find(3)
-    Mailer.deliver_message_posted(message, "jsmith@somenet.foo")
+    Mailer.message_posted(message, "jsmith@somenet.foo").deliver
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
     assert_equal Mailer.message_id_for(message), mail.message_id
@@ -245,7 +245,7 @@ class MailerTest < ActiveSupport::TestCase
     end
 
     should "send one email per recipient" do
-      assert Mailer.deliver_issue_add(@issue, 'dlopper@somenet.foo')
+      assert Mailer.issue_add(@issue, 'dlopper@somenet.foo').deliver
       assert_equal 1, ActionMailer::Base.deliveries.length
       assert_equal ['dlopper@somenet.foo'], last_email.to
     end
@@ -253,73 +253,73 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_issue_add
     issue = Issue.find(1)
-    assert Mailer.deliver_issue_add(issue, 'dlopper@somenet.foo')
+    assert Mailer.issue_add(issue, 'dlopper@somenet.foo').deliver
   end
 
   def test_issue_edit
     journal = Journal.find(1)
-    assert Mailer.deliver_issue_edit(journal, "jsmith@somenet.foo")
+    assert Mailer.issue_edit(journal, "jsmith@somenet.foo").deliver
   end
 
   def test_document_added
     document = Document.find(1)
-    assert Mailer.deliver_document_added(document, "jsmith@somenet.foo")
+    assert Mailer.document_added(document, "jsmith@somenet.foo").deliver
   end
 
   def test_attachments_added
     attachements = [ Attachment.find_by_container_type('Document') ]
-    assert Mailer.deliver_attachments_added(attachements, "jsmith@somenet.foo")
+    assert Mailer.attachments_added(attachements, "jsmith@somenet.foo").deliver
   end
 
   def test_version_file_added
     attachements = [ Attachment.find_by_container_type('Version') ]
-    assert Mailer.deliver_attachments_added(attachements, "jsmith@somenet.foo")
+    assert Mailer.attachments_added(attachements, "jsmith@somenet.foo").deliver
     assert_equal ["jsmith@somenet.foo"], last_email.to
   end
 
   def test_project_file_added
     attachements = [ Attachment.find_by_container_type('Project') ]
-    assert Mailer.deliver_attachments_added(attachements, "jsmith@somenet.foo")
+    assert Mailer.attachments_added(attachements, "jsmith@somenet.foo").deliver
     assert_equal ["jsmith@somenet.foo"], last_email.to
   end
 
   def test_news_added
     news = News.find(:first)
-    assert Mailer.deliver_news_added(news, "jsmith@somenet.foo")
+    assert Mailer.news_added(news, "jsmith@somenet.foo").deliver
   end
 
   def test_news_comment_added
     comment = Comment.find(2)
-    assert Mailer.deliver_news_comment_added(comment)
+    assert Mailer.news_comment_added(comment).deliver
   end
 
   def test_message_posted
     message = Message.find(:first)
-    assert Mailer.deliver_message_posted(message, "jsmith@somenet.foo")
+    assert Mailer.message_posted(message, "jsmith@somenet.foo").deliver
   end
 
   def test_wiki_content_added
     content = WikiContent.find(1)
     assert_difference 'ActionMailer::Base.deliveries.size' do
-      assert Mailer.deliver_wiki_content_added(content, "jsmith@somenet.foo")
+      assert Mailer.wiki_content_added(content, "jsmith@somenet.foo").deliver
     end
   end
 
   def test_wiki_content_updated
     content = WikiContent.find(1)
     assert_difference 'ActionMailer::Base.deliveries.size' do
-      assert Mailer.deliver_wiki_content_updated(content, "jsmith@somenet.foo")
+      assert Mailer.wiki_content_updated(content, "jsmith@somenet.foo").deliver
     end
   end
 
   def test_account_information
     user = User.find(2)
-    assert Mailer.deliver_account_information(user, 'pAsswORd')
+    assert Mailer.account_information(user, 'pAsswORd').deliver
   end
 
   def test_lost_password
     token = Token.find(2)
-    assert Mailer.deliver_lost_password(token)
+    assert Mailer.lost_password(token).deliver
   end
 
   def test_register
@@ -328,7 +328,7 @@ class MailerTest < ActiveSupport::TestCase
     Setting.protocol = 'https'
 
     ActionMailer::Base.deliveries.clear
-    assert Mailer.deliver_register(token)
+    assert Mailer.register(token).deliver
     mail = ActionMailer::Base.deliveries.last
     assert_select_email do
       assert_select "a[href=?]",
@@ -339,7 +339,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_test
     user = User.find(1)
-    assert Mailer.deliver_test_email(user)
+    assert Mailer.test_email(user).deliver
   end
 
   def test_reminders
@@ -374,7 +374,7 @@ class MailerTest < ActiveSupport::TestCase
     # Send an email to a french user
     user = User.find(1)
     user.language = 'fr'
-    Mailer.deliver_account_activated(user)
+    Mailer.account_activated(user).deliver
     mail = ActionMailer::Base.deliveries.last
     assert_mail_body_match 'Votre compte', mail
 
@@ -383,7 +383,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_with_deliveries_off
     Mailer.with_deliveries false do
-      Mailer.deliver_test_email(User.find(1))
+      Mailer.test_email(User.find(1)).deliver
     end
     assert ActionMailer::Base.deliveries.empty?
     # should restore perform_deliveries
@@ -393,7 +393,7 @@ class MailerTest < ActiveSupport::TestCase
   context "layout" do
     should "include the emails_header" do
       with_settings(:emails_header => "*Header content*") do
-        assert Mailer.deliver_test_email(User.find(1))
+        assert Mailer.test_email(User.find(1)).deliver
         assert_select_email do
           assert_select ".header" do
             assert_select "strong", :text => "Header content"
