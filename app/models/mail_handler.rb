@@ -61,7 +61,7 @@ class MailHandler < ActionMailer::Base
         @user = create_user_from_email
         if @user
           logger.info "MailHandler: [#{@user.login}] account created" if logger && logger.info
-          Mailer.deliver_account_information(@user, @user.password)
+          Mailer.account_information(@user, @user.password).deliver
         else
           logger.error "MailHandler: could not create account for [#{sender_email}]" if logger && logger.error
           return false
@@ -69,7 +69,7 @@ class MailHandler < ActionMailer::Base
       else
         # Default behaviour, emails from unknown users are ignored
         logger.info  "MailHandler: ignoring email from unknown user [#{sender_email}]" if logger && logger.info
-        Mailer.deliver_mail_handler_unauthorized_action(user, email.subject.to_s, :to => sender_email) if Setting.mail_handler_confirmation_on_failure
+        Mailer.mail_handler_unauthorized_action(user, email.subject.to_s, :to => sender_email).deliver if Setting.mail_handler_confirmation_on_failure
         return false
       end
     end
@@ -103,15 +103,15 @@ class MailHandler < ActionMailer::Base
   rescue ActiveRecord::RecordInvalid => e
     # TODO: send a email to the user
     logger.error e.message if logger
-    Mailer.deliver_mail_handler_missing_information(user, email.subject.to_s, e.message) if Setting.mail_handler_confirmation_on_failure
+    Mailer.mail_handler_missing_information(user, email.subject.to_s, e.message).deliver if Setting.mail_handler_confirmation_on_failure
     false
   rescue MissingInformation => e
     logger.error "MailHandler: missing information from #{user}: #{e.message}" if logger
-    Mailer.deliver_mail_handler_missing_information(user, email.subject.to_s, e.message) if Setting.mail_handler_confirmation_on_failure
+    Mailer.mail_handler_missing_information(user, email.subject.to_s, e.message).deliver if Setting.mail_handler_confirmation_on_failure
     false
   rescue UnauthorizedAction => e
     logger.error "MailHandler: unauthorized attempt from #{user}" if logger
-    Mailer.deliver_mail_handler_unauthorized_action(user, email.subject.to_s) if Setting.mail_handler_confirmation_on_failure
+    Mailer.mail_handler_unauthorized_action(user, email.subject.to_s).deliver if Setting.mail_handler_confirmation_on_failure
     false
   end
 
@@ -145,7 +145,7 @@ class MailHandler < ActionMailer::Base
     issue.save!
     add_attachments(issue)
     logger.info "MailHandler: issue ##{issue.id} created by #{user}" if logger && logger.info
-    Mailer.deliver_mail_handler_confirmation(issue, user, issue.subject) if Setting.mail_handler_confirmation_on_success
+    Mailer.mail_handler_confirmation(issue, user, issue.subject).deliver if Setting.mail_handler_confirmation_on_success
     issue
   end
 
@@ -167,7 +167,7 @@ class MailHandler < ActionMailer::Base
     add_attachments(issue)
     issue.save!
     logger.info "MailHandler: issue ##{issue.id} updated by #{user}" if logger && logger.info
-    Mailer.deliver_mail_handler_confirmation(issue.last_journal, user, email.subject) if Setting.mail_handler_confirmation_on_success
+    Mailer.mail_handler_confirmation(issue.last_journal, user, email.subject).deliver if Setting.mail_handler_confirmation_on_success
     issue.last_journal
   end
 
@@ -196,7 +196,7 @@ class MailHandler < ActionMailer::Base
         reply.board = message.board
         message.children << reply
         add_attachments(reply)
-        Mailer.deliver_mail_handler_confirmation(message, user, reply.subject) if Setting.mail_handler_confirmation_on_success
+        Mailer.mail_handler_confirmation(message, user, reply.subject).deliver if Setting.mail_handler_confirmation_on_success
         reply
       else
         logger.info "MailHandler: ignoring reply from [#{sender_email}] to a locked topic" if logger && logger.info
