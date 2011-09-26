@@ -15,7 +15,7 @@
 <!--[if lte IE 7]><%= stylesheet_link_tag 'ie7', :media => 'all' %><![endif]-->
 <!--[if gte IE 8]><![endif]-->
 
-<%= javascript_include_tag 'jquery.1.3.2.min.js' %>
+<%= javascript_include_tag 'jquery-1.6.4.min.js' %>
 <%= javascript_include_tag 'jquery.menu_expand.js' %>
 <%= javascript_tag('jQuery.noConflict();') %>
 <%= javascript_heads %>
@@ -90,7 +90,10 @@
           <% unless User.current.logged? %>
             <li>
               <%= link_to l(:label_login), {:controller => 'account', :action => 'login'}, :class => 'login' %>
-              <%= render :partial => 'account/login' %>
+              <!-- IE7 Fix - extra div needed for slideToggle animation -->
+              <div id="nav-login">
+                <%= render :partial => 'account/login' %>
+              </div>
             </li>
           <% else %>
             <%= content_tag('li', "#{link_to_user(User.current)}", :id => '') %>
