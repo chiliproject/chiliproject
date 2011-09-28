@@ -64,8 +64,10 @@ class ActiveSupport::TestCase
     assert_equal login, User.find(session[:user_id]).login
   end
 
+  include ActionDispatch::TestProcess
+
   def uploaded_test_file(name, mime)
-    ActionController::TestUploadedFile.new(ActiveSupport::TestCase.fixture_path + "/files/#{name}", mime, true)
+    fixture_file_upload("files/#{name}", mime, true)
   end
 
   def credentials(user, password=nil)
