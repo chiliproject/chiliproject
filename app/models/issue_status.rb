@@ -53,7 +53,7 @@ class IssueStatus < ActiveRecord::Base
   def new_statuses_allowed_to(roles, tracker)
     if roles && tracker
       role_ids = roles.collect(&:id)
-      new_statuses = workflows.select {|w| role_ids.include?(w.role_id) && w.tracker_id == tracker.id}.collect{|w| w.new_status}.compact.sort
+      new_statuses = workflows.select {|w| role_ids.include?(w.role_id) && w.tracker_id == tracker.id}.collect{|w| w.new_status}.compact.sort.uniq
     else
       []
     end
@@ -66,7 +66,7 @@ class IssueStatus < ActiveRecord::Base
       workflows.find(:all,
                      :include => :new_status,
                      :conditions => { :role_id => roles.collect(&:id), 
-                                      :tracker_id => tracker.id}).collect{ |w| w.new_status }.compact.sort
+                                      :tracker_id => tracker.id}).collect{ |w| w.new_status }.compact.sort.uniq
     else
       []
     end
