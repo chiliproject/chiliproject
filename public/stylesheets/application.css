@@ -1187,7 +1187,6 @@ a:hover {
 	margin:5px 5px;
 	width:94%;
 }
-
 #nav-login {
 	display:none;
         width: 500px;
@@ -1210,7 +1209,6 @@ a:hover {
         padding-right:10px;
         padding-bottom:8px;;
 }
-
 #nav-login input[type=text], #nav-login input[type=password] {
         height: 20px;
         width: 150px;
