@@ -32,6 +32,7 @@
 <div id="wrapper">
   <div id="top-menu">
     <div id="account">
+      <div id="logo"></div>
       <div id="top-menu-items">
       <div id="search">
         <%= label_tag("q", l(:label_search), :class => "hidden-for-sighted") %>
@@ -77,10 +78,7 @@
             <% end %>
           </ul>
         </li>
-        <li>
-        <% end %>
         <%= render_menu_node(help_menu_item) %>
-        </li>
           <% unless User.current.logged? %>
             <li>
               <%= link_to l(:label_login), {:controller => 'account', :action => 'login'}, :class => 'login' %>

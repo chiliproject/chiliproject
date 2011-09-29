@@ -19,7 +19,7 @@ h4, .wiki h3 {font-size: 13px;padding: 2px 10px 1px 0px;margin-bottom: 5px; bord
   padding: 0px 0px 0px 0px;
   white-space:nowrap;
 }
-#top-menu a {color: #444; margin-right: 0px; font-weight: bold;}
+
 #top-menu #loggedas { float: right; margin-right: 0.5em; color: #fff; }
 
 
@@ -1049,19 +1049,26 @@ a:hover {
 
 
 #top-menu {
-	height: 86px;
+	height: 81px;
 	position:relative;
 }
 #top-menu.open { /*IE 6-7 z-index stacking issue*/
 	z-index:5;
 }
 #account {
-	background: #000000 url(../images/logo_chiliproject.png) no-repeat 20px;
+	background: url(../images/background_header.png) repeat-x 20px;
 	height:43px;
+	font: arial,19px,white;
+}
+#logo {
+        float:left;
+        width:200px;
+        height:43px;
+	background: url(../images/logo_chiliproject.png) no-repeat 15px;
 }
 #top-menu-items {
         float:right;
-        padding-right:110px;
+        padding-right:15px;
 }
 #account-nav {
         display:block;
@@ -1070,7 +1077,11 @@ a:hover {
 #account ul {
         line-height:43px;
 	float:left;
-	font-size:11px;
+        font-size:13px;
+        font-family:"Arial", Arial, sans-serif;
+        font-style:normal;
+        font-weight:normal;
+        color:#ffffff;
 	height:43px;
 	border-top:0;
         }
@@ -1098,7 +1109,23 @@ a:hover {
 
 #account li.drop-down > a {
 	background:url(../images/arrow-down-white.png) no-repeat right center;
-	padding-right:24px;
+	padding-right:35px;
+}
+li a.home {
+        text-indent:-999em;
+        width:20px;
+        height:43px;
+        background:url(../images/icon_home.png) no-repeat 50% 50%;
+}
+li a.help {
+        text-indent:-999em;
+        width:20px;
+        height:43px;
+        background:url(../images/icon_help.png) no-repeat 50% 50%;
+}
+#account li.drop-down.open a {
+	background:url(../images/arrow-down.png) no-repeat right center;
+	padding-right:35px;
 }
 #account-nav li{
 	padding:0;
@@ -1108,10 +1135,23 @@ a:hover {
 	padding:0px 9px 0px;
 }
 #account .search_field {
-	width:170px;
-	background-image:url(../images/search.png);
-	background-repeat:no-repeat;
-	background-position:right;
+        border:0px;
+        color:white;
+	background:transparent url(../images/background_suche.png);
+	background-repeat:repeat-x;
+        margin-right:15px;
+        margin-top:6px;
+        margin-bottom:4px;
+        padding-left:10px;
+        padding-right:27px;
+        width:125px;
+	height:30px;
+}
+input::-webkit-input-placeholder {
+        color:    white;
+}
+input:-moz-placeholder {
+        color:    white;
 }
 #search {
         float:left;
@@ -1154,9 +1194,17 @@ a:hover {
 	position:static;
 }
 #breadcrumb {
-	background: #808080;
-	height:43px;
-        line-height:250%;
+	height:38px;
+        line-height:38px;
+        background:url(../images/background_breadcrumb.png) repeat-x left top;
+        border-bottom: 1px #d9d9d9;
+        color:#777777;
+        padding-left:15px;
+        text-decoration: underline;
+        font-size:11px;
+        font-family:"Arial", Arial, sans-serif;
+        font-style:normal;
+        font-weight:normal;
 }
 #nav-search {
         float: right;
@@ -1171,7 +1219,6 @@ a:hover {
         width: 500px;
         position: absolute;
 	right:-1px;
-	top:23px;
 	background: transparent;
 	border:0px;
 	border-top:0;
@@ -1179,6 +1226,7 @@ a:hover {
 }
 #nav-login-content {
         position: relative;
+        position-top:44px;
         float: right;
 	background: white;
 	border:1px solid #194E60;
@@ -1186,7 +1234,8 @@ a:hover {
         padding-left:5px;
         padding-top:5px;
         padding-right:10px;
-        padding-bottom:8px;;
+        padding-bottom:8px;
+        color:black;
 }
 #nav-login input[type=text], #nav-login input[type=password] {
         height: 20px;
@@ -1195,6 +1244,7 @@ a:hover {
 #nav-login div a {
         display: inline;
         padding-left: 2px;
+        color:black;
 }
 #nav-login div a:hover {
   background-color: transparent;
