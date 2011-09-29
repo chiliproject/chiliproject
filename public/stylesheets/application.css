@@ -1090,12 +1090,13 @@ a:hover {
 #account li:first-child {
 	border:0;
 }
-#account li a {
+#account li > a {
 	text-decoration:none;
-        color:#FFFFFF; 
+  color:#FFFFFF;
 	height:43px;
 }
-#account li.drop-down a {
+
+#account li.drop-down > a {
 	background:url(../images/arrow-down-white.png) no-repeat right center;
 	padding-right:24px;
 }
@@ -1115,12 +1116,12 @@ a:hover {
 #search {
         float:left;
 }
-#account li.open a {
+#account li.open > a {
 	position:relative;
 	top:0px;
 	z-index:21;
 }
-#account-nav li a:hover, #account li li a:hover {
+#account-nav li > a:hover, #account li li a:hover {
   background-color:#DDDDDD;
 }
 #account li ul {
@@ -1147,7 +1148,7 @@ a:hover {
 #account li li:last-child {
 	border-bottom:0;
 }
-#account li.drop-down li a {
+#account li.drop-down li > a {
 	padding:5px 9px;
 	background:none;
 	position:static;
