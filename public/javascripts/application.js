@@ -561,13 +561,6 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
-	// remove .drop-down class from empty dropdowns
-	$("#account .drop-down").each(function(index) {
-		if ($(this).find("li").size() < 1) {
-			$(this).removeClass("drop-down");
-		}
-	});
-
 	$("#account .drop-down:has(ul) > a").click(function() {
                 //Close all other open menus
                 $("#account .drop-down.open:has(ul)").not($(this).parent()).toggleClass("open").find("ul").mySlide();
@@ -600,6 +593,16 @@ jQuery(document).ready(function($) {
 			}
 		});
 
+        $('#account li.drop-down select.chzn-select').each(function (ix, select) {
+          // trigger an artificial mousedown event
+          jQuery(select).parents("li.drop-down").first().mousedown(function(event) {
+            var parent = jQuery(event.target).parents('li.drop-down');
+            parent.find('select.chzn-select').chosen({allow_single_deselect:true});
+            parent.find('div.chzn-container').trigger(jQuery.Event("mousedown"))
+            parent.find('a.chzn-single').hide();
+          });
+        });
+        
         $('html').click(function() {
            //Close all open menus
           $("#account .drop-down.open").toggleClass("open").find("ul").mySlide();
