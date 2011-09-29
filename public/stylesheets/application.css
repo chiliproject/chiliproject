@@ -22,7 +22,6 @@ h4, .wiki h3 {font-size: 13px;padding: 2px 10px 1px 0px;margin-bottom: 5px; bord
 #top-menu a {color: #444; margin-right: 0px; font-weight: bold;}
 #top-menu #loggedas { float: right; margin-right: 0.5em; color: #fff; }
 
-#account {float:none;}
 
 #quick-search {float:right;}
 
@@ -1050,33 +1049,32 @@ a:hover {
 
 
 #top-menu {
-	background: #F3F3F3 url(../images/logo.png) no-repeat 24px bottom;
-	height: 88px;
+	height: 86px;
 	position:relative;
 }
 #top-menu.open { /*IE 6-7 z-index stacking issue*/
 	z-index:5;
 }
 #account {
-	background: #FFFFFF url(../images/logo.png) no-repeat 24px 15px;
-	height:67px;
-	border-bottom:1px solid #FF4719;
+	background: #000000 url(../images/logo_chiliproject.png) no-repeat 20px;
+	height:43px;
+}
+#top-menu-items {
+        float:right;
+        padding-right:110px;
+}
+#account-nav {
+        display:block;
+        background:url(../images/background_top_navigation.png) repeat-x left top;
 }
 #account ul {
-	float:right;
+        line-height:43px;
+	float:left;
 	font-size:11px;
-	border:1px solid #444;
+	height:43px;
 	border-top:0;
-	-moz-border-radius-bottomleft:5px;
-	-moz-border-radius-bottomright:5px;
-	-webkit-border-bottom-left-radius:5px;
-	-webkit-border-bottom-right-radius:5px;
-	border-bottom-left-radius:5px;
-	border-bottom-right-radius:5px;
-	height:22px;
-  color:#000000;
-  background:#DDDDDD;}
-}
+        }
+
 #account ul#account-info {
 	margin-right:15px;
 }
@@ -1085,8 +1083,7 @@ a:hover {
 }
 #account li {
 	float:left;
-	border-left:1px solid #444;
-	padding:2px 9px 3px;	
+	border-left:1px solid #450308;
 	position:relative;
 	z-index:5;
 }
@@ -1095,8 +1092,8 @@ a:hover {
 }
 #account li a {
 	text-decoration:none;
-	color:#444;
-	height:17px;
+        color:#FFFFFF; 
+	height:43px;
 }
 #account li.drop-down a {
 	background:url(../images/arrow-down-white.png) no-repeat right center;
@@ -1107,14 +1104,16 @@ a:hover {
 }
 #account-nav li a {
 	display:block;
-	padding:2px 9px 3px;
+	padding:0px 9px 0px;
 }
-#account .search {
-	text-indent:-9999em;
-	width:17px;
+#account .search_field {
+	width:170px;
 	background-image:url(../images/search.png);
 	background-repeat:no-repeat;
-	background-position:center center;
+	background-position:right;
+}
+#search {
+        float:left;
 }
 #account li.open a {
 	position:relative;
@@ -1153,34 +1152,13 @@ a:hover {
 	background:none;
 	position:static;
 }
+#breadcrumb {
+	background: #808080;
+	height:43px;
+        line-height:250%;
+}
 #nav-search {
-	display:none;
-	position:absolute;
-	right:-1px;
-	top:23px;
-	border:1px solid #194E60;
-	border-top:0;
-	-moz-border-radius-bottomleft:5px;
-	-moz-border-radius-bottomright:5px;
-	-webkit-border-bottom-left-radius:5px;
-	-webkit-border-bottom-right-radius:5px;
-	border-bottom-left-radius:5px;
-	border-bottom-right-radius:5px;
-  background-color: #DDDDDD;
-  /* CSS3 gradient from #444444, #DDDDDD, #F3F3F3 */
-   background-image: linear-gradient(bottom, rgb(68,68,68) 46%, rgb(221,221,221) 73%, rgb(243,243,243) 87%);
-   background-image: -o-linear-gradient(bottom, rgb(68,68,68) 46%, rgb(221,221,221) 73%, rgb(243,243,243) 87%);
-   background-image: -moz-linear-gradient(bottom, rgb(68,68,68) 46%, rgb(221,221,221) 73%, rgb(243,243,243) 87%);
-   background-image: -webkit-linear-gradient(bottom, rgb(68,68,68) 46%, rgb(221,221,221) 73%, rgb(243,243,243) 87%);
-   background-image: -ms-linear-gradient(bottom, rgb(68,68,68) 46%, rgb(221,221,221) 73%, rgb(243,243,243) 87%);
-   background-image: -webkit-gradient(
-      linear,
-      left bottom,
-      left top,
-      color-stop(0.46, rgb(68,68,68)),
-      color-stop(0.73, rgb(221,221,221)),
-      color-stop(0.87, rgb(243,243,243))
-   );
+        float: right;
 }
 
 #nav-search input 	{

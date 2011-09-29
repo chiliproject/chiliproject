@@ -30,12 +30,23 @@
 <div id="wrapper">
   <div id="top-menu">
     <div id="account">
+      <div id="top-menu-items">
+      <div id="search">
+        <%= label_tag("q", l(:label_search), :class => "hidden-for-sighted") %>
+        <% form_tag({:controller => 'search', :action => 'index', :id => @project}, :method => :get) do %>
+          <%= hidden_field_tag(controller.default_search_scope, 1, :id => nil) if controller.default_search_scope %>
+          <%= text_field_tag 'q', @question, :size => 20, :class => 'search_field', :placeholder => l(:search_input_placeholder), :accesskey => accesskey(:quick_search) %>
+        <% end %>
+      </div>
       <%
         items_for_main_level = []
         items_for_more_level = []
+        help_menu_item = nil
         menu_items_for(:top_menu) do |item|
           if item.name == :home || item.name == :my_page
             items_for_main_level << item
+          elsif item.name == :help
+            help_menu_item = item
           elsif item.name == :projects
             # Remove
           else
@@ -64,28 +75,16 @@
           </ul>
         </li>
         <li class="drop-down" id="more-menu">
-          <a class="more" href="#">More</a>
+          <a class="more" href="#">Modules</a>
           <ul style="display:none;">
             <% items_for_more_level.each do |item| %>
             <%= render_menu_node(item) %>
             <% end %>
-            <%# TODO: Redmine defines these in a view, should be moved to a helper or data structure %>
-            <% if User.current.admin? %>
-              <% menu_items_for(:admin_menu) do |item| -%>
-                <li><%= link_to h(item.caption), item.url, item.html_options %></li>
-              <% end -%>
-            <% end %>
           </ul>
         </li>
         <li>
-        <label for='q'>
-          <%= link_to l(:label_search), {:controller => 'search', :action => 'index', :id => @project}, :accesskey => accesskey(:search), :class => 'search' %>
-        </label>
-          <% form_tag({:controller => 'search', :action => 'index', :id => @project}, :method => :get, :id => 'nav-search' ) do %>
-            <%= hidden_field_tag(controller.default_search_scope, 1, :id => nil) if controller.default_search_scope %>
-
-          <%= text_field_tag 'q', @question, :size => 20, :class => 'small', :accesskey => accesskey(:quick_search) %>
         <% end %>
+        <%= render_menu_node(help_menu_item) %>
         </li>
           <% unless User.current.logged? %>
             <li>
@@ -108,6 +107,10 @@
       </ul>
       <% end %>
     </div>
+    </div>
+    <div id="breadcrumb">
+      <%= page_header_title %>
+    </div>
   </div>
       
   <% main_menu = render_main_menu(@project) %>
@@ -117,8 +120,6 @@
   <% display_sidebar = false %>
   <% end %>
   <div id="main" class="<%= display_sidebar ? '' : "nosidebar" %>">
-  
-    <h1 class="title"><%= page_header_title %></h1>
     <% if display_sidebar %>
     <div id="main-menu">
       <%= main_menu %>
