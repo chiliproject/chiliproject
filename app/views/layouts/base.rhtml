@@ -61,26 +61,28 @@
         <% items_for_main_level.each do |item| %>
             <%= render_menu_node(item) %>
         <% end %>
-        <li class="drop-down">
-          <%= link_to l(:label_project_plural), :controller => 'projects', :action => 'index' %>
-          <ul style="display:none;">
-            <div>
-              <%= link_to "View all Projects", :controller => 'projects', :action => 'index' %>
-              <%= render_project_jump_box Project.visible, :class => "chzn-select", :'data-placeholder' => "Enter Project Name..." %>
-            </div>
-          </ul>
-        </li>
-        <li class="drop-down" id="more-menu">
-          <a class="more" href="#">Modules</a>
-          <ul style="display:none;">
-            <% items_for_more_level.each do |item| %>
-            <%= render_menu_node(item) %>
-            <% end %>
-          </ul>
-        </li>
-        <%= render_menu_node(help_menu_item) %>
+        <% unless Project.visible.empty? %>
+          <li class="drop-down">
+            <%= link_to l(:label_project_plural), :controller => 'projects', :action => 'index' %>
+            <ul style="display:none;">
+                <li><%= link_to "View all Projects", :controller => 'projects', :action => 'index' %></li>
+                <%= render_project_jump_box Project.visible, :class => "chzn-select", :'data-placeholder' => "Enter Project Name..." %>
+            </ul>
+          </li>
+        <% end %>
+        <% unless (items = items_for_more_level).empty? %>
+          <li class="drop-down" id="more-menu">
+            <a class="more" href="#">Modules</a>
+            <ul style="display:none;">
+              <% items.each do |item| %>
+              <%= render_menu_node(item) %>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+          <%= render_menu_node(help_menu_item) %>
           <% unless User.current.logged? %>
-            <li>
+            <li class="drop-down">
               <%= link_to l(:label_login), {:controller => 'account', :action => 'login'}, :class => 'login' %>
               <!-- IE7 Fix - extra div needed for slideToggle animation -->
               <div id="nav-login">
@@ -98,7 +100,6 @@
           </li>
           <% end %>
       </ul>
-      <% end %>
     </div>
     </div>
     <div id="breadcrumb">

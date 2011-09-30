@@ -1089,27 +1089,48 @@ a:hover {
 #account ul#account-info {
 	margin-right:15px;
 }
-#account ul#account-nav {
-	margin-right:6px;
-}
 #account li {
 	float:left;
-	border-left:1px solid #450308;
+	border-right:1px solid #450308;
 	position:relative;
 	z-index:5;
 }
-#account li:first-child {
-	border:0;
+#account li:last-child {
+	border-right:0px;
 }
 #account li > a {
 	text-decoration:none;
-  color:#FFFFFF;
+        color:#FFFFFF;
 	height:43px;
 }
-
 #account li.drop-down > a {
 	background:url(../images/arrow-down-white.png) no-repeat right center;
 	padding-right:35px;
+}
+#account li.drop-down > a:hover {
+	background:#FFFFFF url(../images/arrow-down-grey.png) no-repeat right center;
+	padding-right:35px;
+}
+#account-nav li > a:hover, #account li li a:hover {
+        background-color:#FFFFFF;
+        color:#222222;
+}
+#account li.drop-down li > a:hover {
+	-moz-border-radius-topleft:10px;
+	-moz-border-radius-topright:10px;
+	-webkit-border-top-left-radius:10px;
+	-webkit-border-top-right-radius:10px;
+	border-top-left-radius:10px;
+	border-top-right-radius:10px;
+	-moz-border-radius-bottomleft:10px;
+	-moz-border-radius-bottomright:10px;
+	-webkit-border-bottom-left-radius:10px;
+	-webkit-border-bottom-right-radius:10px;
+	border-bottom-left-radius:10px;
+	border-bottom-right-radius:10px;
+        background-color:#7F7F7F;
+        font-weight:bold;
+        color:#FFFFFF;
 }
 li a.home {
         text-indent:-999em;
@@ -1123,9 +1144,10 @@ li a.help {
         height:43px;
         background:url(../images/icon_help.png) no-repeat 50% 50%;
 }
-#account li.drop-down.open a {
-	background:url(../images/arrow-down.png) no-repeat right center;
+#account li.drop-down.open > a {
+	background:#FFFFFF url(../images/arrow-down-grey.png) no-repeat right center;
 	padding-right:35px;
+        color:#000000;
 }
 #account-nav li{
 	padding:0;
@@ -1161,20 +1183,21 @@ input:-moz-placeholder {
 	top:0px;
 	z-index:21;
 }
-#account-nav li > a:hover, #account li li a:hover {
-  background-color:#DDDDDD;
-}
+
 #account li ul {
 	display:none;
 	position:absolute;
-	border-top:1px solid #555;
-	top:22px;
 	height:auto;
+	min-width:200px;
 	left:-1px;
 	z-index:20;
-	-moz-box-shadow:1px 1px 3px rgba(0,0,0,.3);
-	-webkit-box-shadow:1px 1px 3px rgba(0,0,0,.3);
-	box-shadow:1px 1px 3px rgba(0,0,0,.3);
+        border: 1px solid #b7b7b7;
+        border-top: 0px;
+        background-color:#FFFFFF;
+}
+#account li:last-child ul {
+        left:auto;
+        right:-1px;
 }
 #account li li {
 	float:none;
@@ -1182,17 +1205,20 @@ input:-moz-placeholder {
 	border-style:solid;
 	border-width:1px 0;
 }
-#account li li:first-child {
-	border-bottom:1px solid #1D5D6E;
-}
-#account li li:last-child {
-	border-bottom:0;
-}
 #account li.drop-down li > a {
 	padding:5px 9px;
-	background:none;
+	background:#FFFFFF;
 	position:static;
+        color:#222222;
+        font-size:13px;
+        font-family:"Arial", Arial, sans-serif;
+        font-style:normal;
+        font-weight:normal;
+        margin:8px;
+        height:20px;
+        line-height:20px;
 }
+
 #breadcrumb {
 	height:38px;
         line-height:38px;
@@ -1236,6 +1262,7 @@ input:-moz-placeholder {
         padding-right:10px;
         padding-bottom:8px;
         color:black;
+        line-height:19px;
 }
 #nav-login input[type=text], #nav-login input[type=password] {
         height: 20px;
@@ -1263,12 +1290,7 @@ div#optional_login_fields {
 #main-menu {
 	width:185px;
 	position:absolute;
-	margin:10px 0 0;
 	left:0;
-}
-#main-menu ul {
-	border-top:1px solid #ddd;
-	border-bottom:1px solid #fff;
 }
 #main-menu ul ul {
 	font-size:11px;
@@ -1290,8 +1312,8 @@ div#optional_login_fields {
 	background:#f3f3f3;
 }
 #main-menu li {
-	border-top:1px solid #fff;
-	border-bottom:1px solid #ddd;
+	border-top:1px solid #d0d0d0;
+	border-bottom:1px solid #d0d0d0;
 	position:relative;
 }
 #main-menu li li {
@@ -2191,12 +2213,6 @@ div.flash {
 /* all kinds of wonderful tweaks */
 
 #account li li:last-child a:hover {
-	-moz-border-radius-bottomleft:5px;
-	-moz-border-radius-bottomright:5px;
-	-webkit-border-bottom-left-radius:5px;
-	-webkit-border-bottom-right-radius:5px;
-	border-bottom-left-radius:5px;
-	border-bottom-right-radius:5px;
 }
 .question pre {
 	color:#111;
