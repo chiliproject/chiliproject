@@ -43,6 +43,7 @@ class Message < ActiveRecord::Base
 
   validates_presence_of :board, :subject, :content
   validates_length_of :subject, :maximum => 255
+  validate :cannot_reply_to_locked_topic, :on => :create
 
   after_create :add_author_as_watcher, :update_parent_last_reply
   after_update :update_messages_board
@@ -61,7 +62,7 @@ class Message < ActiveRecord::Base
     !user.nil? && user.allowed_to?(:view_messages, project)
   end
 
-  def validate_on_create
+  def cannot_reply_to_locked_topic
     # Can not reply to a locked topic
     errors.add_to_base 'Topic is locked' if root.locked? && self != root
   end
