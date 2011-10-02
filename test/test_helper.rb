@@ -140,6 +140,35 @@ class ActiveSupport::TestCase
     assert_tag({:attributes => { :id => 'errorExplanation' }}.merge(options))
   end
 
+  def assert_include(expected, s)
+    assert s.include?(expected), "\"#{expected}\" not found in \"#{s}\""
+  end
+
+  def assert_not_include(expected, s)
+    assert !s.include?(expected), "\"#{expected}\" found in \"#{s}\""
+  end
+
+  def assert_mail_body_match(expected, mail)
+    if expected.is_a?(String)
+      assert_include expected, mail_body(mail)
+    else
+      assert_match expected, mail_body(mail)
+    end
+  end
+
+  def assert_mail_body_no_match(expected, mail)
+    if expected.is_a?(String)
+      assert_not_include expected, mail_body(mail)
+    else
+      assert_no_match expected, mail_body(mail)
+    end
+  end
+
+  def mail_body(mail)
+    mail.body.encoded
+  end
+
+  # Shoulda macros
   def self.should_render_404
     should_respond_with :not_found
     should_render_template 'common/error'
