@@ -4,9 +4,9 @@ module Redmine
   module VERSION #:nodoc:
     MAJOR = 1
     MINOR = 5
-    PATCH = 2
+    PATCH = 3
     TINY  = PATCH # Redmine compat
-    
+
     def self.revision
       revision = nil
       entries_path = "#{RAILS_ROOT}/.svn/entries"
@@ -31,9 +31,9 @@ module Redmine
     REVISION = self.revision
     ARRAY = [MAJOR, MINOR, PATCH, REVISION].compact
     STRING = ARRAY.join('.')
-    
+
     def self.to_a; ARRAY end
-    def self.to_s; STRING end    
+    def self.to_s; STRING end
     def self.to_semver
       [MAJOR, MINOR, PATCH].join('.')
     end
