@@ -1,5 +1,9 @@
 = ChiliProject changelog
 
+== 2011-10-04 v1.5.3
+
+* Bug #619: Redmine.pm allows anonymous read access to repositories even if Anonymous role prohibits it
+
 == 2011-08-01 v1.5.2
 
 * Bug #547: Multiple XSS vulnerabilities
@@ -1520,7 +1524,7 @@ Note: Previous versions referred to Redmine, which ChiliProject forked from in D
 
 * simple SVN browser added (just needs svn binaries in PATH)
 * comments can now be added on news
-* "my page" is now customizable 
+* "my page" is now customizable
 * more powerfull and savable filters for issues lists
 * improved issues change history
 * new functionality: move an issue to another project or tracker
@@ -1559,7 +1563,7 @@ Note: Previous versions referred to Redmine, which ChiliProject forked from in D
 * token based "lost password" functionality
 * user self-registration functionality (optional)
 * custom fields now available for issues, users and projects
-* new custom field format "text" (displayed as a textarea field) 
+* new custom field format "text" (displayed as a textarea field)
 * project & administration drop down menus in navigation bar for quicker access
 * text formatting is preserved for long text fields (issues, projects and news descriptions)
 * urls and emails are turned into clickable links in long text fields
