@@ -1108,18 +1108,28 @@ a:hover {
         font-weight:bold;
         color:#FFFFFF;
 }
+
 li a.home {
-        text-indent:-999em;
-        width:20px;
-        height:43px;
-        background:url(../images/icon_home.png) no-repeat 50% 50%;
+  text-indent:-999em;
+  width:20px;
+  height:43px;
+  background:url(../images/icon_home.png) no-repeat 50% 50%;
+}
+
+li a.home:hover {
+  background-image:url(../images/icon_home_grey.png);
 }
 li a.help {
-        text-indent:-999em;
-        width:20px;
-        height:43px;
-        background:url(../images/icon_help.png) no-repeat 50% 50%;
+  text-indent:-999em;
+  width:20px;
+  height:43px;
+  background:url(../images/icon_help.png) no-repeat 50% 50%;
 }
+li a.help:hover {
+  background-image:url(../images/icon_help_grey.png);
+}
+
+
 #account li.drop-down.open > a {
 	background:#FFFFFF url(../images/arrow-down-grey.png) no-repeat right center;
 	padding-right:35px;
