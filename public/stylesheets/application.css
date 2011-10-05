@@ -1078,6 +1078,11 @@ a:hover {
 	background:url(../images/arrow-down-white.png) no-repeat right center;
 	padding-right:35px;
 }
+
+#account li.drop-down select {
+  width:100%;
+}
+
 #account li.drop-down > a:hover {
 	background:#FFFFFF url(../images/arrow-down-grey.png) no-repeat right center;
 	padding-right:35px;
@@ -1155,18 +1160,18 @@ input:-moz-placeholder {
 	z-index:21;
 }
 
-#account li ul {
-	display:none;
-	position:absolute;
-	height:auto;
-	min-width:200px;
-	left:-1px;
-	z-index:20;
-        border: 1px solid #b7b7b7;
-        border-top: 0px;
-        background-color:#FFFFFF;
+#account li > ul {
+  display:none;
+  position:absolute;
+  height:auto;
+  min-width:200px;
+  left:-1px;
+  z-index:20;
+  border: 1px solid #b7b7b7;
+  border-top: 0px;
+  background-color:#FFFFFF;
 }
-#account li:last-child ul {
+#account li:last-child > ul {
         left:auto;
         right:-1px;
 }
@@ -1177,17 +1182,17 @@ input:-moz-placeholder {
 	border-width:1px 0;
 }
 #account li.drop-down li > a {
-	padding:5px 9px;
-	background:#FFFFFF;
-	position:static;
-        color:#222222;
-        font-size:13px;
-        font-family:"Arial", Arial, sans-serif;
-        font-style:normal;
-        font-weight:normal;
-        margin:6px;
-        height:20px;
-        line-height:20px;
+  padding:5px 9px;
+  background:#FFFFFF;
+  position:static;
+  color:#222222;
+  font-size:13px;
+  font-family:"Arial", Arial, sans-serif;
+  font-style:normal;
+  font-weight:normal;
+  margin:6px;
+  height:20px;
+  line-height:20px;
 }
 
 #breadcrumb {
@@ -1576,9 +1581,9 @@ form#issue-list {
  ------------------------------------------------------------------------------*/
 
 .title-bar-actions {
-	position:absolute; 
-	right:10px; 
-	top:0; 
+	position:absolute;
+	right:10px;
+	top:0;
 	padding:0 100px 0 10px;
 	height:100%;
 }
@@ -1605,7 +1610,7 @@ div.issue {
 	padding:10px;
 }
 div.issue hr {
-	height:0; 
+	height:0;
 	margin:10px -10px;
 	clear:both;
 }
@@ -1870,7 +1875,7 @@ ul.projects li div.root {
 	display:none;
 	z-index:10;
 }
-.issue .profile-box ul, .journal .profile-box ul {	
+.issue .profile-box ul, .journal .profile-box ul {
 	background:url(../images/profile-arrow-up.png) no-repeat 175px top;
 	position:relative;
 	z-index:11;
