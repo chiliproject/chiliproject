@@ -11,9 +11,6 @@ td.dropdown {
 body .title-bar-extras {
 	overflow:hidden;
 }
-#main-menu a {
-	height:30px;
-}
 
 #main-menu, .title-bar {
 	z-index:4;

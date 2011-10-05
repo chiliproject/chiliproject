@@ -36,7 +36,6 @@ h4, .wiki h3 {font-size: 13px;padding: 2px 10px 1px 0px;margin-bottom: 5px; bord
 }
 #main-menu li a {
   display: block;
-  color: #555;
   text-decoration: none;
   font-weight: normal;
   background: none;
@@ -49,34 +48,6 @@ h4, .wiki h3 {font-size: 13px;padding: 2px 10px 1px 0px;margin-bottom: 5px; bord
 #main-menu #admin-menu li {margin: 0;  padding: 0 0 0 0; list-style-type:none;}
 
 #main-menu #admin-menu a { background-position: 6px center; padding-left: 20px; padding-top: 2px; padding-bottom: 3px; line-height: 30px;}
-
-/* Menu icons */
-#main-menu li a.overview {  background: url(../images/fugue/document-text-image.png) 6px center no-repeat; }
-#main-menu li a.activity {  background: url(../images/fugue/lightning.png) 6px center no-repeat; }
-#main-menu li a.roadmap { background: url(../images/fugue/map-pin.png) 6px center no-repeat; }
-#main-menu li a.issues { background: url(../images/fugue/ticket.png) 6px center no-repeat; }
-#main-menu li a.new-issue { background: url(../images/fugue/ticket--plus.png) 6px center no-repeat; }
-#main-menu li a.news { background: url(../images/fugue/newspaper.png) 6px center no-repeat; }
-#main-menu li a.documents { background: url(../images/fugue/documents-text.png) 6px center no-repeat; }
-#main-menu li a.wiki { background: url(../images/fugue/document-horizontal-text.png) 6px center no-repeat; }
-#main-menu li a.boards { background: url(../images/fugue/balloons.png) 6px center no-repeat; }
-#main-menu li a.files { background: url(../images/fugue/document-zipper.png) 6px center no-repeat; }
-#main-menu li a.repository { background: url(../images/fugue/safe.png) 6px center no-repeat; }
-#main-menu li a.settings { background: url(../images/fugue/equalizer.png) 6px center no-repeat; }
-
-#main-menu #admin-menu a.projects { background-image: url(../images/projects.png); }
-#main-menu #admin-menu a.users { background-image: url(../images/user.png); }
-#main-menu #admin-menu a.groups { background-image: url(../images/group.png); }
-#main-menu #admin-menu a.roles { background-image: url(../images/database_key.png); }
-#main-menu #admin-menu a.trackers { background-image: url(../images/ticket.png); }
-#main-menu #admin-menu a.issue_statuses { background-image: url(../images/ticket_edit.png); }
-#main-menu #admin-menu a.workflows { background-image: url(../images/ticket_go.png); }
-#main-menu #admin-menu a.custom_fields { background-image: url(../images/textfield.png); }
-#main-menu #admin-menu a.enumerations { background-image: url(../images/text_list_bullets.png); }
-#main-menu #admin-menu a.settings { background-image: url(../images/changeset.png); }
-#main-menu #admin-menu a.plugins { background-image: url(../images/plugin.png); }
-#main-menu #admin-menu a.info { background-image: url(../images/help.png); }
-#main-menu #admin-menu a.server_authentication { background-image: url(../images/server_key.png); }
 
 #sidebar{ float: none; min-height: 0px; width: 100%; position: static; z-index: 9; padding: 0; margin: 0;}
 * html #sidebar{ width: 22%; }
@@ -1115,19 +1086,19 @@ a:hover {
         background-color:#FFFFFF;
         color:#222222;
 }
-#account li.drop-down li > a:hover {
-	-moz-border-radius-topleft:10px;
-	-moz-border-radius-topright:10px;
-	-webkit-border-top-left-radius:10px;
-	-webkit-border-top-right-radius:10px;
-	border-top-left-radius:10px;
-	border-top-right-radius:10px;
-	-moz-border-radius-bottomleft:10px;
-	-moz-border-radius-bottomright:10px;
-	-webkit-border-bottom-left-radius:10px;
-	-webkit-border-bottom-right-radius:10px;
-	border-bottom-left-radius:10px;
-	border-bottom-right-radius:10px;
+#account li.drop-down li > a:hover, #main-menu li a.selected, #main-menu li a:hover  {
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	-webkit-border-top-left-radius:5px;
+	-webkit-border-top-right-radius:5px;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-webkit-border-bottom-left-radius:5px;
+	-webkit-border-bottom-right-radius:5px;
+	border-bottom-left-radius:5px;
+	border-bottom-right-radius:5px;
         background-color:#7F7F7F;
         font-weight:bold;
         color:#FFFFFF;
@@ -1214,7 +1185,7 @@ input:-moz-placeholder {
         font-family:"Arial", Arial, sans-serif;
         font-style:normal;
         font-weight:normal;
-        margin:8px;
+        margin:6px;
         height:20px;
         line-height:20px;
 }
@@ -1291,13 +1262,14 @@ div#optional_login_fields {
 	width:185px;
 	position:absolute;
 	left:0;
+        background-color:white;
+        border-right:1px solid #d0d0d0;
 }
 #main-menu ul ul {
-	font-size:11px;
 	display:none;
-  border-top:2px solid #aaa;
-  border-bottom-color:#ddd;
-  background-color:#eee;
+        background-color:white;
+        padding-top:1px;
+        padding-bottom:1px;
 }
 #main-menu ul ul.menu-children.unattached {
   border-top:1px solid #ddd;
@@ -1312,12 +1284,15 @@ div#optional_login_fields {
 	background:#f3f3f3;
 }
 #main-menu li {
-	border-top:1px solid #d0d0d0;
-	border-bottom:1px solid #d0d0d0;
+	border-bottom:1px solid #e2e2e2;
+	border-top:1px solid #f5f5f5;
 	position:relative;
+        min-height:23px;
+        background-color:#e9e9e9;
 }
 #main-menu li li {
 	border:0;
+        background-color:white;
 }
 #main-menu li li li {
 	padding:0;
@@ -1330,16 +1305,25 @@ div#optional_login_fields {
 }
 #main-menu a {
 	text-decoration:none;
-	line-height:2.5;
-	padding-left:24px;
+	line-height:23px;
 	display:block;
 	position:relative;
+        height:23px;
+        color:#333333;
+	font-weight:normal;
+        font-size:13px;
+        font-family:"Arial", Arial, sans-serif;
+        font-style:normal;
 }
-#main-menu a.selected {
-	background-color:#fff !important;
+#main-menu li a {
+        margin:6px;
+	font-weight:bold;
+        padding: 0 0 0 20px;
+}
+#main-menu a.selected, #main-menu a:hover {
 }
 #main-menu li li a {
-	padding-left:34px;
+	font-weight:normal;
 }
 #main-menu li li.current a {
 	font-weight:bold;
@@ -1353,20 +1337,16 @@ div#optional_login_fields {
 #main-menu li li li a span {
 	padding:0;
 }
-#main-menu a:hover, #main-menu a.open:hover, #main-menu li a.selected:hover {
-	background-color:#fafafa !important;
-}
 #main-menu .toggler {
-	display:block;
 	position:absolute;
-	right:6px;
-	top:10px;
-	background:url(../images/arrow-right.png) no-repeat left top;
-	width:9px;
-	height:9px;
+	right:0px;
+	top:0px;
+	background:url(../images/projectnavi_arrow_up.png) no-repeat 32px 7px;
+	width:50px;
+	height:25px;
 }
 #main-menu .open .toggler {
-	background-image:url(../images/arrow-down.png);
+	background:url(../images/projectnavi_arrow_down.png) no-repeat 32px 7px;
 }
 #main-menu li li .toggler {
 	display:none;
@@ -2155,11 +2135,8 @@ ul.projects div.root a.project {
 #sidebar li {border: none; }
 #sidebar li a {padding: 0px; }
 
-#main-menu li a {
-	white-space:normal;
-}
 #main-menu li li a {
-	padding-left:40px;
+	padding-left:30px;
 	padding-right:3px;
 	text-indent:-6px;
 	letter-spacing:-.01em;
