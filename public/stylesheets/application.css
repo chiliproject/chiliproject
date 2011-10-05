@@ -2330,9 +2330,6 @@ tr.time-entry {
 #main-menu .toggle-follow {
 	padding:5px 100px 5px 0;
 }
-#main-menu .toggle-follow:hover {
-	text-decoration:underline;
-}
 
 /* Weird Safari cascade bug. More specificity */
 div.issue p, div.issue div, #content td {
