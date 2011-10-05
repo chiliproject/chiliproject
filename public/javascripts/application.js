@@ -467,34 +467,6 @@ jQuery.viewportHeight = function() {
 
 /* TODO: integrate with existing code and/or refactor */
 jQuery(document).ready(function($) {
-
-
-	// show/hide header search box
-  // TODO: switch to live after upgrading jQuery version. "flicker" bug.
-	$("#account a.search").click(function() {
-		var searchWidth = $("#account-nav").width();
-
-		$(this).toggleClass("open");
-		$("#nav-search").width(searchWidth).slideToggle(animationRate, function(){
-			$("#nav-search-box").select();
-		});
-
-		return false;
-	});
-
-        // show/hide login box
-	$("#account a.login").click(function() {
-		$(this).parent().toggleClass("open");
-                // Focus the username field if the login field has opened
-                $("#nav-login").slideToggle(animRate, function () {
-                    if ($(this).parent().hasClass("open")) {
-                      $("input#username").focus();
-                    }
-                  });
-          
-		return false;
-	});
-        
 	// file table thumbnails
 	$("table a.has-thumb").hover(function() {
 		$(this).removeAttr("title").toggleClass("active");
@@ -515,14 +487,33 @@ jQuery(document).ready(function($) {
 	});
 
 	// custom function for sliding the main-menu. IE6 & IE7 don't handle sliding very well
-	$.fn.mySlide = function() {
+	$.fn.slideAndFocus = function() {
+            this.toggleClass("open").find("ul").mySlide(function(){
+              // actually a simple focus should be enough.
+              // The rest is only there to work around a rendering bug in webkit (as of Oct 2011)
+              var input = jQuery("input#username");
+              if (input.is(":visible")){
+                input.blur();
+                setTimeout(function() {
+                    input.focus();
+                  }, 100);
+              }
+            });
+            
+            return false;
+          };
+	// custom function for sliding the main-menu. IE6 & IE7 don't handle sliding very well
+	$.fn.mySlide = function(callback) {
 		if (parseInt($.browser.version, 10) < 8 && $.browser.msie) {
 			// no animations, just toggle
 			this.toggle();
+                        if (callback != undefined) {
+                          callback();
+                        }
 			// this forces IE to redraw the menu area, un-bollocksing things
 			$("#main-menu").css({paddingBottom:5}).animate({paddingBottom:0}, 10);
 		} else {
-			this.slideToggle(animationRate);
+			this.slideToggle(animationRate,callback);
 		}
 
 		return this;
@@ -560,13 +551,26 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
-	$("#account .drop-down:has(ul) > a").click(function() {
+        jQuery("#account-nav > li").hover(function() {
+          if ($("#account-nav").hasClass("hover") && ($("#account-nav > li.drop-down.open").get(0) !== $(this).get(0))){
                 //Close all other open menus
-                $("#account .drop-down.open:has(ul)").not($(this).parent()).toggleClass("open").find("ul").mySlide();
-                //Close login pull down when open
-                $("li.open div#nav-login").parent().toggleClass("open").find("div#nav-login").slideToggle(animRate);
-                //Toggle clicked menu item
-                $(this).parent().toggleClass("open").find("ul").mySlide();
+                //Used to work around the rendering bug
+                jQuery("input#username").blur();
+                $("#account-nav > li.drop-down.open").toggleClass("open").find("ul").mySlide();
+                $(this).slideAndFocus();
+                return false;
+            }
+        },
+        function(){
+          return false;
+          });
+	jQuery("#account-nav > li.drop-down").click(function() {
+          if (($("#account-nav > li.drop-down.open").get(0) !== $(this).get(0))){
+                $("#account-nav > li.drop-down.open").toggleClass("open").find("ul").mySlide();
+          }
+                $(this).slideAndFocus();
+                $("#account-nav").toggleClass("hover");
+
                 return false;
         });
 
@@ -606,11 +610,13 @@ jQuery(document).ready(function($) {
         });
         
         $('html').click(function() {
-           //Close all open menus
           $("#account .drop-down.open").toggleClass("open").find("ul").mySlide();
-          $("li.open div#nav-login").parent().toggleClass("open").find("div#nav-login").slideToggle(animRate);
+          $("#account-nav.hover").toggleClass("hover");
          });
         // Do not close the login window when using it
+        $('#account-nav li li').click(function(event){
+             event.stopPropagation();
+         });
         $('#nav-login-content').click(function(event){
              event.stopPropagation();
          });
