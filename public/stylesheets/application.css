@@ -44,11 +44,6 @@ h4, .wiki h3 {font-size: 13px;padding: 2px 10px 1px 0px;margin-bottom: 5px; bord
 }
 #main-menu li a:hover {color:#555; text-decoration: none;}
 
-#main-menu #admin-menu ul {margin: 0;  padding: 0;}
-#main-menu #admin-menu li {margin: 0;  padding: 0 0 0 0; list-style-type:none;}
-
-#main-menu #admin-menu a { background-position: 6px center; padding-left: 20px; padding-top: 2px; padding-bottom: 3px; line-height: 30px;}
-
 #sidebar{ float: none; min-height: 0px; width: 100%; position: static; z-index: 9; padding: 0; margin: 0;}
 * html #sidebar{ width: 22%; }
 #sidebar h3{ font-size: 14px; margin-top:14px; }
@@ -2393,7 +2388,6 @@ a.has-thumb img {
 }
 
 /* Make icons non repeating */
-#main-menu #admin-menu ul li a, #main-menu #admin-menu a:hover {padding: 0 0 0 24px; background-repeat: no-repeat !important; }
 
 #more-menu.drop-down ul li a.projects { border-top:1px solid #555; }
 
