@@ -488,7 +488,7 @@ jQuery(document).ready(function($) {
 
 	// custom function for sliding the main-menu. IE6 & IE7 don't handle sliding very well
 	$.fn.slideAndFocus = function() {
-            this.toggleClass("open").find("ul").mySlide(function() {
+          this.toggleClass("open").find("> ul").mySlide(function() {
               // actually a simple focus should be enough.
               // The rest is only there to work around a rendering bug in webkit (as of Oct 2011) TODO: fix
               var input = $(this).parents("li.open").find("input:visible").first();
@@ -556,7 +556,7 @@ jQuery(document).ready(function($) {
                 //Close all other open menus
                 //Used to work around the rendering bug  TODO: fix
                 jQuery("input#username").blur();
-                $("#account-nav > li.drop-down.open").toggleClass("open").find("ul").mySlide();
+                $("#account-nav > li.drop-down.open").toggleClass("open").find("> ul").mySlide();
                 $(this).slideAndFocus();
                 return false;
             }
@@ -566,7 +566,7 @@ jQuery(document).ready(function($) {
           });
 	jQuery("#account-nav > li.drop-down").click(function() {
           if (($("#account-nav > li.drop-down.open").get(0) !== $(this).get(0))){
-                $("#account-nav > li.drop-down.open").toggleClass("open").find("ul").mySlide();
+                $("#account-nav > li.drop-down.open").toggleClass("open").find("> ul").mySlide();
           }
                 $(this).slideAndFocus();
                 $("#account-nav").toggleClass("hover");
