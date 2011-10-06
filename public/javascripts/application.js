@@ -598,14 +598,12 @@ jQuery(document).ready(function($) {
 
         $('#header li.drop-down select.chzn-select').each(function (ix, select) {
           // trigger an artificial mousedown event
-          jQuery(select).parents("li.drop-down").first().mousedown(function(event) {
-            var parent = jQuery(event.target).parents('li.drop-down');
-            parent.find('select.chzn-select').chosen({allow_single_deselect:true});
-            parent.find('div.chzn-container').trigger(jQuery.Event("mousedown"))
-            parent.find('a.chzn-single').hide();
-            jQuery('div.chzn-search').click(function(event){
-                 event.stopPropagation();
-             });
+          var parent = $(select).parents('li.drop-down');
+          parent.find('select.chzn-select').chosen({allow_single_deselect:true});
+          parent.find('div.chzn-container').trigger(jQuery.Event("mousedown"))
+          parent.find('a.chzn-single').hide();
+          jQuery('div.chzn-search').click(function(event){
+             event.stopPropagation();
           });
         });
         
