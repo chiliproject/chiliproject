@@ -555,7 +555,7 @@ jQuery(document).ready(function($) {
           if ($("#account-nav").hasClass("hover") && ($("#account-nav > li.drop-down.open").get(0) !== $(this).get(0))){
                 //Close all other open menus
                 //Used to work around the rendering bug  TODO: fix
-                jQuery("input#username").blur();
+                jQuery("input#username-pulldown").blur();
                 $("#account-nav > li.drop-down.open").toggleClass("open").find("> ul").mySlide();
                 $(this).slideAndFocus();
                 return false;
