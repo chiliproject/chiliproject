@@ -1249,7 +1249,6 @@ div#optional_login_fields {
 	width:185px;
 	position:absolute;
 	left:0;
-        background-color:white;
         border-right:1px solid #d0d0d0;
 }
 #main-menu ul ul {
@@ -1785,7 +1784,6 @@ blockquote {
 #project-links {
 	position:absolute;
 	right:30px;
-	top:110px;
 	color:#ccc;
 	font-weight:bold;
 }
@@ -2108,8 +2106,12 @@ ul.projects div.root a.project {
 }
 
 /* sidebar cleanup */
+#sidebar {
+	padding:18px 30px 6px;
+        width:auto;
+}
 #sidebar h3 {
-	margin:18px 0 6px;
+	margin:0px -10px 0px;
 }
 #sidebar a {
 	padding:0;
