@@ -596,7 +596,7 @@ jQuery(document).ready(function($) {
 			}
 		});
 
-        $('#account li.drop-down select.chzn-select').each(function (ix, select) {
+        $('#header li.drop-down select.chzn-select').each(function (ix, select) {
           // trigger an artificial mousedown event
           jQuery(select).parents("li.drop-down").first().mousedown(function(event) {
             var parent = jQuery(event.target).parents('li.drop-down');
@@ -610,7 +610,7 @@ jQuery(document).ready(function($) {
         });
         
         $('html').click(function() {
-          $("#account .drop-down.open").toggleClass("open").find("ul").mySlide();
+          $("#header .drop-down.open").toggleClass("open").find("ul").mySlide();
           $("#account-nav.hover").toggleClass("hover");
          });
         // Do not close the login window when using it
