@@ -606,6 +606,7 @@ jQuery(document).ready(function($) {
           $(select).chosen({allow_single_deselect:false});
           parent.find('div.chzn-container').trigger(jQuery.Event("mousedown"))
           parent.find('a.chzn-single').hide();
+          // prevent menu from getting closed prematurely
           jQuery('div.chzn-search').click(function(event){
              event.stopPropagation();
           });
