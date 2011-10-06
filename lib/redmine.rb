@@ -39,6 +39,8 @@ else
   FCSV = CSV
 end
 
+include ProjectsHelper
+
 Redmine::Scm::Base.add "Subversion"
 Redmine::Scm::Base.add "Darcs"
 Redmine::Scm::Base.add "Mercurial"
@@ -220,6 +222,13 @@ Redmine::MenuManager.map :project_menu do |menu|
   menu.push :repository, { :controller => 'repositories', :action => 'show' },
               :if => Proc.new { |p| p.repository && !p.repository.new_record? }
   menu.push :settings, { :controller => 'projects', :action => 'settings' }, :last => true
+  available_project_settings_tabs.each do |tab|
+    menu.push tab[:name],
+      { :controller => 'projects', :action => "settings", :tab => tab[:name] },
+      :caption => tab[:label],
+      :parent => :settings,
+      :if => Proc.new { |p| User.current.allowed_to?(tab[:action], p) }
+  end
 end
 
 Redmine::Activity.map do |activity|
