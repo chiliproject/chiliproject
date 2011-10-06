@@ -488,10 +488,10 @@ jQuery(document).ready(function($) {
 
 	// custom function for sliding the main-menu. IE6 & IE7 don't handle sliding very well
 	$.fn.slideAndFocus = function() {
-            this.toggleClass("open").find("ul").mySlide(function(){
+            this.toggleClass("open").find("ul").mySlide(function() {
               // actually a simple focus should be enough.
               // The rest is only there to work around a rendering bug in webkit (as of Oct 2011) TODO: fix
-              var input = jQuery("input#username");
+              var input = $(this).parents("li.open").find("input:visible").first();
               if (input.is(":visible")){
                 input.blur();
                 setTimeout(function() {
