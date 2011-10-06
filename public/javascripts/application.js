@@ -490,7 +490,7 @@ jQuery(document).ready(function($) {
 	$.fn.slideAndFocus = function() {
             this.toggleClass("open").find("ul").mySlide(function(){
               // actually a simple focus should be enough.
-              // The rest is only there to work around a rendering bug in webkit (as of Oct 2011)
+              // The rest is only there to work around a rendering bug in webkit (as of Oct 2011) TODO: fix
               var input = jQuery("input#username");
               if (input.is(":visible")){
                 input.blur();
@@ -554,7 +554,7 @@ jQuery(document).ready(function($) {
         jQuery("#account-nav > li").hover(function() {
           if ($("#account-nav").hasClass("hover") && ($("#account-nav > li.drop-down.open").get(0) !== $(this).get(0))){
                 //Close all other open menus
-                //Used to work around the rendering bug
+                //Used to work around the rendering bug  TODO: fix
                 jQuery("input#username").blur();
                 $("#account-nav > li.drop-down.open").toggleClass("open").find("ul").mySlide();
                 $(this).slideAndFocus();
