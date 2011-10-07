@@ -165,7 +165,7 @@ Redmine::MenuManager.map :top_menu do |menu|
   menu.push :home, :home_path
   menu.push :my_page, { :controller => 'my', :action => 'page' }, :if => Proc.new { User.current.logged? }
   menu.push :projects, { :controller => 'projects', :action => 'index' }, :caption => :label_project_plural
-  menu.push :administration, { :controller => 'admin', :action => 'index' }, :if => Proc.new { User.current.admin? }, :last => true
+  menu.push :administration, { :controller => 'admin', :action => 'projects' }, :if => Proc.new { User.current.admin? }, :last => true
   menu.push :help, Redmine::Info.help_url, :last => true, :caption => "?"
 end
 

@@ -248,7 +248,7 @@ blockquote blockquote { margin-left: 0;}
 acronym  { border-bottom: 1px dotted; cursor: help; }
 textarea.wiki-edit { width: 99%; }
 li p {margin-top: 0;}
-div.issue {background:#ffffdd; padding:6px; margin-bottom:6px;border: 1px solid #d7d7d7;}
+div.issue {padding:6px; margin-bottom:6px;}
 p.breadcrumb { font-size: 0.9em; margin: 4px 0 4px 0;}
 p.subtitle { font-size: 0.9em; margin: -6px 0 12px 0; font-style: italic; } 
 p.footnote { font-size: 0.9em; margin-top: 0px; margin-bottom: 0px; }
@@ -261,6 +261,65 @@ div.issue div.subject h3 {margin: 0; margin-bottom: 0.1em;}
 #issue_tree table.issues { border: 0; }
 #issue_tree td.checkbox {display:none;}
 
+fieldset#filters legend {
+    -moz-border-radius-bottomleft:0px;
+    -moz-border-radius-bottomright:0px;
+    -webkit-border-bottom-left-radius:0px;
+    -webkit-border-bottom-right-radius:0px;
+    border-bottom-left-radius:0px;
+    border-bottom-right-radius:0px;
+  }
+fieldset#column_options legend {
+    -moz-border-radius-topleft:0px;
+    -moz-border-radius-topright:0px;
+    -webkit-border-top-left-radius:0px;
+    -webkit-border-top-right-radius:0px;
+    border-top-left-radius:0px;
+    border-top-right-radius:0px;
+  }
+#content fieldset.collapsible.header_collapsible {
+  padding-top:0px;
+  padding-bottom:0px;
+  border:0px;
+  margin:0px;
+  }
+fieldset.collapsible.header_collapsible > div {
+  padding-top:5px;
+  padding-bottom:5px;
+}
+fieldset.collapsible.header_collapsible > * {
+  border-left:1px solid #E6E6E6; 
+  border-right:1px solid #E6E6E6; 
+  border-bottom:1px solid #E6E6E6; 
+  width:100%;
+  }
+fieldset.collapsible.header_collapsible legend {
+    background:#E6E6E6 url(../images/projectnavi_arrow_up.png) no-repeat 99% 50%; cursor:pointer;
+    padding-left:0px;
+    width:100%;
+    height:23px;
+    line-height:23px;
+    text-indent:8px;
+    -moz-border-radius-topleft:5px;
+    -moz-border-radius-topright:5px;
+    -webkit-border-top-left-radius:5px;
+    -webkit-border-top-right-radius:5px;
+    border-top-left-radius:5px;
+    border-top-right-radius:5px;
+    -moz-border-radius-bottomleft:0px;
+    -moz-border-radius-bottomright:0px;
+    -webkit-border-bottom-left-radius:0px;
+    -webkit-border-bottom-right-radius:0px;
+    border-bottom-left-radius:0px;
+    border-bottom-right-radius:0px;
+}
+
+fieldset.collapsible.collapsed.header_collapsible legend {
+    background-image:url(../images/projectnavi_arrow_down.png);
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+  }
 fieldset.collapsible { border-width: 1px 0 0 0; font-size: 0.9em; }
 fieldset.collapsible.borders { border-width: 1px; }
 fieldset.collapsible.collapsed.borders { border-width: 1px 0 0 0; }
@@ -1586,8 +1645,8 @@ form#issue-list {
 /*	color:#fff;*/
 }
 .title-bar .title-bar-actions .contextual a.icon {
-	color:#fff;
-  margin-right: 0px;
+	color:#000000;
+        margin-right: 0px;
 }
 .title-bar .update {
 	right:0;
