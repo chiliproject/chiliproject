@@ -1339,9 +1339,23 @@ div#optional_login_fields {
 	width:50px;
 	height:25px;
 }
+
 #main-menu .open .toggler {
-	background:url(../images/projectnavi_arrow_up.png) no-repeat 32px 7px;
+  background-image:url(../images/projectnavi_arrow_down.png);
 }
+#main-menu li .selected .toggler {
+  background-image:url(../images/projectnavi_arrow_up_white.png);
+}
+#main-menu li .selected.open .toggler {
+  background-image:url(../images/projectnavi_arrow_down_white.png);
+}
+#main-menu li a:hover .toggler {
+  background-image:url(../images/projectnavi_arrow_up_white.png);
+}
+#main-menu .open:hover .toggler {
+  background-image:url(../images/projectnavi_arrow_down_white.png);
+}
+
 #main-menu li li .toggler {
 	display:none;
 }
