@@ -6,8 +6,8 @@
         <td><label for="password-pulldown"><%= l(:field_password) %></label></td>
       </tr>
       <tr>
-        <td><%= text_field_tag 'username-pulldown', nil, :tabindex => '1' %></td>
-        <td><%= password_field_tag 'password-pulldown', nil, :tabindex => '1' %></td>
+        <td><%= text_field_tag 'username', nil, :tabindex => '1', :id => 'username-pulldown' %></td>
+        <td><%= password_field_tag 'password', nil, :tabindex => '1', :id => 'password-pulldown' %></td>
         <td><input type="submit" name="login" value="<%=l(:button_login)%>" tabindex="1"/></td>
       </tr>
     </table>
