@@ -1313,7 +1313,7 @@ div#optional_login_fields {
 
 #main-menu {
 	width:185px;
-        height:100%;
+        height:auto;
 	position:absolute;
 	left:0;
         border-right:1px solid #d0d0d0;
@@ -1660,12 +1660,12 @@ div.issue {
 	padding:10px;
 }
 div.issue hr {
-	height:0;
 	margin:10px -10px;
 	clear:both;
 }
 div.issue h3 {
 	font-size:14px;
+        border:0px;
 }
 #content .meta table {
 	border:0 none;
@@ -2273,9 +2273,6 @@ div.issue hr {
 }
 #content h2 + h3 {
 	margin-top:12px;
-}
-#content .issue h3 {
-	margin:0 0 16px;
 }
 div.issue img.gravatar, #history img.gravatar {
 	float:none;
