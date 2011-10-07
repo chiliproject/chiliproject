@@ -1254,6 +1254,7 @@ div#optional_login_fields {
 
 #main-menu {
 	width:185px;
+        height:100%;
 	position:absolute;
 	left:0;
         border-right:1px solid #d0d0d0;
