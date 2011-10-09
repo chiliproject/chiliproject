@@ -14,7 +14,7 @@
 
 <% html_title(@query.new_record? ? l(:label_issue_plural) : h(@query.name)) %>
 
-<% form_tag({ :controller => 'issues', :action => 'index', :project_id => @project }, :method => :get, :id => 'query_form') do %>
+<%= form_tag({ :controller => 'issues', :action => 'index', :project_id => @project }, :method => :get, :id => 'query_form') do %>
     <%= hidden_field_tag 'set_filter', '1' %>
 		<div id="query_form_content" class="hide-when-print">
     <fieldset id="filters" class="header_collapsible collapsible <%= @query.new_record? ? "" : "collapsed" %>">
