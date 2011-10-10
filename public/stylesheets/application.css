@@ -1083,6 +1083,7 @@ a:hover {
 #top-menu {
 	height: 81px;
 	position:relative;
+        z-index:21;
 }
 #top-menu.open { /*IE 6-7 z-index stacking issue*/
 	z-index:5;
@@ -1445,8 +1446,12 @@ div#optional_login_fields {
  *
  * This section includes the layout and styles for the main content area.
  ------------------------------------------------------------------------------*/
-#main {background:#f3f3f3;}
-#footer { color: #aaa; }
+#main {
+        background:#f3f3f3;
+        position:relative;
+        z-index:20;
+ }
+#footer { color: #aaa; padding-left: 186px }
 
 h1.title {
 	margin:12px 24px 9px;
@@ -1455,7 +1460,7 @@ h1.title {
 	margin:0 15px 10px 185px;
 	padding:10px;
 	font-size:11px;
-    width: auto;
+        width: auto;
 }
 #content .title-bar {
 	position:relative;
@@ -1639,7 +1644,7 @@ form#issue-list {
 }
 .title-bar .title-bar-actions .contextual {
 /*	line-height:3.5;*/
-   padding-right: 100px;
+        padding-right:0px;
 }
 .title-bar-actions .contextual a {
 /*	color:#fff;*/

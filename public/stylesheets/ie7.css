@@ -43,3 +43,6 @@ div.attachments {
 	position:relative;
 	z-index:4;
 }
+fieldset.collapsible.header_collapsible legend {
+  margin-left:-15px;
+}
