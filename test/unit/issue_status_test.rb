@@ -98,7 +98,9 @@ class IssueStatusTest < ActiveSupport::TestCase
     status = issue_statuses(:issue_statuses_001)
 
     new_statuses = status.new_statuses_allowed_to(roles, tracker)
+    find_new_statuses = status.find_new_statuses_allowed_to(roles, tracker)
     assert_equal new_statuses.uniq, new_statuses, 'contains duplicates'
+    assert_equal find_new_statuses.uniq, find_new_statuses, 'contains duplicates'
   end
 
   context "#update_done_ratios" do
