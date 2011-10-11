@@ -13,7 +13,9 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class IssueStatusTest < ActiveSupport::TestCase
-  fixtures :issue_statuses, :issues, :roles, :trackers
+  fixtures :issue_statuses, :issues,
+           :projects, :users, :members, :member_roles, :roles,
+           :trackers, :projects_trackers, :workflows
 
   def test_create
     status = IssueStatus.new :name => "Assigned"
@@ -86,6 +88,17 @@ class IssueStatusTest < ActiveSupport::TestCase
 
     assert_equal [2, 3, 4, 5], status.new_statuses_allowed_to([role], tracker, true, true).map(&:id)
     assert_equal [2, 3, 4, 5], status.find_new_statuses_allowed_to([role], tracker, true, true).map(&:id)
+  end
+
+  def test_return_uniq_allowed_statuses
+    user = users(:users_008)
+    project = projects(:projects_005)
+    roles = user.roles_for_project(project)
+    tracker = project.trackers.first
+    status = issue_statuses(:issue_statuses_001)
+
+    new_statuses = status.new_statuses_allowed_to(roles, tracker)
+    assert_equal new_statuses.uniq, new_statuses, 'contains duplicates'
   end
 
   context "#update_done_ratios" do
