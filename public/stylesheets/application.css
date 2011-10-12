@@ -1608,10 +1608,6 @@ form#issue-list {
 #content table tr.context-menu-selection {
 	background:#FEFBD0 url(../images/selected-gradient.jpg) repeat-x left top;
 }
-#content table td a {
-	color:#333;
-	text-decoration:none;
-}
 #content table td.priority {
 	text-align:center;
 }
