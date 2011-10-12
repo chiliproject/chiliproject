@@ -51,7 +51,15 @@ h4, .wiki h3 {font-size: 13px;padding: 2px 10px 1px 0px;margin-bottom: 5px; bord
 * html #sidebar hr{ width: 95%; position: relative; left: -6px; color: #ccc; }
 #sidebar .contextual { margin-right: 1em; }
 
-#content { width: 75%; background-color: #fff; margin: 0px; border-right: 1px solid #ddd; padding: 6px 10px 10px 10px; z-index: 10; }
+#content {
+  width: 75%;
+  background-color: #fff;
+  margin: 0px;
+  border: 1px #ddd;
+  border-style: none solid solid solid;
+  padding: 6px 10px 10px 10px;
+  z-index: 10;
+}
 * html #content{ width: 75%; padding-left: 0; margin-top: 0px; padding: 6px 10px 10px 10px;}
 html>body #content { min-height: 600px; } 
 * html body #content { height: 600px; } /* IE */
@@ -1323,7 +1331,6 @@ div#optional_login_fields {
         height:100%;
 	position:absolute;
 	left:0;
-        border-right:1px solid #d0d0d0;
 }
 #main-menu ul ul {
 	display:none;
