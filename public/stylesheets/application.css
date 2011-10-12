@@ -1633,7 +1633,7 @@ form#issue-list {
 	margin-right:10px;
 }
 .pagination, .other-formats {
-	float:right;
+	float:left;
 	clear:right;
 	margin:10px 0;
 }
@@ -1649,7 +1649,7 @@ form#issue-list {
 
 .title-bar-actions {
 	position:absolute;
-	right:10px;
+	right:0px;
 	top:0;
 	padding:0 100px 0 10px;
 	height:100%;
@@ -1663,7 +1663,7 @@ form#issue-list {
 }
 .title-bar .title-bar-actions .contextual a.icon {
 	color:#000000;
-        margin-right: 0px;
+  margin-right: 0px;
 }
 .title-bar .update {
 	right:0;
