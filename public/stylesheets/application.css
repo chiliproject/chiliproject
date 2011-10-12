@@ -325,6 +325,10 @@ fieldset.collapsible.header_collapsible legend {
     border-bottom-right-radius:0px;
 }
 
+fieldset.collapsible.header_collapsible legend:hover {
+  background-color:#d8d8d8;
+}
+
 fieldset.collapsible.collapsed.header_collapsible legend {
     background-image:url(../images/projectnavi_arrow_down.png);
     -moz-border-radius:5px;
