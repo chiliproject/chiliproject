@@ -623,7 +623,7 @@ jQuery(document).ready(function($) {
         });
         
         $('html').click(function() {
-          $("#header .drop-down.open").toggleClass("open").find("ul").mySlide();
+          $("#header .drop-down.open").toggleClass("open").find("> ul").mySlide();
           $("#account-nav.hover").toggleClass("hover");
          });
         // Do not close the login window when using it
