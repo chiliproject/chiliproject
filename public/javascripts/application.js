@@ -493,12 +493,13 @@ jQuery(document).ready(function($) {
               // The rest is only there to work around a rendering bug in webkit (as of Oct 2011) TODO: fix
               if ($("input#username-pulldown").is(":visible")) {
                 var input = $("input#username-pulldown");
-              }
-              else{
+              } else {
+                // reset input value and project search list
                 var input = $(".chzn-search input");
+                input.val("");
+                $("select#project-search").trigger($.Event("liszt:updated"));
               }
-
-              if (input.is(":visible")){
+              if (input.is(":visible")) {
                 input.blur();
                 setTimeout(function() {
                     input.focus();
