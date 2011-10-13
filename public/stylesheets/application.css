@@ -1131,6 +1131,7 @@ a:hover {
         color:#ffffff;
 	height:43px;
 	border-top:0;
+  position:relative;
         }
 
 #header ul#account-info {
