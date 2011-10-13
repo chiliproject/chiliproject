@@ -88,7 +88,11 @@ input#openid_url { background: url(../images/openid-bg.gif) no-repeat; backgroun
 .clear:after{ content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 
 /***** Links *****/
-a, a:link, a:visited{ text-decoration: none; }
+a, a:link, a:visited { 
+        text-decoration: none; 
+        color: #6a0406;
+        font-weight:bold;
+  }
 a:hover, a:active{ text-decoration: underline;}
 a img{ border: 0; }
 
@@ -1080,8 +1084,6 @@ h5 {
 	margin-bottom:18px;
 }
 a {
-  color:#8C8C8C;
-	text-decoration:none;
 }
 a:hover {
 	text-decoration:underline;
@@ -1150,6 +1152,7 @@ a:hover {
 	text-decoration:none;
         color:#FFFFFF;
 	height:43px;
+        font-weight:normal;
 }
 #header li.drop-down select {
   width:100%;
@@ -1288,6 +1291,10 @@ input:-moz-placeholder {
         font-family:"Arial", Arial, sans-serif;
         font-style:normal;
         font-weight:normal;
+}
+#breadcrumb a {
+        text-decoration:underline;
+        color:#777777;
 }
 #nav-search {
         float: right;
@@ -1504,9 +1511,8 @@ h1.title {
 
 .button-large a {
 	padding:3px 9px;
-	text-decoration:none;
 	display:block;
-	color:#333;
+	color:#6a0406;
 }
 .title-bar .add-filter {
 	right:155px;
