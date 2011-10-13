@@ -1321,12 +1321,13 @@ input:-moz-placeholder {
 }
 #nav-login-content  div a {
         display: inline;
-        padding-left: 2px;
         color:black;
+        padding:0;
 }
 div#optional_login_fields {
   top:10px;
   white-space:nowrap;
+  margin-left:2px;
 }
 /*-------------------------------------------------------------------------------
  * =02 - Main Menu
