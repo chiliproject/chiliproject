@@ -65,7 +65,7 @@ html>body #content { min-height: 600px; }
 * html body #content { height: 600px; } /* IE */
 
 #main.nosidebar #sidebar{ display: none; }
-#main.nosidebar #content{ width: auto; border-right: 0; }
+#main.nosidebar #content{ width: auto }
 
 #footer {clear: both; font-size: 0.9em; color: #aaa; padding: 5px; text-align:center;}
 
@@ -1147,7 +1147,7 @@ a:hover {
 	position:relative;
 	z-index:5;
 }
-#header li:last-child {
+#header li.last-child {
 	border-right:0px;
 }
 #header li > a {
@@ -1879,6 +1879,7 @@ blockquote {
 	margin-left:20px;
 	padding:15px 60px 15px 25px;
 	font-size:12px;
+
 }
 #project-links {
 	right:30px;
