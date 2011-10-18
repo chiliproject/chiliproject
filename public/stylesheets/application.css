@@ -1,7 +1,7 @@
 html {overflow-y:scroll;}
-body { font-family: Verdana, sans-serif; font-size: 12px; margin: 0; padding: 0; min-width: 900px; }
+body { font-size: 12px; margin: 0; padding: 0; min-width: 900px; }
 
-h1, h2, h3, h4 { font-family: "Trebuchet MS", Verdana, sans-serif;}
+h1, h2, h3, h4 { font-family:"Arial", Arial, sans-serif; }
 h1 {margin:0; padding:0; font-size: 24px;}
 h2, .wiki h1 {font-size: 20px;padding: 2px 10px 1px 0px;margin: 0 0 10px 0; border-bottom: 1px solid #bbbbbb; }
 h3, .wiki h2 {font-size: 16px;padding: 2px 10px 1px 0px;margin: 0 0 10px 0; border-bottom: 1px solid #bbbbbb; }
@@ -417,7 +417,7 @@ ul.projects ul {border: none; }
 ul.projects ul.projects { border-left: 3px solid #e0e0e0; }
 ul.projects li.root { list-style-type:none; margin-bottom: 1em; }
 ul.projects li.child { list-style-type:none; margin-top: 1em;}
-ul.projects div.root a.project { font-family: "Trebuchet MS", Verdana, sans-serif; font-weight: bold; font-size: 16px; margin: 0 0 10px 0; }
+ul.projects div.root a.project { font-family:"Arial", Arial, sans-serif; font-weight: bold; font-size: 16px; margin: 0 0 10px 0; }
 .my-project { padding-left: 18px; background: url(../images/fav.png) no-repeat 0 50%; }
 
 #tracker_project_ids ul { margin: 0;  padding-left: 1em; }
@@ -1051,7 +1051,7 @@ h2 img { vertical-align:middle; }
  ------------------------------------------------------------------------------*/
 
 body {
-	font: normal normal normal 12px/1.5 'lucida grande','lucida sans unicode',tahoma,arial,sans-serif;
+	font: normal normal normal 12px/1.5 arial,'lucida grandriale','lucida sans unicode',tahom,sans-serif;
 	background:#f3f3f3;
 	color:#333;
 
