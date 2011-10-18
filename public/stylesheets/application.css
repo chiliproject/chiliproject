@@ -44,13 +44,6 @@ h4, .wiki h3 {font-size: 13px;padding: 2px 10px 1px 0px;margin-bottom: 5px; bord
 }
 #main-menu li a:hover {color:#555; text-decoration: none;}
 
-#sidebar{ float: none; min-height: 0px; width: 100%; position: static; z-index: 9; padding: 0; margin: 0;}
-* html #sidebar{ width: 22%; }
-#sidebar h3{ font-size: 14px; margin-top:14px; }
-#sidebar hr{ width: 100%; margin: 0 auto; height: 1px; background: #ccc; border: 0; }
-* html #sidebar hr{ width: 95%; position: relative; left: -6px; color: #ccc; }
-#sidebar .contextual { margin-right: 1em; }
-
 #content {
   width: 75%;
   background-color: #fff;
@@ -1079,8 +1072,6 @@ h5 {
 	font-size:12px;
 	text-transform: uppercase;
 	margin-bottom:18px;
-}
-a {
 }
 a:hover {
 	text-decoration:underline;
@@ -2206,15 +2197,36 @@ ul.projects div.root a.project {
 
 /* sidebar cleanup */
 #sidebar {
-	padding:18px 30px 6px;
+	padding:10px 2px 2px 20px;
         width:auto;
+        color:#888888;
+	font-weight:normal;
+        font-size:11px;
+        font-family:"Arial", Arial, sans-serif;
+        font-style:normal;
 }
 #sidebar h3 {
-	margin:0px -10px 0px;
+        color:#777777;
+	font-weight:bold;
+        font-size:12px;
+        font-family:"Arial", Arial, sans-serif;
+        font-style:normal;
+        margin:0px;
+        padding:0px;
+        margin-bottom:8px;
 }
-#sidebar a {
-	padding:0;
-	line-height:1.5;
+#sidebar a, #sidebar a:link, #sidebar a:visited {
+        color: #6a0406;
+        font-weight:bold;
+        height:auto;
+        display:inline;
+        position:static;
+        font-size:11px;
+        font-style:normal;
+        line-height:1.5;
+}
+#sidebar a:hover {
+        text-decoration:underline;
 }
 #sidebar input.button-small {
 	margin-top:6px;
