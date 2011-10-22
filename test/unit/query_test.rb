@@ -383,6 +383,48 @@ class QueryTest < ActiveSupport::TestCase
     assert !q.editable_by?(developer)
   end
 
+  context "#available_columns" do
+    setup do
+      @query = Query.new(:name => "_")
+      @query.project = Project.find(1)
+    end
+    
+    context "'estimated_hours' column" do
+      should "be present" do
+        assert @query.available_columns.collect{ |q| q.name }.include?(:estimated_hours)
+      end
+    end
+
+    context "'spent_hours' column" do
+      context "for an user with view_time_entries permission" do
+        setup do
+          @role = Role.generate!(:name => 'Role', :permissions => [:view_time_entries])
+          @user = User.generate!
+          User.add_to_project(@user, @query.project, @role)
+          User.current = @user
+        end
+
+        should "be present" do
+          assert @query.available_columns.collect{ |q| q.name }.include?(:spent_hours)
+        end
+      end
+      
+      context "for an user without view_time_entries permission" do
+        setup do
+          @role = Role.generate!(:name => 'Role', :permissions => [])
+          @user = User.generate!
+          User.add_to_project(@user, @query.project, @role)
+          User.current = @user
+        end
+
+        should "be hidden" do
+          assert ! @query.available_columns.collect{ |q| q.name }.include?(:spent_hours)
+        end
+      end
+
+    end
+  end
+  
   context "#available_filters" do
     setup do
       @query = Query.new(:name => "_")

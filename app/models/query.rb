@@ -292,7 +292,10 @@ class Query < ActiveRecord::Base
 
   def available_columns
     return @available_columns if @available_columns
-    @available_columns = Query.available_columns
+    @available_columns = Query.available_columns.clone
+    if User.current.allowed_to?(:view_time_entries, project)
+      @available_columns << QueryColumn.new(:spent_hours, :caption => :label_spent_time)
+    end
     @available_columns += (project ?
                             project.all_issue_custom_fields :
                             IssueCustomField.find(:all)
