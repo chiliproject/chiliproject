@@ -48,7 +48,7 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.resources :issue_moves, :only => [:new, :create], :path_prefix => '/issues', :as => 'move'
-  map.resources :queries, :only => [:index]
+  map.resources :queries, :except => [:show]
 
   # Misc issue routes. TODO: move into resources
   map.auto_complete_issues '/issues/auto_complete', :controller => 'auto_completes', :action => 'issues', :conditions => { :method => :get }
@@ -120,6 +120,7 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :boards
     project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
     project.resources :issue_categories, :shallow => true
+    project.resources :queries, :except => [:show]
 
     project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
     project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
