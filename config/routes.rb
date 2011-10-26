@@ -149,7 +149,7 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :boards
     project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
     project.resources :issue_categories, :shallow => true
-    project.resources :queries, :except => [:show]
+    project.resources :queries, :only => [:new, :create]
     project.resources :repositories, :shallow => true, :except => [:index, :show],
                       :member => {:committers => [:get, :post]}
     project.resources :memberships, :shallow => true, :controller => 'members',
