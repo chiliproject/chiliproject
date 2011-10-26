@@ -826,7 +826,7 @@ padding: 15px 0 15px 0;
 .mypage-box {
   margin-top:20px;
   padding: 0px 10px 0px 10px;
-  border: gray solid 1px;
+  border: #C4C4C4 solid 1px;
   font-size:11px;
   background: #FFFFFF url(../images/background_widgets.png) repeat-x 0 0;
 
@@ -837,12 +837,17 @@ padding: 15px 0 15px 0;
   /* For IE 8 */
   -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=2, Direction=135, Color='#333333')";
   /* For IE 5.5 - 7 */
-  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=2, Direction=135, Color='#333333');
+  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=2, Direction=135, Color='#000000');
+  zoom: 1;
+}
+
+#content .mypage-box h3 {
+  margin: 9px 0px 6px;
 }
 
 #content .mypage-box table {
   padding: 10;
-  margin-top:20px;
+  margin-top:15px;
   margin-bottom:15px;
 }
 
