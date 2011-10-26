@@ -120,7 +120,7 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :boards
     project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
     project.resources :issue_categories, :shallow => true
-    project.resources :queries, :except => [:show]
+    project.resources :queries, :only => [:new, :create]
 
     project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
     project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
