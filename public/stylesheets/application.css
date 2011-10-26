@@ -828,6 +828,7 @@ padding: 15px 0 15px 0;
   padding: 0px 10px 0px 10px;
   border: gray solid 1px;
   font-size:11px;
+  background: #FFFFFF url(../images/background_widgets.png) repeat-x 0 0;
 
   /* Shadow definitions cross browser */
   -moz-box-shadow: 1px 1px 1px #BFBFBF;
