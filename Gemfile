@@ -63,7 +63,7 @@ end
 platforms :mri, :mingw, :rbx do
   # keep mysql group as backwards compat
   group :mysql2, :mysql do
-    gem "mysql2", "~> 0.2.7"
+    gem "mysql2"
   end
 
   group :postgres do
