@@ -12,6 +12,21 @@
 #++
 
 module Redmine
-  # THIS IS A REDMINE COMPATIBILITY INTERFACE
-  VERSION = ChiliProject::VERSION
+  module WikiFormatting
+    module NullFormatter
+      class Formatter
+        include ActionView::Helpers::TagHelper
+        include ActionView::Helpers::TextHelper
+        include ActionView::Helpers::UrlHelper
+
+        def initialize(text)
+          @text = text
+        end
+
+        def to_html(*args)
+          simple_format(auto_link(CGI::escapeHTML(@text)))
+        end
+      end
+    end
+  end
 end
