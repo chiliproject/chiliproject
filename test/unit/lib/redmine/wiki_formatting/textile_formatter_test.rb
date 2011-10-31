@@ -85,7 +85,15 @@ class Redmine::WikiFormatting::TextileFormatterTest < HelperTestCase
       'GPL(This is a double-quoted "title")' => '<acronym title="This is a double-quoted &quot;title&quot;">GPL</acronym>'
     )
   end
-  
+
+  def test_textile_should_escape_image_urls
+    # this is onclick="alert('XSS');" in encoded form
+    raw = '!/images/comment.png"onclick=&#x61;&#x6c;&#x65;&#x72;&#x74;&#x28;&#x27;&#x58;&#x53;&#x53;&#x27;&#x29;;&#x22;!'
+    expected = '<img src="/images/comment.png&quot;onclick=&amp;#x61;&amp;#x6c;&amp;#x65;&amp;#x72;&amp;#x74;&amp;#x28;&amp;#x27;&amp;#x58;&amp;#x53;&amp;#x53;&amp;#x27;&amp;#x29;;&amp;#x22;" alt="" />'
+
+    assert_html_output(raw => expected)
+  end
+
   private
   
   def assert_html_output(to_test)
