@@ -1,5 +1,9 @@
 = ChiliProject changelog
 
+== 2011-10-31 v1.5.4
+
+* Bug #647: XSS: User input for images is not properly sanitized
+
 == 2011-10-04 v1.5.3
 
 * Bug #619: Redmine.pm allows anonymous read access to repositories even if Anonymous role prohibits it

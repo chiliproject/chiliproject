@@ -4,7 +4,7 @@ module Redmine
   module VERSION #:nodoc:
     MAJOR = 1
     MINOR = 5
-    PATCH = 3
+    PATCH = 4
     TINY  = PATCH # Redmine compat
 
     def self.revision
