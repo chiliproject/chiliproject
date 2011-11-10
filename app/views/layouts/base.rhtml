@@ -15,8 +15,10 @@
 <!--[if lte IE 7]><%= stylesheet_link_tag 'ie7', :media => 'all' %><![endif]-->
 <!--[if gte IE 8]><![endif]-->
 
-<%= javascript_include_tag 'jquery.1.3.2.min.js' %>
+<%= javascript_include_tag 'jquery-1.6.4.min.js' %>
 <%= javascript_include_tag 'jquery.menu_expand.js' %>
+<%= javascript_include_tag 'chosen.js'%>
+<%= stylesheet_link_tag 'chosen'%>
 <%= javascript_tag('jQuery.noConflict();') %>
 <%= javascript_heads %>
 <%= stylesheet_link_tag 'jstoolbar' %>
@@ -29,22 +31,25 @@
 <body class="<%=h body_css_classes %>">
 <div id="wrapper">
   <div id="top-menu">
-    <div id="account">
-      <% account_items =  menu_items_for(:account_menu) %>
-
-      <ul id="account-info">
-        <%= content_tag('li', "#{l(:label_logged_as)} #{link_to_user(User.current, :format => :username)}", :id => '') if User.current.logged? %>
-        <% account_items.each do |item| %>
-            <%= render_menu_node(item) %>
+    <div id="header">
+      <div id="logo"></div>
+      <div id="top-menu-items">
+      <div id="search">
+        <%= label_tag("q", l(:label_search), :class => "hidden-for-sighted") %>
+        <% form_tag({:controller => 'search', :action => 'index', :id => @project}, :method => :get) do %>
+          <%= hidden_field_tag(controller.default_search_scope, 1, :id => nil) if controller.default_search_scope %>
+          <%= text_field_tag 'q', @question, :size => 20, :class => 'search_field', :placeholder => l(:search_input_placeholder), :accesskey => accesskey(:quick_search) %>
         <% end %>
-      </ul>
-
+      </div>
       <%
         items_for_main_level = []
         items_for_more_level = []
+        help_menu_item = nil
         menu_items_for(:top_menu) do |item|
           if item.name == :home || item.name == :my_page
             items_for_main_level << item
+          elsif item.name == :help
+            help_menu_item = item
           elsif item.name == :projects
             # Remove
           else
@@ -52,85 +57,82 @@
           end
         end
       %>
-      
-      <% if User.current.logged? || !Setting.login_required? %>
       <ul id="account-nav">
         <% items_for_main_level.each do |item| %>
             <%= render_menu_node(item) %>
         <% end %>
-        <li class="drop-down">
-          <%= link_to l(:label_project_plural), { :controller => 'projects', :action => 'index' }, :class => "projects" %>
-          <ul style="display:none;">
-            <% 
-            project_content = ''
-            project_tree(User.current.projects.all) do |project, level|
-              name_prefix = (level > 0 ? ('&nbsp;' * 2 * level + '&#187; ') : '')
-              project_content << content_tag(:li,
-                                     link_to(name_prefix + h(project), {:controller => 'projects', :action => 'show', :id => project, :jump => current_menu_item}))
-            end
-            %>
-            <%= project_content %>
-          </ul>
-        </li>
-        <li class="drop-down" id="more-menu">
-          <a class="more" href="#">More</a>
-          <ul style="display:none;">
-            <% items_for_more_level.each do |item| %>
-            <%= render_menu_node(item) %>
-            <% end %>
-            <%# TODO: Redmine defines these in a view, should be moved to a helper or data structure %>
-            <% if User.current.admin? %>
-              <% menu_items_for(:admin_menu) do |item| -%>
-                <li><%= link_to h(item.caption), item.url, item.html_options %></li>
-              <% end -%>
-            <% end %>
-          </ul>
-        </li>
-        <li>
-          <label for='q'>
-            <%= link_to l(:label_search), {:controller => 'search', :action => 'index', :id => @project}, :accesskey => accesskey(:search), :class => 'search' %>
-          </label>
-          <% form_tag({:controller => 'search', :action => 'index', :id => @project}, :method => :get, :id => 'nav-search' ) do %>
-            <%= hidden_field_tag(controller.default_search_scope, 1, :id => nil) if controller.default_search_scope %>
-            <%= text_field_tag 'q', @question, :size => 20, :class => 'small', :accesskey => accesskey(:quick_search) %>
+        <% if !Project.visible.empty? and (User.current.logged? or !Setting.login_required?) %>
+          <li class="drop-down">
+            <%= link_to l(:label_project_plural), :controller => 'projects', :action => 'index' %>
+            <ul style="display:none;">
+                <li><%= link_to "View all Projects", :controller => 'projects', :action => 'index' %></li>
+                <li><%= render_project_jump_box Project.visible, :id => "project-search", :class => "chzn-select", :'data-placeholder' => "Enter Project Name..." %></li>
+            </ul>
+          </li>
         <% end %>
-        </li>
+        <% unless (items = items_for_more_level).empty? %>
+          <li class="drop-down" id="more-menu">
+            <a class="more" href="#">Modules</a>
+            <ul style="display:none;">
+              <% items.each do |item| %>
+              <%= render_menu_node(item) %>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+          <%= render_menu_node(help_menu_item) %>
+            <li class="drop-down last-child">
+          <% unless User.current.logged? %>
+              <%= link_to l(:label_login), {:controller => 'account', :action => 'login'}, :class => 'login' %>
+              <!-- IE7 Fix - extra div needed for slideToggle animation -->
+                <ul>
+                <%= render :partial => 'account/login' %>
+                </ul>
+          <% else %>
+            <%= link_to_user(User.current) %>
+            <ul style="display:none;">
+            <% menu_items_for(:account_menu) do |item| %>
+              <%= render_menu_node(item) %>
+            <% end %>
+          </ul>
+          <% end %>
+          </li>
       </ul>
-      <% end %>
     </div>
-
+    </div>
+    <div id="breadcrumb">
+      <%= page_header_title %>
+    </div>
   </div>
       
   <% main_menu = render_main_menu(@project) %>
-  <% if has_content?(:sidebar) || !main_menu.blank? %>
+  <% if (side_displayed = has_content?(:sidebar) || has_content?(:main_menu) || !main_menu.blank?) %>
   <% display_sidebar = true %>
   <% else %>
   <% display_sidebar = false %>
   <% end %>
-  <div id="main" class="<%= display_sidebar ? '' : "nosidebar" %>">
-  
-    <h1 class="title"><%= page_header_title %></h1>
-    <% if display_sidebar %>
-    <div id="main-menu">
-      <%= main_menu %>
-      <!-- Sidebar -->
-      <div id="sidebar">        
-        <%= yield :sidebar %>
-        <%= call_hook :view_layouts_base_sidebar %>
+  <div id="main" class="<%= side_displayed ? '' : "nosidebar" %>">
+    <% if (side_displayed) %>
+      <div id="main-menu">
+        <%= main_menu %>
+        <%= yield :main_menu %>
+      <% if display_sidebar %>
+        <!-- Sidebar -->
+        <div id="sidebar">        
+          <%= yield :sidebar %>
+          <%= call_hook :view_layouts_base_sidebar %>
+        </div>
+      <% end %>
       </div>
-    </div>
 
-    <%= expand_current_menu %>
+      <%= expand_current_menu %>
     <% end %>
-
-    <div class="<%= display_sidebar ? '' : "nosidebar" %>" id="content">
+    <div class="<%= side_displayed ? '' : "nosidebar" %>" id="content">
       <%= render_flash_messages %>
       <%= yield %>
       <%= call_hook :view_layouts_base_content %>
       <div style="clear:both;">&nbsp;</div>
-
     </div>
-
   </div>
 
   <div id="footer">
