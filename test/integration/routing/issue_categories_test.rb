@@ -6,9 +6,5 @@ class RoutingIssueCategoriesTest < ActionController::IntegrationTest
       { :method => 'get', :path => "/projects/test/issue_categories/new" },
       { :controller => 'issue_categories', :action => 'new', :project_id => 'test'}
     )
-    assert_routing(
-      { :method => 'post', :path => "/projects/test/issue_categories/new" },
-      { :controller => 'issue_categories', :action => 'new', :project_id => 'test'}
-    )
   end
 end
