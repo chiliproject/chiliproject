@@ -230,6 +230,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'attachments/download/:id/:filename', :controller => 'attachments', :action => 'download', :id => /\d+/, :filename => /.*/
 
   map.resources :groups
+  map.resources :trackers, :except => :show
 
   #left old routes at the bottom for backwards compat
   map.connect 'projects/:project_id/issues/:action', :controller => 'issues'
