@@ -199,6 +199,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :groups
   map.resources :trackers, :except => :show
+  map.resources :issue_statuses, :except => :show, :collection => {:update_issue_done_ratio => :post}
 
   #left old routes at the bottom for backwards compat
   map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
