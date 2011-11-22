@@ -12,12 +12,13 @@
 #++
 
 class QueryColumn
-  attr_accessor :name, :sortable, :groupable, :default_order
+  attr_accessor :name, :sortable, :groupable, :default_order, :guard
   include Redmine::I18n
 
   def initialize(name, options={})
     self.name = name
     self.sortable = options[:sortable]
+    self.guard = options[:guard]
     self.groupable = options[:groupable] || false
     if groupable == true
       self.groupable = name.to_s
@@ -36,7 +37,11 @@ class QueryColumn
   end
 
   def value(issue)
-    issue.send name
+    if guard.is_a? Proc
+      guard.call(issue) ? issue.send(name) : nil
+    else
+      issue.send name
+    end
   end
 end
 
@@ -292,8 +297,10 @@ class Query < ActiveRecord::Base
   def available_columns
     return @available_columns if @available_columns
     @available_columns = Query.available_columns.clone
-    if User.current.allowed_to?(:view_time_entries, project)
-      @available_columns << QueryColumn.new(:spent_hours, :caption => :label_spent_time)
+    if User.current.allowed_to?(:view_time_entries, project) || 
+        User.current.allowed_to?(:view_time_entries, nil, :global => true)
+      @available_columns << QueryColumn.new(:spent_hours, :caption => :label_spent_time, 
+                                            :guard => proc { |issue| User.current.allowed_to?(:view_time_entries, issue.project) })
     end
     @available_columns += (project ?
                             project.all_issue_custom_fields :

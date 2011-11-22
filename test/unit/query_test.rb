@@ -382,10 +382,51 @@ class QueryTest < ActiveSupport::TestCase
     assert !q.editable_by?(developer)
   end
 
+  context "query column" do
+    context "guard attribute" do
+      should "get" do
+        assert QueryColumn.new(:test).respond_to? :guard
+      end
+      
+      should "set" do
+        assert QueryColumn.new(:test).respond_to? "guard="
+      end
+
+      should "initialize" do
+        assert_equal "test", QueryColumn.new(:test, :guard => "test").guard
+      end
+    end
+    
+    context "value" do
+      setup do
+        @query_column = QueryColumn.new(:test)
+        @issue = Issue.new
+        @issue.stubs(:test).returns("test")
+      end
+
+      should "return value from issue" do
+        assert_equal @issue.test, @query_column.value(@issue)
+      end
+      
+      should "return nil when access is denied" do
+        @query_column.guard = proc { |issue| return false }
+        assert_equal nil, @query_column.value(@issue)
+      end
+
+      should "return value when access is allowed" do
+        @query_column.guard = proc { |issue| return true }
+        assert_equal @issue.test, @query_column.value(@issue)
+      end
+    end
+
+  end
+  
   context "#available_columns" do
     setup do
       @query = Query.new(:name => "_")
       @query.project = Project.find(1)
+      Role.anonymous.remove_permission!(:view_time_entries)
+      Role.non_member.remove_permission!(:view_time_entries)
     end
     
     context "'estimated_hours' column" do
