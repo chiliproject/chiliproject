@@ -509,8 +509,8 @@ class Query < ActiveRecord::Base
     order_option = [group_by_sort_order, options[:order]].reject {|s| s.blank?}.join(',')
     order_option = nil if order_option.blank?
 
-    Issue.find :all, :include => ([:status, :project] + (options[:include] || [])).uniq,
-                     :conditions => Query.merge_conditions(statement, options[:conditions]),
+    Issue.visible.scoped(:conditions => options[:conditions]).find :all, :include => ([:status, :project] + (options[:include] || [])).uniq,
+                     :conditions => statement,
                      :order => order_option,
                      :limit  => options[:limit],
                      :offset => options[:offset]
@@ -533,8 +533,7 @@ class Query < ActiveRecord::Base
   # Returns the versions
   # Valid options are :conditions
   def versions(options={})
-    Version.find :all, :include => :project,
-                       :conditions => Query.merge_conditions(project_statement, options[:conditions])
+    Version.visible.scoped(:conditions => options[:conditions]).find :all, :include => :project, :conditions => project_statement
   rescue ::ActiveRecord::StatementInvalid => e
     raise Query::StatementInvalid.new(e.message)
   end
