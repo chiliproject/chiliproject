@@ -14,7 +14,7 @@
 
 class Issue < ActiveRecord::Base
   include Redmine::SafeAttributes
-
+  acts_as_taggable_on :tags
   belongs_to :project
   belongs_to :tracker
   belongs_to :status, :class_name => 'IssueStatus', :foreign_key => 'status_id'
