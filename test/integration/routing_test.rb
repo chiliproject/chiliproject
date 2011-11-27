@@ -19,6 +19,11 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/activity.atom", :controller => 'activities', :action => 'index', :id => nil, :format => 'atom'
   end
 
+  context "groups" do
+    should_route :post,   "/groups/567/users", :controller => 'groups', :action => 'add_users', :id => '567'
+    should_route :delete, "/groups/567/users/12", :controller => 'groups', :action => 'remove_user', :id => '567', :user_id => '12'
+  end
+
   context "issues" do
     # Extra actions
     should_route :get, "/issues/move/new", :controller => 'issue_moves', :action => 'new'
