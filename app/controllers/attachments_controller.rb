@@ -43,6 +43,7 @@ class AttachmentsController < ApplicationController
 
   end
 
+  verify :method => :delete, :only => :destroy
   def destroy
     # Make sure association callbacks are called
     @attachment.container.attachments.delete(@attachment)
