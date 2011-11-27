@@ -34,6 +34,11 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :put, "/custom_fields/2", :controller => 'custom_fields', :action => 'update', :id => '2'
     should_route :delete, "/custom_fields/2", :controller => 'custom_fields', :action => 'destroy', :id => '2'
   end
+  
+  context "groups" do
+    should_route :post,   "/groups/567/users", :controller => 'groups', :action => 'add_users', :id => '567'
+    should_route :delete, "/groups/567/users/12", :controller => 'groups', :action => 'remove_user', :id => '567', :user_id => '12'
+  end
 
   context "issues" do
     # REST actions
