@@ -15,11 +15,10 @@
 class DocumentsController < ApplicationController
   default_search_scope :documents
   model_object Document
-  before_filter :find_project, :only => [:index, :new]
-  before_filter :find_model_object, :except => [:index, :new]
-  before_filter :find_project_from_association, :except => [:index, :new]
+  before_filter :find_project_by_project_id, :only => [:index, :new, :create]
+  before_filter :find_model_object, :except => [:index, :new, :create]
+  before_filter :find_project_from_association, :except => [:index, :new, :create]
   before_filter :authorize
-
 
   def index
     @sort_by = %w(category date title author).include?(params[:sort_by]) ? params[:sort_by] : 'category'
@@ -43,39 +42,35 @@ class DocumentsController < ApplicationController
   end
 
   def new
-    @document = @project.documents.build
-    @document.safe_attributes = params[:document]
-    if request.post?
-      if User.current.allowed_to?(:add_document_watchers, @project) && params[:document]['watcher_user_ids'].present?
-        @document.watcher_user_ids = params[:document]['watcher_user_ids']
-      end
+    @document = @project.documents.build(params[:document])
+  end
 
-      if @document.save
-        attachments = Attachment.attach_files(@document, params[:attachments])
-        render_attachment_warning_if_needed(@document)
-        flash[:notice] = l(:notice_successful_create)
-        redirect_to :action => 'index', :project_id => @project
-      end
+  def create
+    @document = @project.documents.build(params[:document])
+    if request.post? and @document.save
+      attachments = Attachment.attach_files(@document, params[:attachments])
+      render_attachment_warning_if_needed(@document)
+      flash[:notice] = l(:notice_successful_create)
+      redirect_to :action => 'index', :project_id => @project
+    else
+      render :action => 'new'
     end
   end
 
   def edit
-    @categories = DocumentCategory.all
+  end
 
-    if request.post?
-      if User.current.allowed_to?(:add_document_watchers, @project) && params[:document]['watcher_user_ids'].present?
-        @document.watcher_user_ids = params[:document]['watcher_user_ids']
-      end
-
-      if @document.update_attributes(params[:document])
-        flash[:notice] = l(:notice_successful_update)
-        redirect_to :action => 'show', :id => @document
-      end
+  def update
+    if request.put? and @document.update_attributes(params[:document])
+      flash[:notice] = l(:notice_successful_update)
+      redirect_to :action => 'show', :id => @document
+    else
+      render :action => 'edit'
     end
   end
 
   def destroy
-    @document.destroy
+    @document.destroy if request.delete?
     redirect_to :controller => 'documents', :action => 'index', :project_id => @project
   end
 
