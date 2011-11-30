@@ -61,13 +61,26 @@ LOREM
     assert_select '.wiki p', :text => Regexp.new(Regexp.escape("EndOfLineHere..."))
   end
 
-  def test_new_with_one_attachment
+  def test_show
+    get :show, :id => 1
+    assert_response :success
+    assert_template 'show'
+  end
+
+  def test_new
+    @request.session[:user_id] = 2
+    get :new, :project_id => 1
+    assert_response :success
+    assert_template 'new'
+  end
+
+  def test_create_with_one_attachment
     ActionMailer::Base.deliveries.clear
     Setting.notified_events = Setting.notified_events.dup << 'document_added'
     @request.session[:user_id] = 2
     set_tmp_attachments_directory
 
-    post :new, :project_id => 'ecookbook',
+    post :create, :project_id => 'ecookbook',
                :document => { :title => 'DocumentsControllerTest#test_post_new',
                               :description => 'This is a new document',
                               :category_id => 2},
@@ -111,13 +124,12 @@ LOREM
     setup do
       @request.session[:user_id] = 2
       set_tmp_attachments_directory
-
       @document = Document.generate!(:project => Project.find('ecookbook'),
                                      :title => 'Test')
     end
 
     should "update the document" do
-      post(:edit,
+      put(:update,
            :id => @document.id,
            :document => {
              :title => 'Change'
@@ -131,7 +143,7 @@ LOREM
     end
 
     should "allow adding watchers" do
-      post(:edit,
+      put(:update,
            :id => @document.id,
            :document => {
              :title => 'Change',
@@ -171,7 +183,7 @@ LOREM
 
   def test_destroy
     @request.session[:user_id] = 2
-    post :destroy, :id => 1
+    delete :destroy, :id => 1
     assert_redirected_to '/projects/ecookbook/documents'
     assert_nil Document.find_by_id(1)
   end
