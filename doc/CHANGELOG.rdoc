@@ -1,5 +1,9 @@
 = ChiliProject changelog
 
+== 2011-11-30 v1.5.5
+
+* Bug #709: Redmine.pm potential security issue with cache credential enabled and subversion
+
 == 2011-10-31 v1.5.4
 
 * Bug #647: XSS: User input for images is not properly sanitized
