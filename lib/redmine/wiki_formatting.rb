@@ -14,6 +14,8 @@
 
 module Redmine
   module WikiFormatting
+    class StaleSectionError < Exception; end
+
     @@formatters = {}
 
     class << self
@@ -24,6 +26,10 @@ module Redmine
       def register(name, formatter, helper)
         raise ArgumentError, "format name '#{name}' is already taken" if @@formatters[name.to_s]
         @@formatters[name.to_s] = {:formatter => formatter, :helper => helper}
+      end
+
+      def formatter
+        formatter_for(Setting.text_formatting)
       end
 
       def formatter_for(name)
@@ -40,7 +46,7 @@ module Redmine
         @@formatters.keys.map
       end
 
-      def to_html(format, text, options = {}, &block)
+      def to_html(format, text, options = {})
         text = if Setting.cache_formatted_text? && text.size > 2.kilobyte && cache_store && cache_key = cache_key_for(format, options[:object], options[:attribute])
           # Text retrieved from the cache store may be frozen
           # We need to dup it so we can do in-place substitutions with gsub!
@@ -49,9 +55,6 @@ module Redmine
           end.dup
         else
           formatter_for(format).new(text).to_html
-        end
-        if block_given?
-          execute_macros(text, block)
         end
         text
       end
@@ -66,33 +69,6 @@ module Redmine
       # Returns the cache store used to cache HTML output
       def cache_store
         ActionController::Base.cache_store
-      end
-
-      MACROS_RE = /
-                    (!)?                        # escaping
-                    (
-                    \{\{                        # opening tag
-                    ([\w]+)                     # macro name
-                    (\(([^\}]*)\))?             # optional arguments
-                    \}\}                        # closing tag
-                    )
-                  /x unless const_defined?(:MACROS_RE)
-
-      # Macros substitution
-      def execute_macros(text, macros_runner)
-        text.gsub!(MACROS_RE) do
-          esc, all, macro = $1, $2, $3.downcase
-          args = ($5 || '').split(',').each(&:strip)
-          if esc.nil?
-            begin
-              macros_runner.call(macro, args)
-            rescue => e
-              "<div class=\"flash error\">Error executing the <strong>#{macro}</strong> macro (#{e})</div>"
-            end || all
-          else
-            all
-          end
-        end
       end
     end
   end
