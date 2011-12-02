@@ -28,16 +28,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'roles/workflow/:id/:role_id/:tracker_id', :controller => 'roles', :action => 'workflow'
   map.connect 'help/:ctrl/:page', :controller => 'help'
 
-  map.with_options :controller => 'time_entry_reports', :action => 'report',:conditions => {:method => :get} do |time_report|
-    time_report.connect 'projects/:project_id/issues/:issue_id/time_entries/report'
-    time_report.connect 'projects/:project_id/issues/:issue_id/time_entries/report.:format'
-    time_report.connect 'projects/:project_id/time_entries/report'
-    time_report.connect 'projects/:project_id/time_entries/report.:format'
-    time_report.connect 'time_entries/report'
-    time_report.connect 'time_entries/report.:format'
-  end
-
-  map.resources :time_entries, :controller => 'timelog'
+  map.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
 
   map.connect 'projects/:id/wiki', :controller => 'wikis', :action => 'edit', :conditions => {:method => :post}
   map.connect 'projects/:id/wiki/destroy', :controller => 'wikis', :action => 'destroy', :conditions => {:method => :get}
@@ -81,7 +72,7 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.resources :issues do |issues|
-    issues.resources :time_entries, :controller => 'timelog'
+    issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
   end
 
   map.with_options  :controller => 'issue_relations', :conditions => {:method => :post} do |relations|
@@ -124,12 +115,12 @@ ActionController::Routing::Routes.draw do |map|
   } do |project|
     project.resource :project_enumerations, :as => 'enumerations', :only => [:update, :destroy]
     project.resources :issues, :only => [:index, :new, :create] do |issues|
-      issues.resources :time_entries, :controller => 'timelog'
+      issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
     end
     project.resources :files, :only => [:index, :new, :create]
     project.resources :versions, :collection => {:close_completed => :put}, :member => {:status_by => :post}
     project.resources :news, :shallow => true
-    project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id'
+    project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id', :collection => {:report => :get}
     project.resources :boards
     project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
     project.resources :issue_categories, :shallow => true
