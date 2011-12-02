@@ -1059,7 +1059,7 @@ class RedCloth3 < String
         end
     end
 
-    def rip_offtags( text, escape_aftertag=true )
+    def rip_offtags( text, escape_aftertag=true, escape_line=true )
         if text =~ /<.*>/
             ## strip and encode <pre> content
             codepre, used_offtags = 0, {}
@@ -1069,7 +1069,7 @@ class RedCloth3 < String
                     codepre += 1
                     used_offtags[offtag] = true
                     if codepre - used_offtags.length > 0
-                        htmlesc( line, :NoQuotes )
+                        htmlesc( line, :NoQuotes ) if escape_line
                         @pre_list.last << line
                         line = ""
                     else
@@ -1087,7 +1087,7 @@ class RedCloth3 < String
                     end
                 elsif $1 and codepre > 0
                     if codepre - used_offtags.length > 0
-                        htmlesc( line, :NoQuotes )
+                        htmlesc( line, :NoQuotes ) if escape_line
                         @pre_list.last << line
                         line = ""
                     end
