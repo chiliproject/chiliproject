@@ -120,10 +120,10 @@ module TimelogHelper
     export
   end
 
-  def format_criteria_value(criteria, value)
+  def format_criteria_value(criteria_options, value)
     if value.blank?
       l(:label_none)
-    elsif k = @available_criterias[criteria][:klass]
+    elsif k = criteria_options[:klass]
       obj = k.find_by_id(value.to_i)
       if obj.is_a?(Issue)
         obj.visible? ? h("#{obj.tracker} ##{obj.id}: #{obj.subject}") : h("##{obj.id}")
@@ -131,24 +131,24 @@ module TimelogHelper
         obj
       end
     else
-      format_value(value, @available_criterias[criteria][:format])
+      format_value(value, criteria_options[:format])
     end
   end
 
-  def report_to_csv(criterias, periods, hours)
+  def report_to_csv(report)
     export = FCSV.generate(:col_sep => l(:general_csv_separator)) do |csv|
       # Column headers
-      headers = criterias.collect {|criteria| l(@available_criterias[criteria][:label]) }
-      headers += periods
+      headers = report.criteria.collect {|criteria| l(report.available_criteria[criteria][:label]) }
+      headers += report.periods
       headers << l(:label_total)
       csv << headers.collect {|c| to_utf8_for_timelogs(c) }
       # Content
-      report_criteria_to_csv(csv, criterias, periods, hours)
+      report_criteria_to_csv(csv, report.available_criteria, report.columns, report.criteria, report.periods, report.hours)
       # Total row
-      row = [ l(:label_total) ] + [''] * (criterias.size - 1)
+      row = [ l(:label_total) ] + [''] * (report.criteria.size - 1)
       total = 0
-      periods.each do |period|
-        sum = sum_hours(select_hours(hours, @columns, period.to_s))
+      report.periods.each do |period|
+        sum = sum_hours(select_hours(report.hours, report.columns, period.to_s))
         total += sum
         row << (sum > 0 ? "%.2f" % sum : '')
       end
@@ -158,24 +158,24 @@ module TimelogHelper
     export
   end
 
-  def report_criteria_to_csv(csv, criterias, periods, hours, level=0)
-    hours.collect {|h| h[criterias[level]].to_s}.uniq.each do |value|
-      hours_for_value = select_hours(hours, criterias[level], value)
+  def report_criteria_to_csv(csv, available_criteria, columns, criteria, periods, hours, level=0)
+    hours.collect {|h| h[criteria[level]].to_s}.uniq.each do |value|
+      hours_for_value = select_hours(hours, criteria[level], value)
       next if hours_for_value.empty?
       row = [''] * level
-      row << to_utf8_for_timelogs(format_criteria_value(criterias[level], value))
-      row += [''] * (criterias.length - level - 1)
+      row << to_utf8_for_timelogs(format_criteria_value(available_criteria[criteria[level]], value))
+      row += [''] * (criteria.length - level - 1)
       total = 0
       periods.each do |period|
-        sum = sum_hours(select_hours(hours_for_value, @columns, period.to_s))
+        sum = sum_hours(select_hours(hours_for_value, columns, period.to_s))
         total += sum
         row << (sum > 0 ? "%.2f" % sum : '')
       end
       row << "%.2f" %total
       csv << row
 
-      if criterias.length > level + 1
-        report_criteria_to_csv(csv, criterias, periods, hours_for_value, level + 1)
+      if criteria.length > level + 1
+        report_criteria_to_csv(csv, available_criteria, columns, criteria, periods, hours_for_value, level + 1)
       end
     end
   end
