@@ -525,6 +525,12 @@ class User < Principal
     end
   end
 
+  # Send email notifications of upcoming due dates for users that have asked for them.
+  def self.send_due_date_reminders
+    user_ids = User.find(:all, :select => :id, :include => :preference).select { |user| user.pref[:send_due_date_notifications] }.map(&:id)
+    Mailer.reminders :users => user_ids
+  end
+
   protected
 
   def validate
