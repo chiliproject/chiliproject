@@ -360,7 +360,7 @@ class Mailer < ActionMailer::Base
       next if user.pref[:hide_due_date_notifications]
       s = setup_conditions.call(:hide_past_due_date_notifications => user.pref[:hide_past_due_date_notifications])
       issues = user.assigned_issues.all(:include => [:status, :assigned_to, :project, :tracker],
-                                        :order => "#{Issue.table_name}.due_date ASC",
+                                        :order => "#{Issue.table_name}.due_date DESC",
                                         :conditions => s.conditions)
       deliver_reminder(user, issues, days) unless issues.empty?
     end
