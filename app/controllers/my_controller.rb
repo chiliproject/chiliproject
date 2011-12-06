@@ -52,6 +52,7 @@ class MyController < ApplicationController
       @user.pref.attributes = params[:pref]
       @user.pref[:no_self_notified] = (params[:no_self_notified] == '1')
       @user.pref[:send_due_date_notifications] = (params[:send_due_date_notifications] == '1')
+      @user.pref[:hide_past_due_date_notifications] = (params[:hide_past_due_date_notifications] == '1')
       if @user.save
         @user.pref.save
         @user.notified_project_ids = (@user.mail_notification == 'selected' ? params[:notified_project_ids] : [])
