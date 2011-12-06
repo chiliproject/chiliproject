@@ -36,8 +36,4 @@ namespace :redmine do
 
     Mailer.reminders(options)
   end
-
-  task :send_reminders_for_users_from_prefs => :environment do
-    User.send_due_date_reminders
-  end
 end

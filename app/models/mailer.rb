@@ -356,22 +356,13 @@ class Mailer < ActionMailer::Base
       s
     end
 
-    if user_ids.present?
-      User.find(user_ids).each do |user|
-        s = setup_conditions.call(:hide_past_due_date_notifications => user.pref[:hide_past_due_date_notifications])
-        issues = user.assigned_issues.all(:include => [:status, :assigned_to, :project, :tracker],
-                                          :order => "#{Issue.table_name}.due_date ASC",
-                                          :conditions => s.conditions)
-        deliver_reminder(user, issues, days) unless issues.empty?
-      end
-    else
-      issues_by_assignee = Issue.find(:all, :include => [:status, :assigned_to, :project, :tracker],
-                                            :order => "#{Issue.table_name}.due_date ASC",
-                                            :conditions => setup_conditions.call.conditions
-                                      ).group_by(&:assigned_to)
-      issues_by_assignee.each do |assignee, issues|
-        deliver_reminder(assignee, issues, days) if assignee && assignee.active?
-      end
+    User.find(user_ids.presence || :all).each do |user|
+      next if user.pref[:hide_due_date_notifications]
+      s = setup_conditions.call(:hide_past_due_date_notifications => user.pref[:hide_past_due_date_notifications])
+      issues = user.assigned_issues.all(:include => [:status, :assigned_to, :project, :tracker],
+                                        :order => "#{Issue.table_name}.due_date ASC",
+                                        :conditions => s.conditions)
+      deliver_reminder(user, issues, days) unless issues.empty?
     end
   end
 
