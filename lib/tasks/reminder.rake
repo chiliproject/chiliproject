@@ -36,4 +36,19 @@ namespace :redmine do
 
     Mailer.reminders(options)
   end
+
+  task :hide_unset_reminder_preferences => :environment do
+    success, failed = 0, 0
+    User.all(:include => :preference).each do |user|
+      [:hide_due_date_notifications, :hide_past_due_date_notifications].each do |attr|
+        user.pref[attr] = true unless user.pref.others.has_key? attr
+      end
+      if user.pref.save
+        success += 1
+      else
+        failed += 1
+      end
+    end
+    puts "Successfully updated #{success} user(s) preferences and failed to update #{failed}"
+  end
 end
