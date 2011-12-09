@@ -853,7 +853,7 @@ module ApplicationHelper
     options[:html] ||= {}
     options[:html][:class] = 'tabular' unless options[:html].has_key?(:class)
     # TODO: no mention of lang in actionview, probably not needed anymore
-    form_for(record, options.merge({ :builder => TabularFormBuilder, :lang => current_language}), &proc)
+    form_for(record, options.merge({ :builder => Redmine::Views::LabelledFormBuilder, :lang => current_language}), &proc)
   end
 
   def labelled_form_for(*args, &proc)
@@ -891,7 +891,7 @@ module ApplicationHelper
   def labelled_remote_form_for(*args, &proc)
     args << {} unless args.last.is_a?(Hash)
     options = args.last
-    options.merge!({:builder => TabularFormBuilder})
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
     remote_form_for(*args, &proc)
   end
 
