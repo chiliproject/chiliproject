@@ -1,6 +1,6 @@
-<h2><%= link_to l(:label_role_plural), :controller => 'roles', :action => 'index' %> &#187; <%=l(:label_permissions_report)%></h2>
+<h2><%= link_to l(:label_role_plural), roles_path %> &#187; <%=l(:label_permissions_report)%></h2>
 
-<% form_tag({:action => 'report'}, :id => 'permissions_form') do %>
+<% form_tag(permissions_roles_path, :id => 'permissions_form') do %>
 <%= hidden_field_tag 'permissions[0]', '', :id => nil %>
 <div class="autoscroll">
 <table class="list">
@@ -21,10 +21,10 @@
 <% perms_by_module.keys.sort.each do |mod| %>
     <% unless mod.blank? %>
         <tr class="group open">
-        	<td colspan="<%= @roles.size + 1 %>">
-        		<span class="expander" onclick="toggleRowGroup(this);">&nbsp;</span>
-        		<%= l_or_humanize(mod, :prefix => 'project_module_') %>
-        	</td>
+          <td colspan="<%= @roles.size + 1 %>">
+            <span class="expander" onclick="toggleRowGroup(this);">&nbsp;</span>
+            <%= l_or_humanize(mod, :prefix => 'project_module_') %>
+          </td>
         </tr>
     <% end %>
     <% perms_by_module[mod].each do |permission| %>
