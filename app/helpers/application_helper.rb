@@ -884,7 +884,7 @@ module ApplicationHelper
   def labelled_fields_for(*args, &proc)
     args << {} unless args.last.is_a?(Hash)
     options = args.last
-    options.merge!({:builder => TabularFormBuilder})
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
     fields_for(*args, &proc)
   end
 
