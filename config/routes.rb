@@ -194,8 +194,6 @@ ActionController::Routing::Routes.draw do |map|
     sys.connect 'sys/projects/:id/repository.:format', :action => 'create_project_repository', :conditions => {:method => :post}
   end
 
-  # Install the default route as the lowest priority.
-  map.connect ':controller/:action/:id'
   map.connect 'robots.txt', :controller => 'welcome', :action => 'robots'
   # Used for OpenID
   map.root :controller => 'account', :action => 'login'
