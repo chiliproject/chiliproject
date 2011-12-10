@@ -63,7 +63,8 @@ class IssueRelationsController < ApplicationController
     relation.destroy
 
     respond_to do |format|
-      format.html { redirect_to :controller => 'issues', :action => 'show', :id => @issue }
+      # TODO : does this really work since @issue is always nil? What is it useful to?
+      format.html { redirect_to issue_path }
       format.js {
         @relations = @issue.reload.relations.select {|r| r.other_issue(@issue) && r.other_issue(@issue).visible? }
         render(:update) {|page| page.replace_html "relations", :partial => 'issues/relations'}
