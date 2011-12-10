@@ -56,7 +56,6 @@ ActionController::Routing::Routes.draw do |map|
   map.issues_context_menu '/issues/context_menu', :controller => 'context_menus', :action => 'issues'
   map.issue_changes '/issues/changes', :controller => 'journals', :action => 'index'
   map.quoted_issue '/issues/:id/quoted', :controller => 'journals', :action => 'new', :id => /\d+/, :conditions => { :method => :post }
-  map.connect '/issues/:id/destroy', :controller => 'issues', :action => 'destroy', :conditions => { :method => :post } # legacy
   map.journal_diff '/journals/:id/diff/:field', :controller => 'journals', :action => 'diff', :conditions => { :method => :get }
 
   map.resource :gantt, :path_prefix => '/issues', :controller => 'gantts', :only => [:show, :update]
@@ -77,6 +76,8 @@ ActionController::Routing::Routes.draw do |map|
     relations.connect 'issues/:issue_id/relations/:id', :action => 'new'
     relations.connect 'issues/:issue_id/relations/:id/destroy', :action => 'destroy'
   end
+  # Bulk deletion
+  map.connect '/issues', :controller => 'issues', :action => 'destroy', :conditions => {:method => :delete}
 
   map.connect 'projects/:id/members/new', :controller => 'members', :action => 'new'
 
