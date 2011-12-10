@@ -184,7 +184,6 @@ ActionController::Routing::Routes.draw do |map|
 
   #left old routes at the bottom for backwards compat
   map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
-  map.connect 'wiki/:id/:page/:action', :page => nil, :controller => 'wiki'
   map.connect 'issues/:issue_id/relations/:action/:id', :controller => 'issue_relations'
   map.connect 'projects/:project_id/news/:action', :controller => 'news'
 
