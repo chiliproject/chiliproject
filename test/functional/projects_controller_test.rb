@@ -439,13 +439,6 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_nil assigns(:project).id
   end
 
-  def test_copy_without_project
-    @request.session[:user_id] = 1 # admin
-    get :copy
-    assert_response :redirect
-    assert_redirected_to :controller => 'admin', :action => 'projects'
-  end
-
   context "POST :copy" do
     should "TODO: test the rest of the method"
 

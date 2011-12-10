@@ -59,7 +59,7 @@ class AdminTest < ActionController::IntegrationTest
     get "/users/new"
     assert_response :success
     assert_template "users/new"
-    post "/users/create", :user => { :login => "psmith", :firstname => "Paul", :lastname => "Smith", :mail => "psmith@somenet.foo", :language => "en", :password => "psmith09", :password_confirmation => "psmith09" }
+    post "/users", :user => { :login => "psmith", :firstname => "Paul", :lastname => "Smith", :mail => "psmith@somenet.foo", :language => "en", :password => "psmith09", :password_confirmation => "psmith09" }
 
     user = User.find_by_login("psmith")
     assert_kind_of User, user
@@ -76,7 +76,7 @@ class AdminTest < ActionController::IntegrationTest
   end
 
   test "Add a user as an anonymous user should fail" do
-    post '/users/create', :user => { :login => 'psmith', :firstname => 'Paul'}, :password => "psmith09", :password_confirmation => "psmith09"
+    post '/users', :user => { :login => 'psmith', :firstname => 'Paul'}, :password => "psmith09", :password_confirmation => "psmith09"
     assert_response :redirect
     assert_redirected_to "/login?back_url=http%3A%2F%2Fwww.example.com%2Fusers"
   end
