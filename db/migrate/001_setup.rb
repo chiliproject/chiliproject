@@ -57,6 +57,7 @@ class Setup < ActiveRecord::Migration
       t.column "account", :string, :limit => 60
       t.column "account_password", :string, :limit => 60
       t.column "base_dn", :string, :limit => 255
+      t.column "filter", :string, :limit => 255
       t.column "attr_login", :string, :limit => 30
       t.column "attr_firstname", :string, :limit => 30
       t.column "attr_lastname", :string, :limit => 30

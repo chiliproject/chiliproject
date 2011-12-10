@@ -265,6 +265,7 @@ en:
   field_port: Port
   field_account: Account
   field_base_dn: Base DN
+  field_filter: Filter
   field_attr_login: Login attribute
   field_attr_firstname: Firstname attribute
   field_attr_lastname: Lastname attribute
