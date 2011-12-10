@@ -292,8 +292,6 @@ ActionController::Routing::Routes.draw do |map|
     sys.connect 'sys/fetch_changesets', :action => 'fetch_changesets', :conditions => {:method => :get}
   end
 
-  # Install the default route as the lowest priority.
-  map.connect ':controller/:action/:id'
   map.connect 'robots.txt', :controller => 'welcome', :action => 'robots', :conditions => {:method => :get}
 
   # Used for OpenID
