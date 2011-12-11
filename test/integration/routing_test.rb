@@ -35,6 +35,15 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :delete, "/custom_fields/2", :controller => 'custom_fields', :action => 'destroy', :id => '2'
   end
 
+  context "enumerations" do
+    should_route :get, "/enumerations", :controller => 'enumerations', :action => 'index'
+    should_route :get, "/enumerations/new", :controller => 'enumerations', :action => 'new'
+    should_route :post, "/enumerations", :controller => 'enumerations', :action => 'create'
+    should_route :get, "/enumerations/2/edit", :controller => 'enumerations', :action => 'edit', :id => 2
+    should_route :put, "/enumerations/2", :controller => 'enumerations', :action => 'update', :id => 2
+    should_route :delete, "/enumerations/2", :controller => 'enumerations', :action => 'destroy', :id => 2
+  end
+  
   context "issues" do
     # REST actions
     should_route :get, "/issues", :controller => 'issues', :action => 'index'
