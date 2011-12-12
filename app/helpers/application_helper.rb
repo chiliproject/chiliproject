@@ -851,6 +851,7 @@ module ApplicationHelper
     content_tag("label", label_text)
   end
 
+  # TODO: remove
   def labelled_tabular_form_for(name, object, options, &proc)
     options[:html] ||= {}
     options[:html][:class] = 'tabular' unless options[:html].has_key?(:class)
@@ -860,6 +861,9 @@ module ApplicationHelper
   def labelled_form_for(*args, &proc)
     args << {} unless args.last.is_a?(Hash)
     options = args.last
+    if args.first.is_a?(Symbol)
+      options.merge!(:as => args.shift)
+    end
     options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
     form_for(*args, &proc)
   end
@@ -872,10 +876,11 @@ module ApplicationHelper
   end
 
   def labelled_remote_form_for(*args, &proc)
+    ActiveSupport::Deprecation.warn "ApplicationHelper#labelled_remote_form_for is deprecated and will be removed in Redmine 2.2."
     args << {} unless args.last.is_a?(Hash)
     options = args.last
-    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
-    remote_form_for(*args, &proc)
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder, :remote => true})
+    form_for(*args, &proc)
   end
 
   def error_messages_for(*objects)
