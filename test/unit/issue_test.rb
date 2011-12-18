@@ -103,6 +103,16 @@ class IssueTest < ActiveSupport::TestCase
     assert issues.detect {|issue| !issue.project.is_public?}
   end
 
+  def test_open_scope
+    issues = Issue.open.all
+    assert_nil issues.detect(&:closed?)
+  end
+
+  def test_open_scope_with_arg
+    issues = Issue.open(false).all
+    assert_equal issues, issues.select(&:closed?)
+  end
+
   def test_errors_full_messages_should_include_custom_fields_errors
     field = IssueCustomField.find_by_name('Database')
 
