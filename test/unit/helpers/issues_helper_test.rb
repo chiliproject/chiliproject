@@ -13,33 +13,17 @@
 #++
 require File.expand_path('../../../test_helper', __FILE__)
 
-class IssuesHelperTest < HelperTestCase
+class IssuesHelperTest < ActionView::TestCase
   include ApplicationHelper
   include IssuesHelper
 
-  include ActionController::Assertions::SelectorAssertions
   fixtures :all
-
-  # Used by assert_select
-  def html_document
-    HTML::Document.new(@response.body)
-  end
 
   def setup
     super
     set_language_if_valid('en')
     User.current = nil
-    @response = ActionController::TestResponse.new
   end
-
-  def controller
-    @controller ||= IssuesController.new
-  end
-
-  def request
-    @request ||= ActionController::TestRequest.new
-  end
-
 
   # TODO: Move test code to Journal class
   context "IssuesHelper#show_detail" do
@@ -75,11 +59,8 @@ class IssuesHelperTest < HelperTestCase
           j.changes = {"done_ratio" => [40, 100]}
           j.journaled = Issue.last
         end
-        @response.body = @journal.render_detail(@journal.details.to_a.first, false)
-
-        assert_select 'strong', :text => '% Done'
-        assert_select 'i', :text => '40'
-        assert_select 'i', :text => '100'
+        html = @journal.render_detail(@journal.details.to_a.first, false)
+        assert_equal "<strong>% Done</strong> changed from <i>40</i> to <i>100</i>", html
       end
 
       should 'show a new attribute with HTML highlights' do
@@ -87,10 +68,8 @@ class IssuesHelperTest < HelperTestCase
           j.changes = {"done_ratio" => [nil, 100]}
           j.journaled = Issue.last
         end
-        @response.body = @journal.render_detail(@journal.details.to_a.first, false)
-
-        assert_select 'strong', :text => '% Done'
-        assert_select 'i', :text => '100'
+        html = @journal.render_detail(@journal.details.to_a.first, false)
+        assert_equal "<strong>% Done</strong> set to <i>100</i>", html
       end
 
       should 'show a deleted attribute with HTML highlights' do
@@ -98,12 +77,8 @@ class IssuesHelperTest < HelperTestCase
           j.changes = {"done_ratio" => [50, nil]}
           j.journaled = Issue.last
         end
-        @response.body = @journal.render_detail(@journal.details.to_a.first, false)
-
-        assert_select 'strong', :text => '% Done'
-        assert_select 'strike' do
-          assert_select 'i', :text => '50'
-        end
+        html = @journal.render_detail(@journal.details.to_a.first, false)
+        assert_equal "<strong>% Done</strong> deleted (<strike><i>50</i></strike>)", html
       end
     end
 
