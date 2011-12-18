@@ -84,10 +84,6 @@ class Query < ActiveRecord::Base
     super attributes
     self.filters ||= { 'status_id' => {:operator => "o", :values => [""]} }
     self.display_subprojects ||= Setting.display_subprojects_issues?
-  end
-
-  def after_initialize
-    # Store the fact that project is nil (used in #editable_by?)
     @is_for_all = project.nil?
   end
 
