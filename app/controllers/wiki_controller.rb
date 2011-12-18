@@ -79,6 +79,9 @@ class WikiController < ApplicationController
       end
     end
     @editable = editable?
+    @sections_editable = @editable && User.current.allowed_to?(:edit_wiki_pages, @page.project) &&
+      params[:version].nil? &&
+      Redmine::WikiFormatting.supports_section_edit?
   end
 
   # edit an existing page or a new one
@@ -94,6 +97,13 @@ class WikiController < ApplicationController
 
     # To prevent StaleObjectError exception when reverting to a previous version
     @content.lock_version = @page.content.lock_version
+
+    @text = @content.text
+    if params[:section].present? && Redmine::WikiFormatting.supports_section_edit?
+      @section = params[:section].to_i
+      @text, @section_hash = Redmine::WikiFormatting.formatter.new(@text).get_section(@section)
+      render_404 if @text.blank?
+    end
   end
 
   verify :method => :put, :only => :update, :render => {:nothing => true, :status => :method_not_allowed }
@@ -116,7 +126,17 @@ class WikiController < ApplicationController
       return
     end
     params[:content].delete(:version) # The version count is automatically increased
-    @content.attributes = params[:content]
+
+    @content.comments = params[:content][:comments]
+    @text = params[:content][:text]
+    if params[:section].present? && Redmine::WikiFormatting.supports_section_edit?
+      @section = params[:section].to_i
+      @section_hash = params[:section_hash]
+      @content.text = Redmine::WikiFormatting.formatter.new(@content.text).update_section(params[:section].to_i, @text, @section_hash)
+    else
+      @content.attributes = params[:content]
+    end
+
     @content.author = User.current
     # if page is new @page.save will also save content, but not if page isn't a new record
     if (@page.new_record? ? @page.save : @content.save)
@@ -128,7 +148,7 @@ class WikiController < ApplicationController
       render :action => 'edit'
     end
 
-  rescue ActiveRecord::StaleObjectError
+  rescue ActiveRecord::StaleObjectError, Redmine::WikiFormatting::StaleSectionError
     # Optimistic locking exception
     flash.now[:error] = l(:notice_locking_conflict)
     render :action => 'edit'

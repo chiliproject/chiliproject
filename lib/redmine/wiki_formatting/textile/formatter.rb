@@ -13,6 +13,7 @@
 #++
 
 require 'redcloth3'
+require 'digest/md5'
 
 module Redmine
   module WikiFormatting
@@ -35,6 +36,68 @@ module Redmine
           super(*RULES).to_s
         end
 
+        def get_section(index)
+          section = extract_sections(index)[1]
+          hash = Digest::MD5.hexdigest(section)
+          return section, hash
+        end
+
+        def update_section(index, update, hash=nil)
+          t = extract_sections(index)
+          if hash.present? && hash != Digest::MD5.hexdigest(t[1])
+            raise Redmine::WikiFormatting::StaleSectionError
+          end
+          t[1] = update unless t[1].blank?
+          t.reject(&:blank?).join "\n\n"
+        end
+
+        def extract_sections(index)
+          @pre_list = []
+          text = self.dup
+          rip_offtags text, false, false
+          before = ''
+          s = ''
+          after = ''
+          i = 0
+          l = 1
+          started = false
+          ended = false
+          text.scan(/(((?:.*?)(\A|\r?\n\r?\n))(h(\d+)(#{A}#{C})\.(?::(\S+))? (.*?)$)|.*)/m).each do |all, content, lf, heading, level|
+            if heading.nil?
+              if ended
+                after << all
+              elsif started
+                s << all
+              else
+                before << all
+              end
+              break
+            end
+            i += 1
+            if ended
+              after << all
+            elsif i == index
+              l = level.to_i
+              before << content
+              s << heading
+              started = true
+            elsif i > index
+              s << content
+              if level.to_i > l
+                s << heading
+              else
+                after << heading
+                ended = true
+              end
+            else
+              before << all
+            end
+          end
+          sections = [before.strip, s.strip, after.strip]
+          sections.each {|section| smooth_offtags_without_code_highlighting section}
+          sections
+        end
+
       private
 
         # Patch for RedCloth.  Fixed in RedCloth r128 but _why hasn't released it yet.
@@ -43,6 +106,7 @@ module Redmine
           text.gsub!( /(.)\n(?!\n|\Z| *([#*=]+(\s|$)|[{|]))/, "\\1<br />" ) if hard_breaks
         end
 
+        alias :smooth_offtags_without_code_highlighting :smooth_offtags
         # Patch to add code highlighting support to RedCloth
         def smooth_offtags( text )
           unless @pre_list.empty?
