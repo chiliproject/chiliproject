@@ -15,23 +15,16 @@ require File.expand_path('../../../../../test_helper', __FILE__)
 
 class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
   include Redmine::MenuManager::MenuHelper
-  include ActionController::Assertions::SelectorAssertions
+  include ERB::Util
   fixtures :users, :members, :projects, :enabled_modules
 
-  # Used by assert_select
-  def html_document
-    HTML::Document.new(@response.body)
-  end
-
   def setup
-    super
-    @response = ActionController::TestResponse.new
+    setup_with_controller
     # Stub the current menu item in the controller
     def @controller.current_menu_item
       :index
     end
   end
-
 
   context "MenuManager#current_menu_item" do
     should "be tested"
@@ -55,14 +48,14 @@ class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
 
   def test_render_single_menu_node
     node = Redmine::MenuManager::MenuItem.new(:testing, '/test', { })
-    @response.body = render_single_menu_node(node, 'This is a test', node.url, false)
+    @output_buffer = render_single_menu_node(node, 'This is a test', node.url, false)
 
     assert_select("a.testing", "This is a test")
   end
 
   def test_render_menu_node
     single_node = Redmine::MenuManager::MenuItem.new(:single_node, '/test', { })
-    @response.body = render_menu_node(single_node, nil)
+    @output_buffer = render_menu_node(single_node, nil)
 
     assert_select("li") do
       assert_select("a.single-node", "Single node")
@@ -77,7 +70,7 @@ class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
       Redmine::MenuManager::MenuItem.new(:child_three_node, '/test', { }) <<
       Redmine::MenuManager::MenuItem.new(:child_three_inner_node, '/test', { })
 
-    @response.body = render_menu_node(parent_node, nil)
+    @output_buffer = render_menu_node(parent_node, nil)
 
     assert_select("li") do
       assert_select("a.parent-node", "Parent node")
@@ -111,7 +104,7 @@ class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
                                                          children
                                                        }
                                                      })
-    @response.body = render_menu_node(parent_node, Project.find(1))
+    @output_buffer = render_menu_node(parent_node, Project.find(1))
 
     assert_select("li") do
       assert_select("a.parent-node", "Parent node")
@@ -150,7 +143,7 @@ class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
                                                        }
                                                      })
 
-    @response.body = render_menu_node(parent_node, Project.find(1))
+    @output_buffer = render_menu_node(parent_node, Project.find(1))
 
     assert_select("li") do
       assert_select("a.parent-node", "Parent node")
@@ -179,7 +172,7 @@ class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
                                                      })
 
     assert_raises Redmine::MenuManager::MenuError, ":children must be an array of MenuItems" do
-      @response.body = render_menu_node(parent_node, Project.find(1))
+      @output_buffer = render_menu_node(parent_node, Project.find(1))
     end
   end
 
@@ -191,7 +184,7 @@ class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
                                                      })
 
     assert_raises Redmine::MenuManager::MenuError, ":children must be an array of MenuItems" do
-      @response.body = render_menu_node(parent_node, Project.find(1))
+      @output_buffer = render_menu_node(parent_node, Project.find(1))
     end
 
   end
@@ -252,5 +245,4 @@ class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
     items = menu_items_for(menu_name, Project.find(1))
     assert_equal 1, items.size
   end
-
 end
