@@ -93,7 +93,7 @@ class Project < ActiveRecord::Base
     ProjectDrop.new(self)
   end
 
-  def initialize(attributes = nil)
+  def initialize(attributes=nil, *args)
     super
 
     initialized = (attributes || {}).stringify_keys
