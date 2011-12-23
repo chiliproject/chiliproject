@@ -19,13 +19,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/activity.atom", :controller => 'activities', :action => 'index', :id => nil, :format => 'atom'
   end
 
-  context "attachments" do
-    should_route :get, "/attachments/1", :controller => 'attachments', :action => 'show', :id => '1'
-    should_route :get, "/attachments/1/filename.ext", :controller => 'attachments', :action => 'show', :id => '1', :filename => 'filename.ext'
-    should_route :get, "/attachments/download/1", :controller => 'attachments', :action => 'download', :id => '1'
-    should_route :get, "/attachments/download/1/filename.ext", :controller => 'attachments', :action => 'download', :id => '1', :filename => 'filename.ext'
-  end
-
   context "custom_fields" do
     should_route :get, "/custom_fields", :controller => 'custom_fields', :action => 'index'
     should_route :get, "/custom_fields/new", :controller => 'custom_fields', :action => 'new'
