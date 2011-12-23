@@ -26,17 +26,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/attachments/download/1/filename.ext", :controller => 'attachments', :action => 'download', :id => '1', :filename => 'filename.ext'
   end
 
-  context "documents" do
-    should_route :get, "/projects/567/documents", :controller => 'documents', :action => 'index', :project_id => '567'
-    should_route :get, "/projects/567/documents/new", :controller => 'documents', :action => 'new', :project_id => '567'
-    should_route :get, "/documents/22", :controller => 'documents', :action => 'show', :id => '22'
-    should_route :get, "/documents/22/edit", :controller => 'documents', :action => 'edit', :id => '22'
-
-    should_route :post, "/projects/567/documents", :controller => 'documents', :action => 'create', :project_id => '567'
-    should_route :put, "/documents/22", :controller => 'documents', :action => 'update', :id => '22'
-    should_route :delete, "/documents/22", :controller => 'documents', :action => 'destroy', :id => '22'
-  end
-
   context "issues" do
     # REST actions
     should_route :get, "/issues", :controller => 'issues', :action => 'index'
