@@ -331,12 +331,7 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :post, "/projects/ladida/wiki/destroy", :controller => 'wikis', :action => 'destroy', :id => 'ladida'
   end
 
-  context "administration panel" do
-    should_route :get, "/admin/projects", :controller => 'admin', :action => 'projects'
-  end
-
   context "auto_completes" do
     should_route :get, "/users/auto_complete", :controller => 'auto_completes', :action => 'users'
   end
-
 end
