@@ -19,15 +19,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/activity.atom", :controller => 'activities', :action => 'index', :id => nil, :format => 'atom'
   end
 
-  context "enumerations" do
-    should_route :get, "/enumerations", :controller => 'enumerations', :action => 'index'
-    should_route :get, "/enumerations/new", :controller => 'enumerations', :action => 'new'
-    should_route :post, "/enumerations", :controller => 'enumerations', :action => 'create'
-    should_route :get, "/enumerations/2/edit", :controller => 'enumerations', :action => 'edit', :id => '2'
-    should_route :put, "/enumerations/2", :controller => 'enumerations', :action => 'update', :id => '2'
-    should_route :delete, "/enumerations/2", :controller => 'enumerations', :action => 'destroy', :id => '2'
-  end
-  
   context "issues" do
     # Extra actions
     should_route :get, "/issues/move/new", :controller => 'issue_moves', :action => 'new'
