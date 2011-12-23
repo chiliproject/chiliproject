@@ -117,17 +117,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :post, "/projects/5234/members/new", :controller => 'members', :action => 'new', :id => '5234'
   end
 
-  context "messages" do
-    should_route :get, "/boards/22/topics/2", :controller => 'messages', :action => 'show', :id => '2', :board_id => '22'
-    should_route :get, "/boards/lala/topics/new", :controller => 'messages', :action => 'new', :board_id => 'lala'
-    should_route :get, "/boards/lala/topics/22/edit", :controller => 'messages', :action => 'edit', :id => '22', :board_id => 'lala'
-
-    should_route :post, "/boards/lala/topics/new", :controller => 'messages', :action => 'new', :board_id => 'lala'
-    should_route :post, "/boards/lala/topics/22/edit", :controller => 'messages', :action => 'edit', :id => '22', :board_id => 'lala'
-    should_route :post, "/boards/22/topics/555/replies", :controller => 'messages', :action => 'reply', :id => '555', :board_id => '22'
-    should_route :post, "/boards/22/topics/555/destroy", :controller => 'messages', :action => 'destroy', :id => '555', :board_id => '22'
-  end
-
   context "news" do
     should_route :get, "/news", :controller => 'news', :action => 'index'
     should_route :get, "/news.atom", :controller => 'news', :action => 'index', :format => 'atom'
