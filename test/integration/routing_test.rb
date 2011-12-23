@@ -19,15 +19,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/activity.atom", :controller => 'activities', :action => 'index', :id => nil, :format => 'atom'
   end
 
-  context "custom_fields" do
-    should_route :get, "/custom_fields", :controller => 'custom_fields', :action => 'index'
-    should_route :get, "/custom_fields/new", :controller => 'custom_fields', :action => 'new'
-    should_route :post, "/custom_fields", :controller => 'custom_fields', :action => 'create'
-    should_route :get, "/custom_fields/2/edit", :controller => 'custom_fields', :action => 'edit', :id => '2'
-    should_route :put, "/custom_fields/2", :controller => 'custom_fields', :action => 'update', :id => '2'
-    should_route :delete, "/custom_fields/2", :controller => 'custom_fields', :action => 'destroy', :id => '2'
-  end
-
   context "enumerations" do
     should_route :get, "/enumerations", :controller => 'enumerations', :action => 'index'
     should_route :get, "/enumerations/new", :controller => 'enumerations', :action => 'new'
