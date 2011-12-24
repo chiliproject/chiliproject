@@ -20,9 +20,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :post, "/issues/move", :controller => 'issue_moves', :action => 'create'
 
     should_route :post, "/issues/1/quoted", :controller => 'journals', :action => 'new', :id => '1'
-
-    should_route :get, "/issues/auto_complete", :controller => 'auto_completes', :action => 'issues'
-
     should_route :post, "/issues/preview/123", :controller => 'previews', :action => 'issue', :id => '123'
     should_route :get, "/issues/changes", :controller => 'journals', :action => 'index'
   end
@@ -275,9 +272,5 @@ class RoutingTest < ActionController::IntegrationTest
 
     should_route :post, "/projects/ladida/wiki", :controller => 'wikis', :action => 'edit', :id => 'ladida'
     should_route :post, "/projects/ladida/wiki/destroy", :controller => 'wikis', :action => 'destroy', :id => 'ladida'
-  end
-
-  context "auto_completes" do
-    should_route :get, "/users/auto_complete", :controller => 'auto_completes', :action => 'users'
   end
 end
