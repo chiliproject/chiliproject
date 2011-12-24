@@ -23,7 +23,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/projects/1.xml", :controller => 'projects', :action => 'show', :id => '1', :format => 'xml'
     should_route :get, "/projects/4223/settings", :controller => 'projects', :action => 'settings', :id => '4223'
     should_route :get, "/projects/4223/settings/members", :controller => 'projects', :action => 'settings', :id => '4223', :tab => 'members'
-    should_route :get, "/projects/33/roadmap", :controller => 'versions', :action => 'index', :project_id => '33'
 
     should_route :post, "/projects", :controller => 'projects', :action => 'create'
     should_route :post, "/projects.xml", :controller => 'projects', :action => 'create', :format => 'xml'
