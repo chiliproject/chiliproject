@@ -28,9 +28,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/issues/gantt", :controller => 'gantts', :action => 'show'
     should_route :get, "/projects/project-name/issues/gantt", :controller => 'gantts', :action => 'show', :project_id => 'project-name'
 
-    should_route :get, "/issues/context_menu", :controller => 'context_menus', :action => 'issues'
-    should_route :post, "/issues/context_menu", :controller => 'context_menus', :action => 'issues'
-
     should_route :get, "/issues/changes", :controller => 'journals', :action => 'index'
   end
 
