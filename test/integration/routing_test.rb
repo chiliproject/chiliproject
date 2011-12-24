@@ -20,20 +20,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :post, "/issues/move", :controller => 'issue_moves', :action => 'create'
   end
 
-  context "issue relations" do
-    should_route :post, "/issues/1/relations", :controller => 'issue_relations', :action => 'create', :issue_id => '1'
-    should_route :post, "/issues/1/relations.xml", :controller => 'issue_relations', :action => 'create', :issue_id => '1', :format => 'xml'
-    should_route :post, "/issues/1/relations.json", :controller => 'issue_relations', :action => 'create', :issue_id => '1', :format => 'json'
-
-    should_route :get, "/issues/1/relations/23", :controller => 'issue_relations', :action => 'show', :issue_id => '1', :id => '23'
-    should_route :get, "/issues/1/relations/23.xml", :controller => 'issue_relations', :action => 'show', :issue_id => '1', :id => '23', :format => 'xml'
-    should_route :get, "/issues/1/relations/23.json", :controller => 'issue_relations', :action => 'show', :issue_id => '1', :id => '23', :format => 'json'
-
-    should_route :delete, "/issues/1/relations/23", :controller => 'issue_relations', :action => 'destroy', :issue_id => '1', :id => '23'
-    should_route :delete, "/issues/1/relations/23.xml", :controller => 'issue_relations', :action => 'destroy', :issue_id => '1', :id => '23', :format => 'xml'
-    should_route :delete, "/issues/1/relations/23.json", :controller => 'issue_relations', :action => 'destroy', :issue_id => '1', :id => '23', :format => 'json'
-  end
-
   context "issue reports" do
     should_route :get, "/projects/567/issues/report", :controller => 'reports', :action => 'issue_report', :id => '567'
     should_route :get, "/projects/567/issues/report/assigned_to", :controller => 'reports', :action => 'issue_report_details', :id => '567', :detail => 'assigned_to'
