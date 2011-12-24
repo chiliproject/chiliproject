@@ -57,17 +57,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :delete, "/projects/redmine/queries/1", :controller => 'queries', :action => 'destroy', :id => '1', :project_id => 'redmine'
   end
 
-  context "roles" do
-    should_route :get, "/roles", :controller => 'roles', :action => 'index'
-    should_route :get, "/roles/new", :controller => 'roles', :action => 'new'
-    should_route :post, "/roles", :controller => 'roles', :action => 'create'
-    should_route :get, "/roles/2/edit", :controller => 'roles', :action => 'edit', :id => 2
-    should_route :put, "/roles/2", :controller => 'roles', :action => 'update', :id => 2
-    should_route :delete, "/roles/2", :controller => 'roles', :action => 'destroy', :id => 2
-    should_route :get, "/roles/permissions", :controller => 'roles', :action => 'permissions'
-    should_route :post, "/roles/permissions", :controller => 'roles', :action => 'permissions'
-  end
-
   context "users" do
     should_route :get, "/users", :controller => 'users', :action => 'index'
     should_route :get, "/users.xml", :controller => 'users', :action => 'index', :format => 'xml'
