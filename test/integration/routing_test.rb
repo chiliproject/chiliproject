@@ -99,8 +99,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/projects/33/files", :controller => 'files', :action => 'index', :project_id => '33'
     should_route :get, "/projects/33/files/new", :controller => 'files', :action => 'new', :project_id => '33'
     should_route :get, "/projects/33/roadmap", :controller => 'versions', :action => 'index', :project_id => '33'
-    should_route :get, "/projects/33/activity", :controller => 'activities', :action => 'index', :id => '33'
-    should_route :get, "/projects/33/activity.atom", :controller => 'activities', :action => 'index', :id => '33', :format => 'atom'
 
     should_route :post, "/projects", :controller => 'projects', :action => 'create'
     should_route :post, "/projects.xml", :controller => 'projects', :action => 'create', :format => 'xml'
