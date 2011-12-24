@@ -90,10 +90,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/projects/567/issues/report/assigned_to", :controller => 'reports', :action => 'issue_report_details', :id => '567', :detail => 'assigned_to'
   end
 
-  context "members" do
-    should_route :post, "/projects/5234/members/new", :controller => 'members', :action => 'new', :id => '5234'
-  end
-
   context "news" do
     should_route :get, "/news", :controller => 'news', :action => 'index'
     should_route :get, "/news.atom", :controller => 'news', :action => 'index', :format => 'atom'
