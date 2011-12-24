@@ -54,6 +54,7 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/issues/calendar", :controller => 'calendars', :action => 'show'
     should_route :get, "/projects/project-name/issues/calendar", :controller => 'calendars', :action => 'show', :project_id => 'project-name'
 
+<<<<<<< HEAD
     should_route :get, "/issues/gantt", :controller => 'gantts', :action => 'show'
     should_route :get, "/projects/project-name/issues/gantt", :controller => 'gantts', :action => 'show', :project_id => 'project-name'
 
@@ -88,10 +89,6 @@ class RoutingTest < ActionController::IntegrationTest
   context "issue reports" do
     should_route :get, "/projects/567/issues/report", :controller => 'reports', :action => 'issue_report', :id => '567'
     should_route :get, "/projects/567/issues/report/assigned_to", :controller => 'reports', :action => 'issue_report_details', :id => '567', :detail => 'assigned_to'
-  end
-
-  context "members" do
-    should_route :post, "/projects/5234/members/new", :controller => 'members', :action => 'new', :id => '5234'
   end
 
   context "news" do
