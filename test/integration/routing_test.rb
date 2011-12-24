@@ -37,8 +37,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/issues/gantt", :controller => 'gantts', :action => 'show'
     should_route :get, "/projects/project-name/issues/gantt", :controller => 'gantts', :action => 'show', :project_id => 'project-name'
 
-    should_route :get, "/issues/auto_complete", :controller => 'auto_completes', :action => 'issues'
-
     should_route :get, "/issues/context_menu", :controller => 'context_menus', :action => 'issues'
     should_route :post, "/issues/context_menu", :controller => 'context_menus', :action => 'issues'
 
@@ -298,9 +296,5 @@ class RoutingTest < ActionController::IntegrationTest
 
     should_route :post, "/projects/ladida/wiki", :controller => 'wikis', :action => 'edit', :id => 'ladida'
     should_route :post, "/projects/ladida/wiki/destroy", :controller => 'wikis', :action => 'destroy', :id => 'ladida'
-  end
-
-  context "auto_completes" do
-    should_route :get, "/users/auto_complete", :controller => 'auto_completes', :action => 'users'
   end
 end
