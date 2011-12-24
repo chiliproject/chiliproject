@@ -57,35 +57,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :delete, "/projects/redmine/queries/1", :controller => 'queries', :action => 'destroy', :id => '1', :project_id => 'redmine'
   end
 
-  context "versions" do
-    # /projects/foo/versions is /projects/foo/roadmap
-    should_route :get, "/projects/foo/versions.xml", :controller => 'versions', :action => 'index', :project_id => 'foo', :format => 'xml'
-    should_route :get, "/projects/foo/versions.json", :controller => 'versions', :action => 'index', :project_id => 'foo', :format => 'json'
-
-    should_route :get, "/projects/foo/versions/new", :controller => 'versions', :action => 'new', :project_id => 'foo'
-
-    should_route :post, "/projects/foo/versions", :controller => 'versions', :action => 'create', :project_id => 'foo'
-    should_route :post, "/projects/foo/versions.xml", :controller => 'versions', :action => 'create', :project_id => 'foo', :format => 'xml'
-    should_route :post, "/projects/foo/versions.json", :controller => 'versions', :action => 'create', :project_id => 'foo', :format => 'json'
-
-    should_route :get, "/versions/1", :controller => 'versions', :action => 'show', :id => '1'
-    should_route :get, "/versions/1.xml", :controller => 'versions', :action => 'show', :id => '1', :format => 'xml'
-    should_route :get, "/versions/1.json", :controller => 'versions', :action => 'show', :id => '1', :format => 'json'
-
-    should_route :get, "/versions/1/edit", :controller => 'versions', :action => 'edit', :id => '1'
-
-    should_route :put, "/versions/1", :controller => 'versions', :action => 'update', :id => '1'
-    should_route :put, "/versions/1.xml", :controller => 'versions', :action => 'update', :id => '1', :format => 'xml'
-    should_route :put, "/versions/1.json", :controller => 'versions', :action => 'update', :id => '1', :format => 'json'
-
-    should_route :delete, "/versions/1", :controller => 'versions', :action => 'destroy', :id => '1'
-    should_route :delete, "/versions/1.xml", :controller => 'versions', :action => 'destroy', :id => '1', :format => 'xml'
-    should_route :delete, "/versions/1.json", :controller => 'versions', :action => 'destroy', :id => '1', :format => 'json'
-
-    should_route :put, "/projects/foo/versions/close_completed", :controller => 'versions', :action => 'close_completed', :project_id => 'foo'
-    should_route :post, "/versions/1/status_by", :controller => 'versions', :action => 'status_by', :id => '1'
-  end
-
   context "wiki (singular, project's pages)" do
     should_route :get, "/projects/567/wiki", :controller => 'wiki', :action => 'show', :project_id => '567'
     should_route :get, "/projects/567/wiki/lalala", :controller => 'wiki', :action => 'show', :project_id => '567', :id => 'lalala'
