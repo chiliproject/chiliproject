@@ -39,7 +39,6 @@ class RoutingTest < ActionController::IntegrationTest
 
     should_route :get, "/issues/auto_complete", :controller => 'auto_completes', :action => 'issues'
 
-    should_route :get, "/issues/preview/123", :controller => 'previews', :action => 'issue', :id => '123'
     should_route :post, "/issues/preview/123", :controller => 'previews', :action => 'issue', :id => '123'
     should_route :get, "/issues/context_menu", :controller => 'context_menus', :action => 'issues'
     should_route :post, "/issues/context_menu", :controller => 'context_menus', :action => 'issues'
@@ -83,7 +82,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/projects/567/news/new", :controller => 'news', :action => 'new', :project_id => '567'
     should_route :get, "/news/234", :controller => 'news', :action => 'show', :id => '234'
     should_route :get, "/news/567/edit", :controller => 'news', :action => 'edit', :id => '567'
-    should_route :get, "/news/preview", :controller => 'previews', :action => 'news'
 
     should_route :post, "/projects/567/news", :controller => 'news', :action => 'create', :project_id => '567'
     should_route :post, "/news/567/comments", :controller => 'comments', :action => 'create', :id => '567'
