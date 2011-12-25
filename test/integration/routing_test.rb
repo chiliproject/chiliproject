@@ -19,25 +19,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/projects/567/issues/report/assigned_to", :controller => 'reports', :action => 'issue_report_details', :id => '567', :detail => 'assigned_to'
   end
 
-  context "news" do
-    should_route :get, "/news", :controller => 'news', :action => 'index'
-    should_route :get, "/news.atom", :controller => 'news', :action => 'index', :format => 'atom'
-    should_route :get, "/news.xml", :controller => 'news', :action => 'index', :format => 'xml'
-    should_route :get, "/news.json", :controller => 'news', :action => 'index', :format => 'json'
-    should_route :get, "/projects/567/news", :controller => 'news', :action => 'index', :project_id => '567'
-    should_route :get, "/projects/567/news.atom", :controller => 'news', :action => 'index', :format => 'atom', :project_id => '567'
-    should_route :get, "/projects/567/news.xml", :controller => 'news', :action => 'index', :format => 'xml', :project_id => '567'
-    should_route :get, "/projects/567/news.json", :controller => 'news', :action => 'index', :format => 'json', :project_id => '567'
-    should_route :get, "/news/2", :controller => 'news', :action => 'show', :id => '2'
-    should_route :get, "/projects/567/news/new", :controller => 'news', :action => 'new', :project_id => '567'
-    should_route :get, "/news/234", :controller => 'news', :action => 'show', :id => '234'
-    should_route :get, "/news/567/edit", :controller => 'news', :action => 'edit', :id => '567'
-
-    should_route :post, "/projects/567/news", :controller => 'news', :action => 'create', :project_id => '567'
-    should_route :put, "/news/567", :controller => 'news', :action => 'update', :id => '567'
-    should_route :delete, "/news/567", :controller => 'news', :action => 'destroy', :id => '567'
-  end
-
   context "projects" do
     should_route :get, "/projects", :controller => 'projects', :action => 'index'
     should_route :get, "/projects.atom", :controller => 'projects', :action => 'index', :format => 'atom'
