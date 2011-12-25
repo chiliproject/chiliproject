@@ -36,23 +36,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :delete, "/projects/1.xml", :controller => 'projects', :action => 'destroy', :id => '1', :format => 'xml'
   end
 
-  context "queries" do
-    should_route :get, "/queries.xml", :controller => 'queries', :action => 'index', :format => 'xml'
-    should_route :get, "/queries.json", :controller => 'queries', :action => 'index', :format => 'json'
-
-    should_route :get, "/queries/new", :controller => 'queries', :action => 'new'
-    should_route :get, "/projects/redmine/queries/new", :controller => 'queries', :action => 'new', :project_id => 'redmine'
-
-    should_route :post, "/queries", :controller => 'queries', :action => 'create'
-    should_route :post, "/projects/redmine/queries", :controller => 'queries', :action => 'create', :project_id => 'redmine'
-
-    should_route :get, "/queries/1/edit", :controller => 'queries', :action => 'edit', :id => '1'
-
-    should_route :put, "/queries/1", :controller => 'queries', :action => 'update', :id => '1'
-
-    should_route :delete, "/queries/1", :controller => 'queries', :action => 'destroy', :id => '1'
-  end
-
   context "wiki (singular, project's pages)" do
     should_route :get, "/projects/567/wiki", :controller => 'wiki', :action => 'show', :project_id => '567'
     should_route :get, "/projects/567/wiki/lalala", :controller => 'wiki', :action => 'show', :project_id => '567', :id => 'lalala'
