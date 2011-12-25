@@ -72,12 +72,8 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/news/567/edit", :controller => 'news', :action => 'edit', :id => '567'
 
     should_route :post, "/projects/567/news", :controller => 'news', :action => 'create', :project_id => '567'
-    should_route :post, "/news/567/comments", :controller => 'comments', :action => 'create', :id => '567'
-
     should_route :put, "/news/567", :controller => 'news', :action => 'update', :id => '567'
-
     should_route :delete, "/news/567", :controller => 'news', :action => 'destroy', :id => '567'
-    should_route :delete, "/news/567/comments/15", :controller => 'comments', :action => 'destroy', :id => '567', :comment_id => '15'
   end
 
   context "projects" do
