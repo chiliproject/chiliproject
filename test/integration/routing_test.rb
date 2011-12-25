@@ -36,36 +36,7 @@ class RoutingTest < ActionController::IntegrationTest
   end
 
   context "issues" do
-    # REST actions
-    should_route :get, "/issues", :controller => 'issues', :action => 'index'
-    should_route :get, "/issues.pdf", :controller => 'issues', :action => 'index', :format => 'pdf'
-    should_route :get, "/issues.atom", :controller => 'issues', :action => 'index', :format => 'atom'
-    should_route :get, "/issues.xml", :controller => 'issues', :action => 'index', :format => 'xml'
-    should_route :get, "/projects/23/issues", :controller => 'issues', :action => 'index', :project_id => '23'
-    should_route :get, "/projects/23/issues.pdf", :controller => 'issues', :action => 'index', :project_id => '23', :format => 'pdf'
-    should_route :get, "/projects/23/issues.atom", :controller => 'issues', :action => 'index', :project_id => '23', :format => 'atom'
-    should_route :get, "/projects/23/issues.xml", :controller => 'issues', :action => 'index', :project_id => '23', :format => 'xml'
-    should_route :get, "/issues/64", :controller => 'issues', :action => 'show', :id => '64'
-    should_route :get, "/issues/64.pdf", :controller => 'issues', :action => 'show', :id => '64', :format => 'pdf'
-    should_route :get, "/issues/64.atom", :controller => 'issues', :action => 'show', :id => '64', :format => 'atom'
-    should_route :get, "/issues/64.xml", :controller => 'issues', :action => 'show', :id => '64', :format => 'xml'
-
-    should_route :get, "/projects/23/issues/new", :controller => 'issues', :action => 'new', :project_id => '23'
-    # issue form update
-    should_route :post, "/projects/23/issues/new", :controller => 'issues', :action => 'new', :project_id => '23'
-    should_route :post, "/projects/23/issues", :controller => 'issues', :action => 'create', :project_id => '23'
-    should_route :post, "/issues.xml", :controller => 'issues', :action => 'create', :format => 'xml'
-
-    should_route :get, "/issues/64/edit", :controller => 'issues', :action => 'edit', :id => '64'
-    should_route :put, "/issues/1.xml", :controller => 'issues', :action => 'update', :id => '1', :format => 'xml'
-
-    # TODO: Should use DELETE
-    should_route :post, "/issues/64/destroy", :controller => 'issues', :action => 'destroy', :id => '64'
-    should_route :delete, "/issues/1.xml", :controller => 'issues', :action => 'destroy', :id => '1', :format => 'xml'
-
     # Extra actions
-    should_route :get, "/projects/23/issues/64/copy", :controller => 'issues', :action => 'new', :project_id => '23', :copy_from => '64'
-
     should_route :get, "/issues/move/new", :controller => 'issue_moves', :action => 'new'
     should_route :post, "/issues/move", :controller => 'issue_moves', :action => 'create'
 
@@ -85,9 +56,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :post, "/issues/context_menu", :controller => 'context_menus', :action => 'issues'
 
     should_route :get, "/issues/changes", :controller => 'journals', :action => 'index'
-
-    should_route :get, "/issues/bulk_edit", :controller => 'issues', :action => 'bulk_edit'
-    should_route :post, "/issues/bulk_update", :controller => 'issues', :action => 'bulk_update'
   end
 
   context "journals" do
