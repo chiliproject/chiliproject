@@ -58,7 +58,6 @@ Redmine::Application.routes.draw do |map|
   end
 
   map.resources :issue_moves, :only => [:new, :create], :path_prefix => '/issues', :as => 'move'
-  map.resources :queries, :except => [:show]
 
   # Misc issue routes. TODO: move into resources
   map.auto_complete_issues '/issues/auto_complete', :controller => 'auto_completes', :action => 'issues', :conditions => { :method => :get }
@@ -170,8 +169,9 @@ Redmine::Application.routes.draw do |map|
       :export => :get,
       :date_index => :get
     }
-
   end
+
+  map.resources :queries, :except => [:show]
 
   map.resources :issues, :member => { :edit => :post },
                 :collection => {:bulk_edit => :get, :bulk_update => :post} do |issues|
