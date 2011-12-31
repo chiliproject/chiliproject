@@ -33,11 +33,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'help/wiki_syntax', :controller => 'help', :action => 'wiki_syntax', :conditions => {:method => :get}
   map.connect 'help/wiki_syntax_detailed', :controller => 'help', :action => 'wiki_syntax_detailed', :conditions => {:method => :get}
 
-  map.connect '/time_entries/destroy',
-                   :controller => 'timelog', :action => 'destroy', :conditions => { :method => :delete }
-
-  map.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
-
   map.connect 'projects/:id/wiki', :controller => 'wikis', :action => 'edit', :conditions => {:method => :post}
   map.connect 'projects/:id/wiki/destroy', :controller => 'wikis', :action => 'destroy', :conditions => {:method => [:get, :post]}
 
@@ -183,6 +178,13 @@ ActionController::Routing::Routes.draw do |map|
   # Bulk deletion
   map.connect '/issues', :controller => 'issues', :action => 'destroy',
               :conditions => {:method => :delete}
+
+  map.connect '/time_entries/destroy',
+              :controller => 'timelog', :action => 'destroy',
+              :conditions => { :method => :delete }
+
+  map.resources :time_entries, :controller => 'timelog',
+                :collection => {:bulk_update => :post}
 
   map.with_options :controller => 'activities', :action => 'index', :conditions => {:method => :get} do |activity|
     activity.connect 'projects/:id/activity'
