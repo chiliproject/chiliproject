@@ -12,11 +12,6 @@
 # See doc/COPYRIGHT.rdoc for more details.
 #++
 require File.expand_path('../../test_helper', __FILE__)
-require 'reports_controller'
-
-# Re-raise errors caught by the controller.
-class ReportsController; def rescue_action(e) raise e end; end
-
 
 class ReportsControllerTest < ActionController::TestCase
   fixtures :attachments,
@@ -60,57 +55,36 @@ class ReportsControllerTest < ActionController::TestCase
            :workflows
 
   def setup
-    @controller = ReportsController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
-    User.current = nil
   end
 
-  context "GET :issue_report without details" do
-    setup do
-      get :issue_report, :id => 1
-    end
+  def test_get_issue_report
+    get :issue_report, :id => 1
 
-    should respond_with :success
-    should render_template :issue_report
+    assert_response :success
+    assert_template 'issue_report'
 
     [:issues_by_tracker, :issues_by_version, :issues_by_category, :issues_by_assigned_to,
      :issues_by_author, :issues_by_subproject].each do |ivar|
-      should assign_to ivar
-      should "set a value for #{ivar}" do
-        assert assigns[ivar.to_s].present?
-      end
+      assert_not_nil assigns(ivar)
     end
   end
 
-  context "GET :issue_report_details" do
+  def test_get_issue_report_details
     %w(tracker version priority category assigned_to author subproject).each do |detail|
-      context "for #{detail}" do
-        setup do
-          get :issue_report_details, :id => 1, :detail => detail
-        end
+      get :issue_report_details, :id => 1, :detail => detail
 
-        should respond_with :success
-        should render_template :issue_report_details
-        should assign_to :field
-        should assign_to :rows
-        should assign_to :data
-        should assign_to :report_title
-      end
+      assert_response :success
+      assert_template 'issue_report_details'
+      assert_not_nil assigns(:field)
+      assert_not_nil assigns(:rows)
+      assert_not_nil assigns(:data)
+      assert_not_nil assigns(:report_title)
     end
-
-    context "with an invalid detail" do
-      setup do
-        get :issue_report_details, :id => 1, :detail => 'invalid'
-      end
-
-      should respond_with :redirect
-      should redirect_to('the issue report'){
-                {:controller => 'reports',
-                 :action => 'issue_report', :id => 'ecookbook'}
-                 }
-    end
-
   end
 
+  def test_get_issue_report_details_with_an_invalid_detail
+    get :issue_report_details, :id => 1, :detail => 'invalid'
+
+    assert_redirected_to '/projects/ecookbook/issues/report'
+  end
 end
