@@ -226,8 +226,7 @@ class ActiveSupport::TestCase
       context "with a valid HTTP authentication" do
         setup do
           @user = User.generate_with_protected!(:password => 'my_password', :password_confirmation => 'my_password', :admin => true) # Admin so they can access the project
-          @authorization = ActionController::HttpAuthentication::Basic.encode_credentials(@user.login, 'my_password')
-          send(http_method, url, parameters, {:authorization => @authorization})
+          send(http_method, url, parameters, {:authorization => credentials(@user.login, 'my_password')})
         end
 
         should_respond_with success_code
@@ -240,8 +239,7 @@ class ActiveSupport::TestCase
       context "with an invalid HTTP authentication" do
         setup do
           @user = User.generate_with_protected!
-          @authorization = ActionController::HttpAuthentication::Basic.encode_credentials(@user.login, 'wrong_password')
-          send(http_method, url, parameters, {:authorization => @authorization})
+          send(http_method, url, parameters, {:authorization => credentials(@user.login, 'wrong_password')})
         end
 
         should_respond_with failure_code
@@ -283,8 +281,7 @@ class ActiveSupport::TestCase
         setup do
           @user = User.generate_with_protected!(:admin => true)
           @token = Token.generate!(:user => @user, :action => 'api')
-          @authorization = ActionController::HttpAuthentication::Basic.encode_credentials(@token.value, 'X')
-          send(http_method, url, parameters, {:authorization => @authorization})
+          send(http_method, url, parameters, {:authorization => credentials(@token.value, 'X')})
         end
 
         should_respond_with success_code
@@ -299,8 +296,7 @@ class ActiveSupport::TestCase
         setup do
           @user = User.generate_with_protected!
           @token = Token.generate!(:user => @user, :action => 'feeds')
-          @authorization = ActionController::HttpAuthentication::Basic.encode_credentials(@token.value, 'X')
-          send(http_method, url, parameters, {:authorization => @authorization})
+          send(http_method, url, parameters, {:authorization => credentials(@token.value, 'X')})
         end
 
         should_respond_with failure_code
