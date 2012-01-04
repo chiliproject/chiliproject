@@ -562,33 +562,24 @@ jQuery(document).ready(function($) {
   };
 
   // Click on the menu header with a dropdown menu
-  $('#account-nav .drop-down').live('click', function(event) {
+  $('#account-nav .drop-down').hover(function(hoverOnEvent) {
     var menuItem = $(this);
-
     toggleTopMenu(menuItem);
-
-    if (menuItem.hasClass('open')) {
-      handleClickEventOnPageToCloseOpenMenu(menuItem);
-    }
-    return false;
-  });
-
-  // Click on an actual item
-  $('#account-nav .drop-down ul a').live('click', function(event) {
-    event.stopPropagation();
+  }, function(hoverOffEvent) {
+    var menuItem = $(this);
+    toggleTopMenu(menuItem);
   });
 
   // show/hide login box
-  $("#account-nav a.login").click(function() {
-    $(this).parent().toggleClass("open");
+  $("#account-nav #login-menu").hover(function(hoverOnEvent) {
     // Focus the username field if the login field has opened
     $("#nav-login").slideToggle(animationRate, function () {
-      if ($(this).parent().hasClass("open")) {
+      if ($(this).hasClass("open")) {
         $("input#username").focus()
       }
     });
-    
-    return false;
+  }, function(hoverOffEvent) {
+    $("#nav-login").slideToggle(animationRate);
   });
 
 	// deal with potentially problematic super-long titles
