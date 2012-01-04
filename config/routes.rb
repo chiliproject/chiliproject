@@ -193,7 +193,6 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :controller => 'repositories' do |repositories|
     repositories.with_options :conditions => {:method => :get} do |repository_views|
       repository_views.connect 'projects/:id/repository', :action => 'show'
-      repository_views.connect 'projects/:id/repository/edit', :action => 'edit'
       repository_views.connect 'projects/:id/repository/statistics', :action => 'stats'
       repository_views.connect 'projects/:id/repository/revisions', :action => 'revisions'
       repository_views.connect 'projects/:id/repository/revisions.:format', :action => 'revisions'
@@ -214,7 +213,8 @@ ActionController::Routing::Routes.draw do |map|
 
     repositories.connect 'projects/:id/repository/revision', :action => 'revision', :conditions => {:method => [:get, :post]}
     repositories.connect 'projects/:id/repository/committers', :action => 'committers', :conditions => {:method => [:get, :post]}
-    repositories.connect 'projects/:id/repository/edit', :action => 'edit', :conditions => {:method => :post}
+    repositories.connect 'projects/:id/repository/edit', :action => 'edit',
+                          :conditions => {:method => [:get, :post]}
     repositories.connect 'projects/:id/repository/destroy', :action => 'destroy', :conditions => {:method => :post}
   end
 
