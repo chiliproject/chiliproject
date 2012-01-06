@@ -135,7 +135,8 @@ ActionController::Routing::Routes.draw do |map|
   } do |project|
     project.resource :project_enumerations, :as => 'enumerations', :only => [:update, :destroy]
     # issue form update
-    project.issue_form 'issues/new', :controller => 'issues', :action => 'new', :conditions => {:method => :post}
+    project.issue_form 'issues/new', :controller => 'issues',
+                       :action => 'new', :conditions => {:method => [:post, :put]}
     project.resources :issues, :only => [:index, :new, :create] do |issues|
       issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
     end
