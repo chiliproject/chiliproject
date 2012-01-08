@@ -147,7 +147,8 @@ Redmine::Application.routes.draw do |map|
     project.resources :files, :only => [:index, :new, :create]
     project.resources :versions, :shallow => true, :collection => {:close_completed => :put}, :member => {:status_by => :post}
     project.resources :news, :shallow => true
-    project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id', :collection => {:report => :get}
+    project.resources :time_entries, :controller => 'timelog',
+                      :collection => {:report => :get}
     project.resources :boards
     project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
     project.resources :issue_categories, :shallow => true
