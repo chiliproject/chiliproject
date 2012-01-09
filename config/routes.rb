@@ -136,7 +136,8 @@ Redmine::Application.routes.draw do |map|
     :archive => :post,
     :unarchive => :post
   } do |project|
-    project.resource :project_enumerations, :as => 'enumerations', :only => [:update, :destroy]
+    project.resource :enumerations, :controller => 'project_enumerations',
+                     :only => [:update, :destroy]
     # issue form update
     project.issue_form 'issues/new', :controller => 'issues',
                        :action => 'new', :conditions => {:method => [:post, :put]}
