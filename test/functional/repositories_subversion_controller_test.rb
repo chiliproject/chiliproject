@@ -38,6 +38,16 @@ class RepositoriesSubversionControllerTest < ActionController::TestCase
   end
 
   if repository_configured?('subversion')
+    def test_new
+      @request.session[:user_id] = 1
+      @project.repository.destroy
+      get :new, :project_id => 'subproject1', :repository_scm => 'Subversion'
+      assert_response :success
+      assert_template 'new'
+      assert_kind_of Repository::Subversion, assigns(:repository)
+      assert assigns(:repository).new_record?
+    end
+
     def test_show
       @repository.fetch_changesets
       @project.reload
@@ -286,6 +296,5 @@ class RepositoriesSubversionControllerTest < ActionController::TestCase
     end
   else
     should "Subversion test repository not found."
-
   end
 end

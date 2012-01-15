@@ -58,6 +58,16 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
          "Current value is '#{Encoding.default_external.to_s}'"
     def test_fake; assert true end
   elsif File.directory?(REPOSITORY_PATH)
+    def test_get_new
+      @request.session[:user_id] = 1
+      @project.repository.destroy
+      get :new, :project_id => 'subproject1', :repository_scm => 'Mercurial'
+      assert_response :success
+      assert_template 'new'
+      assert_kind_of Repository::Mercurial, assigns(:repository)
+      assert assigns(:repository).new_record?
+    end
+
     def test_show_root
       @repository.fetch_changesets
       @project.reload

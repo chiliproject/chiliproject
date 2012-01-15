@@ -39,6 +39,16 @@ class RepositoriesFilesystemControllerTest < ActionController::TestCase
   end
 
   if File.directory?(REPOSITORY_PATH)
+    def test_get_new
+      @request.session[:user_id] = 1
+      @project.repository.destroy
+      get :new, :project_id => 'subproject1', :repository_scm => 'Filesystem'
+      assert_response :success
+      assert_template 'new'
+      assert_kind_of Repository::Filesystem, assigns(:repository)
+      assert assigns(:repository).new_record?
+    end
+
     def test_browse_root
       @repository.fetch_changesets
       @project.reload
