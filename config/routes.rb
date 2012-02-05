@@ -102,11 +102,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'my/remove_block', :controller => 'my', :action => 'remove_block', :conditions => {:method => :post}
   map.connect 'my/order_blocks', :controller => 'my', :action => 'order_blocks', :conditions => {:method => :post}
 
-  map.connect 'projects/:id/members/new', :controller => 'members', :action => 'new', :conditions => { :method => :post }
-  map.connect 'members/edit/:id', :controller => 'members', :action => 'edit', :id => /\d+/, :conditions => { :method => :post }
-  map.connect 'members/destroy/:id', :controller => 'members', :action => 'destroy', :id => /\d+/, :conditions => { :method => :post }
-  map.connect 'members/autocomplete_for_member/:id', :controller => 'members', :action => 'autocomplete_for_member', :conditions => { :method => :post }
-
   map.with_options :controller => 'users' do |users|
     users.user_membership 'users/:id/memberships/:membership_id', :action => 'edit_membership', :conditions => {:method => :put}
     users.connect 'users/:id/memberships/:membership_id', :action => 'destroy_membership', :conditions => {:method => :delete}
@@ -161,6 +156,9 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :queries, :except => [:show]
     project.resources :repositories, :shallow => true, :except => [:index, :show],
                       :member => {:committers => [:get, :post]}
+    project.resources :memberships, :shallow => true, :controller => 'members',
+                      :only => [:create, :update, :destroy],
+                      :collection => {:autocomplete => :get}
 
     project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
     project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
