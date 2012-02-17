@@ -15,7 +15,6 @@
             }
         },
         Click: function(e) {
-            methods.hideMenu();
             var target = $(e.target);
 
             if(target.is('a')) {
@@ -25,11 +24,13 @@
             switch(e.which) {
                 case 1:
                     if(e.type === 'click') {
+                        methods.hideMenu();
                         methods.LeftClick(e);
                         break;
                     }
                 case 3:
                     if(e.type === 'contextmenu') {
+                        methods.hideMenu();
                         methods.RightClick(e);
                         break;
                     }
