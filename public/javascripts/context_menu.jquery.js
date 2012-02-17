@@ -124,7 +124,6 @@
            menu.hide();
         },
         showMenu: function(e) {
-            //menu.show();
             var target = $(e.target);
             var params = target.parents('form').serialize();
 
