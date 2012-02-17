@@ -6,6 +6,8 @@
     var menuId = 'context-menu';
     var selectorName = 'hascontextmenu';
     var contextMenuSelectionClass = 'context-menu-selection';
+    var reverseXClass = 'reverse-x';
+    var reverseYClass = 'reverse-y';
 
     var methods = {
         createMenu: function() {
@@ -129,13 +131,40 @@
 
             var mouseX = e.pageX;
             var mouseY = e.pageY;
+            var renderX = mouseX;
+            var renderY = mouseY;
 
             $.ajax({
                 url: url,
                 data: params,
                 success: function(response, success) {
                     menu.html(response);
-                    menu.css('top', mouseY).css('left', mouseX);
+
+                    var maxWidth = mouseX + (2 * menu.width());
+                    var maxHeight = mouseY + menu.height();
+
+                    if(maxWidth > $(window).width()) {
+                        renderX -= menu.width();
+                        menu.addClass(reverseXClass);
+                    } else {
+                        menu.removeClass(reverseXClass);
+                    }
+
+                    if(maxHeight > $(window).height()) {
+                        renderY =+ menu.height();
+                        menu.addClass(reverseYClass);
+                    } else {
+                        menu.removeClass(reverseYClass);
+                    }
+
+                    if(renderX <= 0) {
+                        renderX = 1;
+                    }
+                    if(renderY <= 0) {
+                        renderY = 1;
+                    }
+
+                    menu.css('top', renderY).css('left', renderX);
                     menu.show();
                 }
             });
