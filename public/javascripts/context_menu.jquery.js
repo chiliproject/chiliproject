@@ -16,7 +16,7 @@
                 menu = $('#' + menuId);
             }
         },
-        Click: function(e) {
+        click: function(e) {
             var target = $(e.target);
 
             if(target.is('a')) {
@@ -27,20 +27,20 @@
                 case 1:
                     if(e.type === 'click') {
                         methods.hideMenu();
-                        methods.LeftClick(e);
+                        methods.leftClick(e);
                         break;
                     }
                 case 3:
                     if(e.type === 'contextmenu') {
                         methods.hideMenu();
-                        methods.RightClick(e);
+                        methods.rightClick(e);
                         break;
                     }
                 default:
                     return;
             }
         },
-        LeftClick: function(e) {
+        leftClick: function(e) {
             var target = $(e.target);
             var tr = target.parents('tr');
             if((tr.size() > 0) && tr.hasClass(selectorName))
@@ -100,7 +100,7 @@
                 }
             }
         },
-        RightClick: function(e) {
+        rightClick: function(e) {
             var target = $(e.target);
             var tr = target.parents('tr');
 
@@ -195,13 +195,13 @@
         }
     };
 
-    $.fn.contextMenu = function(u) {
+    $.fn.ContextMenu = function(u) {
         url = u;
         methods.createMenu();
 
         if(!observingContextMenuClick) {
-            $(document).bind('click.contextMenu', methods.Click);
-            $(document).bind('contextmenu.contextMenu', methods.Click);
+            $(document).bind('click.contextMenu', methods.click);
+            $(document).bind('contextmenu.contextMenu', methods.click);
             observingContextMenuClick = true;
         }
 
