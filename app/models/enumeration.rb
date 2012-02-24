@@ -94,7 +94,7 @@ class Enumeration < ActiveRecord::Base
   #
   # Note: subclasses is protected in ActiveRecord
   def self.get_subclasses
-    @@subclasses[Enumeration]
+    subclasses
   end
 
   # Does the +new+ Hash override the previous Enumeration?
