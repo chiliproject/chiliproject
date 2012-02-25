@@ -41,6 +41,7 @@
 
 <% content_for :sidebar do %>
 <% form_tag({}, :method => :get) do %>
+<%= hidden_field_tag 'activities_filter', 1 %>
 <h3><%= l(:label_activity) %></h3>
 <p><% @activity.event_types.each do |t| %>
 <%= check_box_tag "show_#{t}", 1, @activity.scope.include?(t) %>
