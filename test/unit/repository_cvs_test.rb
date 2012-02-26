@@ -50,9 +50,9 @@ class RepositoryCvsTest < ActiveSupport::TestCase
       @repository.fetch_changesets
       # Remove changesets with revision > 3
       @repository.changesets.find(:all).each {|c| c.destroy if c.revision.to_i > 3}
-      @repository.reload
+      @project.reload
       assert_equal 3, @repository.changesets.count
-      assert_equal %w|3 2 1|, @repository.changesets.collect(&:revision)
+      assert_equal %w|3 2 1|, @repository.changesets.all.collect(&:revision)
 
       rev3_commit = @repository.changesets.find(:first, :order => 'committed_on DESC')
       assert_equal '3', rev3_commit.revision
@@ -64,10 +64,10 @@ class RepositoryCvsTest < ActiveSupport::TestCase
       assert_equal rev3_committed_on, latest_rev.committed_on
 
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       assert_equal 5, @repository.changesets.count
 
-      assert_equal %w|5 4 3 2 1|, @repository.changesets.collect(&:revision)
+      assert_equal %w|5 4 3 2 1|, @repository.changesets.all.collect(&:revision)
       rev5_commit = @repository.changesets.find(:first, :order => 'committed_on DESC')
       assert_equal 'HEAD-20071213-163001', rev5_commit.scmid
        # 2007-12-14 01:30:01 +0900
