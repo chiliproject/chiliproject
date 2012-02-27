@@ -25,10 +25,6 @@ class Mailer < ActionMailer::Base
 
   self.prepend_view_path "app/views/mailer"
 
-  def self.default_url_options
-    { :host => Setting.host_name, :protocol => Setting.protocol }
-  end
-
   # Builds a tmail object used to email a recipient of the added issue.
   #
   # Example:
