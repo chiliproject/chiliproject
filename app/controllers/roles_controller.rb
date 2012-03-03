@@ -56,7 +56,6 @@ class RolesController < ApplicationController
     end
   end
 
-  verify :method => :delete, :only => :destroy, :redirect_to => { :action => :index }
   def destroy
     @role.destroy
     redirect_to :action => 'index'
