@@ -323,13 +323,13 @@ class Mailer < ActionMailer::Base
     render_multipart('mail_handler_missing_information', body)
   end
 
-  def test(user)
+  def test_email(user)
     redmine_headers 'Type' => "Test"
     set_language_if_valid(user.language)
     recipients user.mail
     subject 'ChiliProject test'
     body :url => url_for(:controller => 'welcome')
-    render_multipart('test', body)
+    render_multipart('test_email', body)
   end
 
   # Overrides default deliver! method to prevent from sending an email
