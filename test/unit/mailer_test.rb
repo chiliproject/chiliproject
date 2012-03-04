@@ -127,7 +127,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_mail_from_with_phrase
     with_settings :mail_from => 'Redmine app <redmine@example.net>' do
-      Mailer.deliver_test(User.find(1))
+      Mailer.deliver_test_email(User.find(1))
     end
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
@@ -297,7 +297,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_test
     user = User.find(1)
-    assert Mailer.deliver_test(user)
+    assert Mailer.deliver_test_email(user)
   end
 
   def test_reminders
@@ -341,7 +341,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_with_deliveries_off
     Mailer.with_deliveries false do
-      Mailer.deliver_test(User.find(1))
+      Mailer.deliver_test_email(User.find(1))
     end
     assert ActionMailer::Base.deliveries.empty?
     # should restore perform_deliveries
@@ -351,17 +351,13 @@ class MailerTest < ActiveSupport::TestCase
   context "layout" do
     should "include the emails_header" do
       with_settings(:emails_header => "*Header content*") do
-        assert Mailer.deliver_test(User.find(1))
-
+        assert Mailer.deliver_test_email(User.find(1))
         assert_select_email do
           assert_select ".header" do
             assert_select "strong", :text => "Header content"
           end
         end
       end
-
     end
-
   end
-
 end
