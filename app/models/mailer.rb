@@ -343,7 +343,7 @@ class Mailer < ActionMailer::Base
     render_multipart('mail_handler_missing_information', body)
   end
 
-  def test(user)
+  def test_email(user)
     redmine_headers 'Type' => "Test"
     set_language_if_valid(user.language)
     @url = url_for(:controller => 'welcome')
