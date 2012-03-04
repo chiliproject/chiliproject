@@ -29,12 +29,11 @@ class ApiTest::DisabledRestApiTest < ActionController::IntegrationTest
 
   # Using the NewsController because it's a simple API.
   context "get /news with the API disabled" do
-
     context "in :xml format" do
       context "with a valid api token" do
         setup do
           @user = User.generate_with_protected!
-          @token = Token.generate!(:user => @user, :action => 'api')
+          @token = Token.create!(:user => @user, :action => 'api')
           get "/news.xml?key=#{@token.value}"
         end
 
@@ -61,10 +60,9 @@ class ApiTest::DisabledRestApiTest < ActionController::IntegrationTest
       context "with a valid HTTP authentication using the API token" do
         setup do
           @user = User.generate_with_protected!
-          @token = Token.generate!(:user => @user, :action => 'api')
+          @token = Token.create!(:user => @user, :action => 'api')
           get "/news.xml", nil, credentials(@token.value, 'X')
         end
-
         should_respond_with :unauthorized
         should_respond_with_content_type :xml
         should "not login as the user" do
@@ -77,10 +75,9 @@ class ApiTest::DisabledRestApiTest < ActionController::IntegrationTest
       context "with a valid api token" do
         setup do
           @user = User.generate_with_protected!
-          @token = Token.generate!(:user => @user, :action => 'api')
+          @token = Token.create!(:user => @user, :action => 'api')
           get "/news.json?key=#{@token.value}"
         end
-
         should_respond_with :unauthorized
         should_respond_with_content_type :json
         should "not login as the user" do
@@ -104,17 +101,15 @@ class ApiTest::DisabledRestApiTest < ActionController::IntegrationTest
       context "with a valid HTTP authentication using the API token" do
         setup do
           @user = User.generate_with_protected!
-          @token = Token.generate!(:user => @user, :action => 'api')
+          @token = Token.create!(:user => @user, :action => 'api')
           get "/news.json", nil, credentials(@token.value, 'DoesNotMatter')
         end
-
         should_respond_with :unauthorized
         should_respond_with_content_type :json
         should "not login as the user" do
           assert_equal User.anonymous, User.current
         end
       end
-
     end
   end
 end
