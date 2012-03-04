@@ -60,35 +60,6 @@ class ProjectTest < ActiveSupport::TestCase
     User.current = nil
   end
 
-  should validate_presence_of :name
-  should validate_presence_of :identifier
-
-  should validate_uniqueness_of :identifier
-
-  context "associations" do
-    should have_many :members
-    should have_many(:users).through(:members)
-    should have_many :member_principals
-    should have_many(:principals).through(:member_principals)
-    should have_many :enabled_modules
-    should have_many :issues
-    should have_many(:issue_changes).through(:issues)
-    should have_many :versions
-    should have_many :time_entries
-    should have_many :queries
-    should have_many :documents
-    should have_many :news
-    should have_many :issue_categories
-    should have_many :boards
-    should have_many(:changesets).through(:repository)
-
-    should have_one :repository
-    should have_one :wiki
-
-    should have_and_belong_to_many :trackers
-    should have_and_belong_to_many :issue_custom_fields
-  end
-
   def test_truth
     assert_kind_of Project, @ecookbook
     assert_equal "eCookbook", @ecookbook.name
