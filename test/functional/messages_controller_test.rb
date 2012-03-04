@@ -95,7 +95,7 @@ class MessagesControllerTest < ActionController::TestCase
     assert mail.to.include?('jsmith@somenet.foo')
     assert_not_nil mail
     assert_equal "[#{message.board.project.name} - #{message.board.name} - msg#{message.root.id}] Test created message", mail.subject
-    assert mail.body.include?('Message body')
+    assert_mail_body_match 'Message body', mail
 
     # project member
     mails_to_member = ActionMailer::Base.deliveries.select {|m| m.to.include?('dlopper@somenet.foo') }
