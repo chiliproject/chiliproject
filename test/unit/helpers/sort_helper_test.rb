@@ -15,6 +15,7 @@ require File.expand_path('../../../test_helper', __FILE__)
 
 class SortHelperTest < ActionView::TestCase
   include SortHelper
+  include ERB::Util
 
   def setup
     @session = nil
