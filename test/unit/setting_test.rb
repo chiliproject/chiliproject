@@ -38,4 +38,22 @@ class SettingTest < ActiveSupport::TestCase
     assert_equal ['issue_added', 'issue_updated', 'news_added'], Setting.notified_events
     assert_equal ['issue_added', 'issue_updated', 'news_added'], Setting.find_by_name('notified_events').value
   end
+
+  def test_find_or_default
+    Setting.available_settings["plugin_foo"] = {'default' => {:name => nil, :version => nil}, 'serialized' => true}
+    assert_equal Hash, Setting.find_or_default('plugin_foo').value.class
+  end
+
+  def test_create_new_setting_with_hash
+    setting = Setting.new
+    setting.name = "plugin_foo"
+    setting.value = {:bar => 2}
+    assert_equal Hash, setting.value.class 
+
+    setting = Setting.new
+    setting.value = {:bar => 2}
+    setting.name = "plugin_foo"
+    assert_equal Hash, setting.value.class 
+  end
+
 end
