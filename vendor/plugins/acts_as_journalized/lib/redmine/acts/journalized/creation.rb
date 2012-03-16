@@ -75,23 +75,45 @@ module Redmine::Acts::Journalized
       def recreate_initial_journal!
         new_journal = journals.find_by_version(1)
         new_journal ||= journals.build
-        # Mock up a list of changes for the creation journal based on Class defaults
-        new_attributes = self.class.new.attributes.except(self.class.primary_key,
-                                                          self.class.inheritance_column,
-                                                          :updated_on,
-                                                          :updated_at,
-                                                          :lock_version,
-                                                          :lft,
-                                                          :rgt)
-        creation_changes = {}
-        new_attributes.each do |name, default_value|
-          # Set changes based on the initial value to current. Can't get creation value without
-          # rebuiling the object history
-          creation_changes[name] = [default_value, self.send(name)] # [initial_value, creation_value]
+
+        initial_changes = {}
+
+        self.attributes.keys.reject{|attribute| self.class.vestal_journals_options[:except].include?(attribute)}.each do |name|
+
+          # Set the current attributes as initial attributes
+          # This works as a fallback if no prior change is found
+          initial_changes[name] = self.send(name)
+
+          # Try to find the real initial values
+          unless self.journals.empty?
+            self.journals[1..-1].each do |journal|
+              unless journal.changes[name].nil?
+                # Found the first change in journals
+                # Copy the first value as initial change value
+                initial_changes[name] = journal.changes[name].first
+                break
+              end
+            end
+          end
         end
-        new_journal.changes = creation_changes
+
+        fill_object = self.class.new
+
+        # The parent id is set via awesome_nested set
+        # we need to use the correct accessor which is 'parent_issue_id' for issues
+        initial_changes["parent_issue_id"] = initial_changes.delete("parent_id") if self.class == Issue and initial_changes.has_key?("parent_id")
+
+        # Force the gathered attributes onto the fill object
+        attributes_setter = ActiveRecord::Base.instance_method(:attributes=)
+        attributes_setter = attributes_setter.bind(fill_object)
+
+        attributes_setter.call(initial_changes, false)
+
+        # Call the journal creating method
+        new_journal.changes = fill_object.send(:merge_journal_changes)
+
         new_journal.version = 1
-        new_journal.activity_type = self.class.send(:journalized_activity_hash, {})[:type]
+        new_journal.activity_type = activity_type
 
         if respond_to?(:author)
           new_journal.user = author
