@@ -74,26 +74,16 @@
 
 <%= call_hook(:view_issues_show_description_bottom, :issue => @issue) %>
 
-<% if !@issue.leaf? || User.current.allowed_to?(:manage_subtasks, @project) %>
-<hr />
-<div id="issue_tree">
-<p>
-  <strong><%=l(:label_subtask_plural)%></strong>
-  (<%= link_to(l(:button_add), {:controller => 'issues', :action => 'new', :project_id => @project, :issue => {:parent_issue_id => @issue}}) if User.current.allowed_to?(:manage_subtasks, @project) %>)
-</p>
-
-<%= render_descendants_tree(@issue) unless @issue.leaf? %>
-</div>
-<% end %>
+<%= render :partial => 'tree_simple' %>
 
 <% if authorize_for('issue_relations', 'new') || @issue.relations.present? %>
 <hr />
 <div id="relations">
 <%= render :partial => 'relations' %>
 </div>
-<hr />
 <% end %>
 
+<hr />
 </div>
 
 <% if @changesets.present? %>
@@ -148,9 +138,8 @@
 <% content_for :header_tags do %>
     <%= auto_discovery_link_tag(:atom, {:format => 'atom', :key => User.current.rss_key}, :title => "#{@issue.project} - #{@issue.tracker} ##{@issue.id}: #{@issue.subject}") %>
     <%= stylesheet_link_tag 'scm' %>
-    <%= javascript_include_tag 'context_menu' %>
+    <%= javascript_include_tag 'context_menu.jquery' %>
     <%= stylesheet_link_tag 'context_menu' %>
     <%= stylesheet_link_tag 'context_menu_rtl' if l(:direction) == 'rtl' %>
 <% end %>
-<div id="context-menu" style="display: none;"></div>
-<%= javascript_tag "new ContextMenu('#{issues_context_menu_path}')" %>
+<%= javascript_tag "jQuery(document).ContextMenu('#{issues_context_menu_path}')" %>
