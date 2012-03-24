@@ -41,7 +41,7 @@ class SettingTest < ActiveSupport::TestCase
 
   def test_find_or_default
     Setting.available_settings["plugin_foo"] = {'default' => {:name => nil, :version => nil}, 'serialized' => true}
-    assert_equal Hash, Setting.find_or_default('plugin_issue_widget').value.class
+    assert_equal Hash, Setting.find_or_default('plugin_foo').value.class
   end
 
   def test_create_new_setting_with_hash
