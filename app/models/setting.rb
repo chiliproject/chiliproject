@@ -13,7 +13,6 @@
 #++
 
 class Setting < ActiveRecord::Base
-  serialize :value
 
   DATE_FORMATS = [
 	'%Y-%m-%d',
@@ -82,6 +81,19 @@ class Setting < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_inclusion_of :name, :in => @@available_settings.keys
   validates_numericality_of :value, :only_integer => true, :if => Proc.new { |setting| @@available_settings[setting.name]['format'] == 'int' }
+
+  def value
+    v = read_attribute(:value)
+    # Unserialize serialized settings
+    v = YAML::load(v) if @@available_settings[name]['serialized'] && v.is_a?(String)
+    v = v.to_sym if @@available_settings[name]['format'] == 'symbol' && !v.blank?
+    v
+  end
+
+  def value=(v)
+    v = v.to_yaml if v && @@available_settings[name] && @@available_settings[name]['serialized']
+    write_attribute(:value, v.to_s)
+  end
 
   # Returns the value of the setting named name
   def self.[](name)
@@ -174,7 +186,12 @@ private
     name = name.to_s
     raise "There's no setting named #{name}" unless @@available_settings.has_key?(name)
     setting = find_by_name(name)
-    setting ||= new(:name => name, :value => @@available_settings[name]['default']) if @@available_settings.has_key? name
+    unless setting
+      setting = new
+      setting.name = name
+      setting.value = @@available_settings[name]['default'] if @@available_settings.has_key? name
+    end
+    setting
   end
 
   def self.cache_key(name)
