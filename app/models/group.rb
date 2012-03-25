@@ -22,6 +22,8 @@ class Group < Principal
   validates_uniqueness_of :lastname, :case_sensitive => false
   validates_length_of :lastname, :maximum => 30
 
+  alias_attribute :name, :lastname
+
   # Returns an array of all of the email addresses of the group's users
   def mails
     users.collect(&:mail)
@@ -47,5 +49,10 @@ class Group < Principal
       MemberRole.find(:all, :include => :member,
                             :conditions => ["#{Member.table_name}.user_id = ? AND #{MemberRole.table_name}.inherited_from IN (?)", user.id, member.member_role_ids]).each(&:destroy)
     end
+  end
+
+  def self.human_attribute_name(attribute_name)
+    attribute_name = "name" if attribute_name == "lastname"
+    super(attribute_name)
   end
 end
