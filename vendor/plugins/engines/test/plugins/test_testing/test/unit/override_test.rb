@@ -1,5 +1,5 @@
 #-- encoding: UTF-8
-require File.expand_path(File.join(File.dirname(__FILE__), *%w[.. .. .. .. .. test test_helper]))
+require File.expand_path(File.join(*%w[.. .. .. .. .. test test_helper]), File.dirname(__FILE__))
 
 class OverrideTest < ActiveSupport::TestCase
   def test_overrides_from_the_application_should_work

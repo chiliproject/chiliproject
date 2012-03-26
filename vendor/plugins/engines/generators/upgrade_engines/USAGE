@@ -1,0 +1,17 @@
+Description:
+  The upgrade engines migration performs any database alterations required to
+  use engines 1.2.
+  
+  Currently, this is only the renaming of 'engines_schema_info' to 'plugin_schema_info'.
+
+Example:
+  ./script/generate upgrade_engines
+
+  This will generate:
+
+    RAILS_ROOT
+      |- db
+          |-migrate
+              |- xxx_upgrade_engines_to_1.2.rb
+
+  which contains the migrations to perform the changes described above.

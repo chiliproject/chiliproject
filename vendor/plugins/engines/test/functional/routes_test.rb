@@ -4,7 +4,7 @@
 # * Routes from plugins can be routed to
 # * Named routes can be defined within a plugin
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 class RoutesTest < ActionController::TestCase
   tests TestRoutingController

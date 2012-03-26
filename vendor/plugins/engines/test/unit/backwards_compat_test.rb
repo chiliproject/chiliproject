@@ -1,5 +1,5 @@
 #-- encoding: UTF-8
-require File.dirname(__FILE__) + '/../test_helper'
+require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 class BackwardsCompatibilityTest < Test::Unit::TestCase
   def test_rails_module_plugin_method_should_delegate_to_engines_plugins
