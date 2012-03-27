@@ -1,0 +1,18 @@
+dn: olcDatabase={0}config
+objectClass: olcDatabaseConfig
+olcDatabase: {0}config
+olcAccess: {0}to *  by * none
+olcAddContentAcl: TRUE
+olcLastMod: TRUE
+olcMaxDerefDepth: 15
+olcReadOnly: FALSE
+olcRootDN: cn=config
+olcSyncUseSubentry: FALSE
+olcMonitoring: FALSE
+structuralObjectClass: olcDatabaseConfig
+entryUUID: 7cf554ce-0b92-1031-91b2-430cf9135336
+creatorsName: cn=config
+createTimestamp: 20120326132232Z
+entryCSN: 20120326132232.336747Z#000000#000#000000
+modifiersName: cn=config
+modifyTimestamp: 20120326132232Z

@@ -52,8 +52,9 @@ class UsersControllerTest < ActionController::TestCase
     assert_template 'index'
     users = assigns(:users)
     assert_not_nil users
-    assert_equal 1, users.size
-    assert_equal 'John', users.first.firstname
+    assert_equal 2, users.size
+    assert_equal 'john', users.first.login
+    assert_equal 'John', users.second.firstname
   end
 
   def test_index_with_group_filter

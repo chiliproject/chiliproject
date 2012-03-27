@@ -27,14 +27,16 @@ class AdminTest < ActionController::IntegrationTest
     assert_kind_of User, user
     assert_redirected_to "/users/#{ user.id }/edit"
 
-    logged_user = User.try_to_login("psmith", "psmith09")
+    logged_user, error = User.try_to_login("psmith", "psmith09").first
+    assert_nil error
     assert_kind_of User, logged_user
     assert_equal "Paul", logged_user.firstname
 
     put "users/#{user.id}", :id => user.id, :user => { :status => User::STATUS_LOCKED }
     assert_redirected_to "/users/#{ user.id }/edit"
-    locked_user = User.try_to_login("psmith", "psmith09")
+    locked_user, error = User.try_to_login("psmith", "psmith09")
     assert_equal nil, locked_user
+    assert_equal :invalid_credentials, error[:type]
   end
 
   test "Add a user as an anonymous user should fail" do

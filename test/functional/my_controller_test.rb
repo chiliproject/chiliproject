@@ -106,7 +106,7 @@ class MyControllerTest < ActionController::TestCase
                     :new_password => 'hello',
                     :new_password_confirmation => 'hello'
     assert_redirected_to '/my/account'
-    assert User.try_to_login('jsmith', 'hello')
+    assert User.try_to_login('jsmith', 'hello').first
   end
 
   def test_page_layout

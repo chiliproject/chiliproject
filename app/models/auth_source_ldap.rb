@@ -38,7 +38,8 @@ class AuthSourceLdap < AuthSource
       return attrs.except(:dn)
     end
   rescue  Net::LDAP::LdapError => text
-    raise "LdapError: " + text
+    logger.debug "LDAP fail: #{text.to_s}" if logger && logger.debug?
+    return [nil, true]
   end
 
   # test the connection to the LDAP
@@ -46,7 +47,8 @@ class AuthSourceLdap < AuthSource
     ldap_con = initialize_ldap_con(self.account, self.account_password)
     ldap_con.open { }
   rescue  Net::LDAP::LdapError => text
-    raise "LdapError: " + text
+    logger.debug "LDAP fail: #{text.to_s}" if logger && logger.debug?
+    return [nil, true]
   end
 
   def auth_method_name

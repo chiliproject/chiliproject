@@ -140,10 +140,10 @@ class AccountController < ApplicationController
   end
 
   def password_authentication
-    user = User.try_to_login(params[:username], params[:password])
-
+    user, error = User.try_to_login(params[:username], params[:password])
     if user.nil?
-      invalid_credentials
+      flash.now[:error] = error[:message] if error
+      invalid_credentials if error.nil? || error[:type] == :invalid_credentials 
     elsif user.new_record?
       onthefly_creation_failed(user, {:login => user.login, :auth_source_id => user.auth_source_id })
     else

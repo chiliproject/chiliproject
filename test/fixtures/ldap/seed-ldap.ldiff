@@ -1,30 +1,31 @@
-dn: dc=redmine,dc=org
+dn: dc=chiliproject,dc=org
 objectClass: top
 objectClass: dcObject
 objectClass: organization
-o: redmine.org
-dc: redmine
+o: chiliproject.org
+dc: chiliproject
 
-dn: ou=Person,dc=redmine,dc=org
+dn: ou=Person,dc=chiliproject,dc=org
 ou: Person
 objectClass: top
 objectClass: organizationalUnit
 
-dn: uid=example1,ou=Person,dc=redmine,dc=org
+dn: uid=john,ou=Person,dc=chiliproject,dc=org
 objectClass: posixAccount
 objectClass: top
 objectClass: inetOrgPerson
 gidNumber: 0
-givenName: Example
-sn: One
-uid: example1
-homeDirectory: /home/example1
-cn: Example One
+givenName: John
+sn: Doe
+uid: john
+homeDirectory: /home/john
+cn: John Doe
 uidNumber: 0
-mail: example1@redmine.org
+mail: john.doe@chiliproject.org
 userPassword:: e1NIQX1mRXFOQ2NvM1lxOWg1WlVnbEQzQ1pKVDRsQnM9
+# pass: 123456
 
-dn: uid=edavis,ou=Person,dc=redmine,dc=org
+dn: uid=edavis,ou=Person,dc=chiliproject,dc=org
 objectClass: posixAccount
 objectClass: top
 objectClass: inetOrgPerson
@@ -32,9 +33,10 @@ gidNumber: 0
 givenName: Eric
 sn: Davis
 uid: edavis
-mail: edavis@littlestreamsoftware.com
+mail: edavis@chiliproject.com
 homeDirectory: /home/edavis
 cn: Eric Davis
 uidNumber: 0
 userPassword:: e1NIQX1mRXFOQ2NvM1lxOWg1WlVnbEQzQ1pKVDRsQnM9
+# pass: 123456
 

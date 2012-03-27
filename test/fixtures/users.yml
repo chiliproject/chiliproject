@@ -29,7 +29,7 @@ users_001:
   admin: true
   mail: admin@somenet.foo
   lastname: Admin
-  firstname: redMine
+  firstname: Maly
   id: 1
   auth_source_id:
   mail_notification: all
@@ -160,5 +160,21 @@ groups_011:
   id: 11
   lastname: B Team
   type: Group
-
-
+users_012:
+  id: 12
+  created_on: 2012-03-23 12:33:19 +01:00
+  status: 1
+  last_login_on:
+  language: 'en'
+  # password foo
+  salt: 7599f9963ec07b5a3b55b354407120c0
+  hashed_password: 8f659c8d7c072f189374edacfa90d6abbc26d8ed
+  created_on: 2012-03-23 12:33:19 +01:00
+  admin: false
+  mail: john.doe@chiliproject.org
+  lastname: John
+  firstname: Doe
+  auth_source_id: 1
+  mail_notification: only_my_events
+  login: john
+  type: User

@@ -99,10 +99,10 @@ class UserTest < ActiveSupport::TestCase
 
   def test_update
     assert_equal "admin", @admin.login
-    @admin.login = "john"
+    @admin.login = "johns"
     assert @admin.save, @admin.errors.full_messages.join("; ")
     @admin.reload
-    assert_equal "john", @admin.login
+    assert_equal "johns", @admin.login
   end
 
   def test_destroy
@@ -126,7 +126,8 @@ class UserTest < ActiveSupport::TestCase
 
   context "User#try_to_login" do
     should "fall-back to case-insensitive if user login is not found as-typed." do
-      user = User.try_to_login("AdMin", "admin")
+      user, error = User.try_to_login("AdMin", "admin")
+      assert_nil error
       assert_kind_of User, user
       assert_equal "admin", user.login
     end
@@ -136,7 +137,8 @@ class UserTest < ActiveSupport::TestCase
       # bypass validations to make it appear like existing data
       case_sensitive_user.update_attribute(:login, 'ADMIN')
 
-      user = User.try_to_login("ADMIN", "admin")
+      user, error = User.try_to_login("ADMIN", "admin")
+      assert_nil error
       assert_kind_of User, user
       assert_equal "ADMIN", user.login
 
@@ -144,13 +146,15 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def test_password
-    user = User.try_to_login("admin", "admin")
+    user, error = User.try_to_login("admin", "admin")
+    assert_nil error
     assert_kind_of User, user
     assert_equal "admin", user.login
     user.password = "hello"
     assert user.save
 
-    user = User.try_to_login("admin", "hello")
+    user, error = User.try_to_login("admin", "hello")
+    assert_nil error
     assert_kind_of User, user
     assert_equal "admin", user.login
   end
@@ -164,18 +168,20 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def test_lock
-    user = User.try_to_login("jsmith", "jsmith")
+    user, error = User.try_to_login("jsmith", "jsmith")
     assert_equal @jsmith, user
 
     @jsmith.status = User::STATUS_LOCKED
     assert @jsmith.save
 
-    user = User.try_to_login("jsmith", "jsmith")
+    user, error = User.try_to_login("jsmith", "jsmith")
+    assert_kind_of Hash, error
+    assert_equal :invalid_credentials, error[:type]
     assert_equal nil, user
   end
 
   def test_error_on_active_to_registered
-    user = User.try_to_login("jsmith", "jsmith")
+    user, error = User.try_to_login("jsmith", "jsmith")
     assert_equal @jsmith, user
 
     @jsmith.status = User::STATUS_REGISTERED
@@ -185,7 +191,7 @@ class UserTest < ActiveSupport::TestCase
   context ".try_to_login" do
     context "with good credentials" do
       should "return the user" do
-        user = User.try_to_login("admin", "admin")
+        user, error = User.try_to_login("admin", "admin")
         assert_kind_of User, user
         assert_equal "admin", user.login
       end
@@ -193,7 +199,7 @@ class UserTest < ActiveSupport::TestCase
 
     context "with wrong credentials" do
       should "return nil" do
-        assert_nil User.try_to_login("admin", "foo")
+        assert_nil User.try_to_login("admin", "foo").first
       end
     end
   end
@@ -205,13 +211,13 @@ class UserTest < ActiveSupport::TestCase
           @auth_source = AuthSourceLdap.find(1)
           AuthSource.any_instance.stubs(:initialize_ldap_con).raises(Net::LDAP::LdapError, 'Cannot connect')
 
-          assert_equal nil, User.try_to_login('edavis', 'wrong')
+          assert_equal nil, User.try_to_login('edavis', 'wrong').first
         end
       end
 
       context "with an unsuccessful authentication" do
         should "return nil" do
-          assert_equal nil, User.try_to_login('edavis', 'wrong')
+          assert_equal nil, User.try_to_login('edavis', 'wrong').first
         end
       end
 
@@ -223,18 +229,18 @@ class UserTest < ActiveSupport::TestCase
         context "with a successful authentication" do
           should "create a new user account if it doesn't exist" do
             assert_difference('User.count') do
-              user = User.try_to_login('edavis', '123456')
+              user, error = User.try_to_login('edavis', '123456')
               assert !user.admin?
             end
           end
 
           should "retrieve existing user" do
-            user = User.try_to_login('edavis', '123456')
+            user, error = User.try_to_login('edavis', '123456')
             user.admin = true
             user.save!
 
             assert_no_difference('User.count') do
-              user = User.try_to_login('edavis', '123456')
+              user, error = User.try_to_login('edavis', '123456')
               assert user.admin?
             end
           end
@@ -243,7 +249,13 @@ class UserTest < ActiveSupport::TestCase
     end
 
   else
-    puts "Skipping LDAP tests."
+    puts "LDAP server for test if offline."
+    context "with offline ldap" do
+      should "return message that ldap is offline" do
+        @ldap_user = User.find(12)
+        assert_equal nil, User.try_to_login(@ldap_user.login, "12345").first
+      end
+    end
   end
 
   def test_create_anonymous
@@ -574,7 +586,7 @@ class UserTest < ActiveSupport::TestCase
     assert !user.salt.blank?
     # Password still valid
     assert user.check_password?("unsalted")
-    assert_equal user, User.try_to_login(user.login, "unsalted")
+    assert_equal user, User.try_to_login(user.login, "unsalted").first
   end
 
   if Object.const_defined?(:OpenID)

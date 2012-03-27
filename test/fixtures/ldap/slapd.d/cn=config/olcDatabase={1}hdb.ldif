@@ -1,0 +1,38 @@
+dn: olcDatabase={1}hdb
+objectClass: olcDatabaseConfig
+objectClass: olcHdbConfig
+olcDatabase: {1}hdb
+olcSuffix: dc=chiliproject,dc=org
+olcAccess: {0}to attrs=userPassword,shadowLastChange  by anonymous auth  by se
+ lf write  by * none
+olcAccess: {1}to *  by * read
+olcAddContentAcl: FALSE
+olcLastMod: TRUE
+olcMaxDerefDepth: 15
+olcReadOnly: FALSE
+olcRootDN: cn=Manager,dc=chiliproject,dc=org
+olcRootPW:: c2VjcmV0
+olcSyncUseSubentry: FALSE
+olcMonitoring: FALSE
+olcDbDirectory: /var/lib/ldap/chiliproject
+olcDbCacheSize: 1000
+olcDbConfig: {0}set_cachesize 0 2097152 0
+olcDbConfig: {1}set_lk_max_objects 1500
+olcDbConfig: {2}set_lk_max_locks 1500
+olcDbConfig: {3}set_lk_max_lockers 1500
+olcDbNoSync: FALSE
+olcDbDirtyRead: FALSE
+olcDbIDLcacheSize: 0
+olcDbLinearIndex: FALSE
+olcDbMode: 0600
+olcDbSearchStack: 16
+olcDbShmKey: 0
+olcDbCacheFree: 1
+olcDbDNcacheSize: 0
+structuralObjectClass: olcHdbConfig
+entryUUID: 7cf55b04-0b92-1031-91b3-430cf9135336
+creatorsName: cn=config
+createTimestamp: 20120326132232Z
+entryCSN: 20120326132232.336747Z#000000#000#000000
+modifiersName: cn=config
+modifyTimestamp: 20120326132232Z
