@@ -35,13 +35,6 @@ class GroupTest < ActiveSupport::TestCase
     assert new_group.errors.full_messages.include? "Name can't be blank" 
   end
 
-  def test_too_long_name_error_message
-    set_language_if_valid 'en'
-    new_group = Group.new(:name => "FM9b19a939R7WW12UW03Ci1s6jmZ5F9U32")
-    assert !new_group.save
-    assert new_group.errors.full_messages.include? "Name is too long (maximum is 30 characters)"
-  end
-
   def test_roles_given_to_new_user
     group = Group.find(11)
     user = User.find(9)
