@@ -218,8 +218,8 @@ ActionController::Routing::Routes.draw do |map|
       repository_views.connect 'projects/:id/repository/diff/*path', :action => 'diff'
       repository_views.connect 'projects/:id/repository/show/*path', :action => 'show'
       repository_views.connect 'projects/:id/repository/graph', :action => 'graph'
+      repository_views.connect 'projects/:id/repository/revision', :action => 'revision'
     end
-    repositories.connect 'projects/:id/repository/revision', :action => 'revision', :conditions => {:method => [:get, :post]}
   end
 
   # additional routes for having the file name at the end of url
