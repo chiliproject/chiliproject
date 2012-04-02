@@ -190,5 +190,10 @@ class RoutingRepositoriesTest < ActionController::IntegrationTest
         { :controller => 'repositories', :action => 'changes', :id => 'redmine',
           :path => @path_hash[:param] }
       )
+    assert_routing(
+        { :method => 'get',
+          :path => "/projects/redmine/repository/revision" },
+        { :controller => 'repositories', :action => 'revision', :id => 'redmine' }
+      )
   end
 end
