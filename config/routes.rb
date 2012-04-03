@@ -220,18 +220,16 @@ ActionController::Routing::Routes.draw do |map|
       repository_views.connect 'projects/:id/repository/revisions/:rev/raw/*path', :action => 'entry', :format => 'raw', :requirements => { :rev => /[a-z0-9\.\-_]+/ }
       repository_views.connect 'projects/:id/repository/revisions/:rev/:action/*path', :requirements => { :rev => /[a-z0-9\.\-_]+/ }
       repository_views.connect 'projects/:id/repository/raw/*path', :action => 'entry', :format => 'raw'
-      
+
       repository_views.connect 'projects/:id/repository/:action/*path',
                                :requirements => { :action => /(browse|show|entry|changes|annotate|diff)/ }
-      
-      
+
+
       # Same routes with a repository_id
       repository_views.connect 'projects/:id/repository/:repository_id/statistics',
                                :action => 'stats'
-      
-      #repository_views.connect 'projects/:id/repository/:repository_id/graph',
-      #                         :action => 'graph'
-      
+      repository_views.connect 'projects/:id/repository/:repository_id/graph',
+                               :action => 'graph'
       repository_views.connect 'projects/:id/repository/:repository_id/revisions',
                                :action => 'revisions'
       repository_views.connect 'projects/:id/repository/:repository_id/revisions.:format',
@@ -240,8 +238,6 @@ ActionController::Routing::Routes.draw do |map|
                                :action => 'revision'
       repository_views.connect 'projects/:id/repository/:repository_id/revisions/:rev/diff',
                                 :action => 'diff'
-      
-      
       repository_views.connect 'projects/:id/repository/:repository_id/revisions/:rev/diff.:format',
                                :action => 'diff'
       repository_views.connect 'projects/:id/repository/:repository_id/revisions/:rev/raw/*path',
@@ -254,16 +250,11 @@ ActionController::Routing::Routes.draw do |map|
                                :requirements => { :action => /(browse|show|entry|changes|annotate|diff)/ }
       repository_views.connect 'projects/:id/repository/:repository_id',
                                 :action => 'show'
-      
 
-      
-      
-      
       # TODO: why the following route is required?
       repository_views.connect 'projects/:id/repository/entry/*path', :action => 'entry'
       repository_views.connect 'projects/:id/repository/:action/*path'
     end
-
     repositories.connect 'projects/:id/repository/:action', :conditions => {:method => :post}
   end
 

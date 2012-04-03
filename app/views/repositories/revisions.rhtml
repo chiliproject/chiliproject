@@ -7,7 +7,7 @@
 
 <h2><%= l(:label_revision_plural) %></h2>
 
-<%= render :partial => 'revisions', :locals => {:project => @project, :repository_id => @repository.identifier_param,, :path => '', :revisions => @changesets, :entry => nil }%>
+<%= render :partial => 'revisions', :locals => {:project => @project, :path => '', :revisions => @changesets, :entry => nil }%>
 
 <p class="pagination"><%= pagination_links_full @changeset_pages,@changeset_count %></p>
 
