@@ -103,11 +103,14 @@ module ApplicationHelper
   # Generates a link to a SCM revision
   # Options:
   # * :text - Link text (default to the formatted revision)
-  def link_to_revision(revision, project, options={})
+  def link_to_revision(revision, repository, options={})
+    if repository.is_a?(Project)
+      repository = repository.repository
+    end
     text = options.delete(:text) || format_revision(revision)
     rev = revision.respond_to?(:identifier) ? revision.identifier : revision
 
-    link_to(h(text), {:controller => 'repositories', :action => 'revision', :id => project, :rev => rev},
+    link_to(h(text), {:controller => 'repositories', :action => 'revision', :id => repository.project, :repository_id => repository.identifier_param, :rev => rev},
             :title => l(:label_revision_id, format_revision(revision)))
   end
 
