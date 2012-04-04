@@ -25,7 +25,7 @@
      sep = ''
  %>
 <%   if @repository.supports_all_revisions? && @path.blank? %>
-<%= link_to l(:label_view_all_revisions), :action => 'revisions', :id => @project %>
+<%= link_to l(:label_view_all_revisions), :action => 'revisions', :id => @project, :repository_id => @repository.identifier_param %>
 <%   sep = '|' %>
 <%   end %>
 <%
@@ -38,6 +38,7 @@
                    :action => 'changes',
                    :path   => to_path_param(@path),
                    :id     => @project,
+                   :repository_id => @repository.identifier_param,
                    :rev    => @rev
                    %>
 <%   end %>
@@ -52,7 +53,7 @@
 <%     end %>
 
 <%     other_formats_links do |f| %>
-  <%= f.link_to 'Atom', :url => {:action => 'revisions', :id => @project, :key => User.current.rss_key} %>
+  <%= f.link_to 'Atom', :url => {:action => 'revisions', :id => @project, :repository_id => @repository.identifier_param, :key => User.current.rss_key} %>
 <%     end %>
 <%   end %>
 <% end %>

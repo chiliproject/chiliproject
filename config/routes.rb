@@ -163,6 +163,9 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :news, :shallow => true
     project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id'
 
+    project.resources :repositories, :shallow => true, :except => [:index, :show],
+                      :member => {:committers => [:get, :post]}
+
     project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
     project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
     project.wiki_diff 'wiki/:id/diff/:version', :controller => 'wiki', :action => 'diff', :version => nil
@@ -207,6 +210,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :controller => 'repositories' do |repositories|
     repositories.with_options :conditions => {:method => :get} do |repository_views|
       repository_views.connect 'projects/:id/repository', :action => 'show'
+      repository_views.connect 'projects/:id/repositories', :action => 'list'
       repository_views.connect 'projects/:id/repository/edit', :action => 'edit'
       repository_views.connect 'projects/:id/repository/statistics', :action => 'stats'
       repository_views.connect 'projects/:id/repository/revisions', :action => 'revisions'
@@ -217,11 +221,41 @@ ActionController::Routing::Routes.draw do |map|
       repository_views.connect 'projects/:id/repository/revisions/:rev/raw/*path', :action => 'entry', :format => 'raw', :requirements => { :rev => /[a-z0-9\.\-_]+/ }
       repository_views.connect 'projects/:id/repository/revisions/:rev/:action/*path', :requirements => { :rev => /[a-z0-9\.\-_]+/ }
       repository_views.connect 'projects/:id/repository/raw/*path', :action => 'entry', :format => 'raw'
+
+      repository_views.connect 'projects/:id/repository/:action/*path',
+                               :requirements => { :action => /(browse|show|entry|changes|annotate|diff)/ }
+
+
+      # Same routes with a repository_id
+      repository_views.connect 'projects/:id/repository/:repository_id/statistics',
+                               :action => 'stats'
+      repository_views.connect 'projects/:id/repository/:repository_id/graph',
+                               :action => 'graph'
+      repository_views.connect 'projects/:id/repository/:repository_id/revisions',
+                               :action => 'revisions'
+      repository_views.connect 'projects/:id/repository/:repository_id/revisions.:format',
+                               :action => 'revisions'
+      repository_views.connect 'projects/:id/repository/:repository_id/revisions/:rev',
+                               :action => 'revision'
+      repository_views.connect 'projects/:id/repository/:repository_id/revisions/:rev/diff',
+                                :action => 'diff'
+      repository_views.connect 'projects/:id/repository/:repository_id/revisions/:rev/diff.:format',
+                               :action => 'diff'
+      repository_views.connect 'projects/:id/repository/:repository_id/revisions/:rev/raw/*path',
+                               :action => 'entry', :format => 'raw'
+      repository_views.connect 'projects/:id/repository/:repository_id/revisions/:rev/:action/*path',
+                               :requirements => { :action => /(browse|show|entry|changes|annotate|diff)/ }
+      repository_views.connect 'projects/:id/repository/:repository_id/raw/*path',
+                               :action => 'entry', :format => 'raw'
+      repository_views.connect 'projects/:id/repository/:repository_id/:action/*path',
+                               :requirements => { :action => /(browse|show|entry|changes|annotate|diff)/ }
+      repository_views.connect 'projects/:id/repository/:repository_id',
+                                :action => 'show'
+
       # TODO: why the following route is required?
       repository_views.connect 'projects/:id/repository/entry/*path', :action => 'entry'
       repository_views.connect 'projects/:id/repository/:action/*path'
     end
-
     repositories.connect 'projects/:id/repository/:action', :conditions => {:method => :post}
   end
 

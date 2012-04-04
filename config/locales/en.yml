@@ -312,6 +312,7 @@ en:
   field_issue_summary: Issue summary
   field_new_saved_query: New saved query
   field_issue_view_all_open: View all open issues
+  field_repository_is_default: Main repository
 
   setting_app_title: Application title
   setting_app_subtitle: Application subtitle
@@ -635,6 +636,7 @@ en:
   label_not_contains: doesn't contain
   label_day_plural: days
   label_repository: Repository
+  label_repository_new: New repository
   label_repository_plural: Repositories
   label_browse: Browse
   label_modification: "%{count} change"
