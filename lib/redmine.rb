@@ -370,7 +370,7 @@ Redmine::MenuManager.map :project_menu do |menu|
             })
 
   menu.push( :repositories, { :controller => 'repositories', :action => 'list' }, {
-              :if => Proc.new { |p| p.repository && !p.repository.new_record? },
+              :if => Proc.new { |p| p.repositories && p.repositories.size > 1 },
               :children => Proc.new { |p|
                 @project = p
                 @repositories = @project.repositories
@@ -388,11 +388,17 @@ Redmine::MenuManager.map :project_menu do |menu|
               }
            })
 
+  menu.push(:repository, { :controller => 'repositories', :action => 'show' }, {
+              :if => Proc.new { |p| p.repositories && p.repositories.size == 1 }
+            })
+
+
 #   menu.push(:new_repository, { :controller => 'repositories', :action => 'new' }, {
 #                                  :parent => :repositories,
 #                                  :param => :project_id,
 #                                  :if => Proc.new {|p| User.current.allowed_to?(:manage_repositories, p)}
 #                              })
+
 
   menu.push(:settings, { :controller => 'projects', :action => 'settings' }, {
               :last => true,
