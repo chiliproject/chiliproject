@@ -43,28 +43,37 @@ class Repository < ActiveRecord::Base
     super(attr_name, *args)
   end
 
-  alias :attributes_without_extra_info= :attributes=
-  def attributes=(new_attributes, guard_protected_attributes = true)
-    return if new_attributes.nil?
-    attributes = new_attributes.dup
-    attributes.stringify_keys!
-
-    p       = {}
-    p_extra = {}
-    attributes.each do |k, v|
-      if k =~ /^extra_/
-        p_extra[k] = v
-      else
-        p[k] = v
-        logger.warn k, v
-      end
-    end
-
-    send :attributes_without_extra_info=, p, guard_protected_attributes
-    if p_extra.keys.any?
-      merge_extra_info(p_extra)
-    end
+  def initialize(attributes = nil)
+    super
+    initialized = (attributes || {}).stringify_keys
   end
+
+  # Not sure if bit below is needed.  It seems to force all custom attributes
+  # to be called extra_*....Breaks some plugins.
+  #
+
+  #alias :attributes_without_extra_info= :attributes=
+  #def attributes=(new_attributes, guard_protected_attributes = true)
+  #  return if new_attributes.nil?
+  #  attributes = new_attributes.dup
+  #  attributes.stringify_keys!
+  #
+  #  p       = {}
+  #  p_extra = {}
+  #  attributes.each do |k, v|
+  #    if k =~ /^extra_/
+  #      p_extra[k] = v
+  #    else
+  #      p[k] = v
+  #      logger.warn k, v
+  #    end
+  #  end
+  #
+  #  send :attributes_without_extra_info=, p, guard_protected_attributes
+  #  if p_extra.keys.any?
+  #    merge_extra_info(p_extra)
+  #  end
+  #end
 
   # Removes leading and trailing whitespace
   def url=(arg)
