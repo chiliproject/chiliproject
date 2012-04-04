@@ -263,6 +263,11 @@ class RepositoriesController < ApplicationController
       @repository = @project.repositories.find_by_identifier_param(params[:repository_id])
     else
       @repository = @project.repository
+      if !@repository
+        if @project.repositories.size >= 1
+          @repository = @project.repositories[0]
+        end
+      end
     end
     (render_404; return false) unless @repository
     @path = params[:path].join('/') unless params[:path].nil?
