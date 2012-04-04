@@ -100,6 +100,11 @@ class RepositoriesController < ApplicationController
     end
   end
 
+  def list
+    @repositories = @project.repositories
+  	render :action => 'list'
+  end
+
   alias_method :browse, :show
 
   def changes

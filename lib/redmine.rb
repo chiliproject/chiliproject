@@ -143,7 +143,7 @@ Redmine::AccessControl.map do |map|
 
   map.project_module :repository do |map|
     map.permission :manage_repository, {:repositories => [:new, :create, :edit, :update, :committers, :destroy]}, :require => :member
-    map.permission :browse_repository, :repositories => [:show, :browse, :entry, :annotate, :changes, :diff, :stats, :graph]
+    map.permission :browse_repository, :repositories => [:show, :list, :browse, :entry, :annotate, :changes, :diff, :stats, :graph]
     map.permission :view_changesets, :repositories => [:show, :revisions, :revision]
     map.permission :commit_access, {}
   end
@@ -221,7 +221,7 @@ Redmine::MenuManager.map :project_menu do |menu|
     visible = ARCondition.new(["is_public = ? OR user_id = ?", true, (User.current.logged? ? User.current.id : 0)])
     # Project specific queries and global queries
     visible << (p.nil? ? ["project_id IS NULL"] : ["project_id IS NULL OR project_id = ?", p.id])
-    sidebar_queries = Query.find(:all, 
+    sidebar_queries = Query.find(:all,
                                  :select => 'id, name',
                                  :order => "name ASC",
                                  :conditions => visible.conditions)
@@ -234,7 +234,7 @@ Redmine::MenuManager.map :project_menu do |menu|
                                          })
     end
   }
-  
+
   menu.push(:overview, { :controller => 'projects', :action => 'show' })
   menu.push(:activity, { :controller => 'activities', :action => 'index' })
   menu.push(:roadmap, { :controller => 'versions', :action => 'index' }, {
@@ -269,7 +269,7 @@ Redmine::MenuManager.map :project_menu do |menu|
               :param => :project_id,
               :caption => :field_issue_view_all_open,
               :parent => :issues
-            })  
+            })
   menu.push(:new_query, { :controller => 'queries', :action => 'new'}, {
               :param => :project_id,
               :caption => :field_new_saved_query,
@@ -368,9 +368,32 @@ Redmine::MenuManager.map :project_menu do |menu|
               :parent => :files,
               :if => Proc.new {|p| User.current.allowed_to?(:manage_files, p) }
             })
-  menu.push(:repository, { :controller => 'repositories', :action => 'show' }, {
-              :if => Proc.new { |p| p.repository && !p.repository.new_record? }
-            })
+
+  menu.push( :repositories, { :controller => 'repositories', :action => 'list' }, {
+              :if => Proc.new { |p| p.repository && !p.repository.new_record? },
+              :children => Proc.new { |p|
+                @project = p
+                @repositories = @project.repositories
+                @repositories.sort.collect do |repo|
+                    
+                    Redmine::MenuManager::MenuItem.new("#{repo.name}",
+                                                     {:controller => 'repositories', 
+                                                      :action => 'show', 
+                                                      :id => @project, 
+                                                      :repository_id => repo.identifier_param, 
+                                                      :rev => nil, 
+                                                      :path => nil}, 
+                                                      {:caption => repo.identifier_param})
+                  end
+              }
+           })
+
+#   menu.push(:new_repository, { :controller => 'repositories', :action => 'new' }, {
+#                                  :parent => :repositories,
+#                                  :param => :project_id,
+#                                  :if => Proc.new {|p| User.current.allowed_to?(:manage_repositories, p)}
+#                              })
+
   menu.push(:settings, { :controller => 'projects', :action => 'settings' }, {
               :last => true,
               :children => Proc.new { |p|

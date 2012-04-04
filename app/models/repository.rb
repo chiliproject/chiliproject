@@ -327,8 +327,8 @@ class Repository < ActiveRecord::Base
   def self.factory(klass_name, *args)
     klass = "Repository::#{klass_name}".constantize
     klass.new(*args)
-  #rescue
-  #  nil
+  rescue
+    nil
   end
 
   def self.scm_adapter_class
