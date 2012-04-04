@@ -1,5 +1,9 @@
 = ChiliProject changelog
 
+== 2012-04-04 v2.7.1
+
+* Bug #922: Mass assignment
+
 == 2012-02-06 v2.7.0
 
 * Bug #593: Notification Mail for Wiki-Changes has wrong Diff
