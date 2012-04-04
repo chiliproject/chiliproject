@@ -4,12 +4,16 @@
 </div>
 <% end %>
 
-
 <% if @repositories.size > 1 %>
 	  <h3><%= l(:label_repository_plural) %></h3>
-	  <%= @repositories.sort.collect {|repo|
-	        link_to h(repo.name), 
+      <% @repositories.each do |repo| -%>
+          <p>
+          <%=  link_to h(repo.name),
                   {:controller => 'repositories', :action => 'show', :id => @project, :repository_id => repo.identifier_param, :rev => nil, :path => nil},
-                  :class => 'repository' + (repo == @repository ? ' selected' : '')
-	      }.join('<br />').html_safe %></p>
+                  :class => 'repository' + (repo == @repository ? ' selected' : '') %>
+          <br/>
+          <%= call_hook(:view_repositories_list_contextual, { :repository => repo, :project => @project }) %>
+          <br/>
+          </p>
+    <% end %>
 <% end %>

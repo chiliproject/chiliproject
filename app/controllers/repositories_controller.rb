@@ -100,12 +100,12 @@ class RepositoriesController < ApplicationController
     end
   end
 
+  alias_method :browse, :show
+
   def list
     @repositories = @project.repositories
   	render :action => 'list'
   end
-
-  alias_method :browse, :show
 
   def changes
     @entry = @repository.entry(@path, @rev)
