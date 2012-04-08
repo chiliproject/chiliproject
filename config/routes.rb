@@ -241,6 +241,7 @@ Redmine::Application.routes.draw do |map|
 
   map.connect 'journals/diff/:id', :controller => 'journals', :action => 'diff'
 
+  map.connect 'projects/:id/search', :controller => 'search', :action => 'index', :conditions => {:method => :get}
   map.connect 'search', :controller => 'search', :action => 'index', :conditions => {:method => :get}
 
   map.connect 'mail_handler', :controller => 'mail_handler', :action => 'index', :conditions => {:method => :post}
