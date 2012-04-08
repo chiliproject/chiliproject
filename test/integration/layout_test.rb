@@ -107,4 +107,13 @@ class LayoutTest < ActionController::IntegrationTest
       assert_select "title", /&lt;3/
     end
   end
+
+  def test_search_field_outside_project_should_link_to_global_search
+    get '/'
+    assert_select 'div#quick-search form[action=/search]'
+  end
+
+  def test_search_field_inside_project_should_link_to_project_search
+    get '/projects/ecookbook'
+    assert_select 'div#quick-search form[action=/projects/ecookbook/search]'
 end
