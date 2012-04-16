@@ -564,6 +564,12 @@ jQuery(document).ready(function($) {
   $('#account-nav .drop-down').live('click', function(event) {
     var menuItem = $(this);
 
+    var windowHeight = Math.floor($.viewportHeight() * 0.8);
+    if(menuItem.find("ul").height() > $.viewportHeight())
+    {
+      menuItem.find("ul").css({'height':windowHeight, 'overflow-y':'scroll'});
+    }
+
     toggleTopMenu(menuItem);
 
     if (menuItem.hasClass('open')) {
