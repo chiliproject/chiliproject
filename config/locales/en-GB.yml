@@ -1006,3 +1006,6 @@ en-GB:
   field_issue_view_all_open: View all open issues
   label_subtask_add: Add a subtask
   label_issue_hierarchy: Issue hierarchy
+  label_scm_status: "SCM Status"
+  scm_status_is_available: "%{scm_kind} is available, version = %{version}"
+  scm_status_not_available: "%{scm_kind} is not available. Please check your installation and 'config/configuration.yml' for executable path."
