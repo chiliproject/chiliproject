@@ -111,6 +111,7 @@ module ProjectsHelper
         t(:scm_status_is_available, :scm_kind => scm_kind, :version => @repository.scm.class.client_version_string)
       else
         t(:scm_status_not_available, :scm_kind => scm_kind)
+        logger.error t(:scm_status_not_available, :scm_kind => scm_kind)
       end
     end
   end

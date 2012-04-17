@@ -83,7 +83,8 @@ module Redmine
             end
           end
           @branches.sort!
-        rescue ScmCommandAborted
+        rescue ScmCommandAborted => exception
+          logger.error exception
           nil
         end
 
@@ -93,7 +94,8 @@ module Redmine
           scm_cmd(*cmd_args) do |io|
             @tags = io.readlines.sort!.map{|t| t.strip}
           end
-        rescue ScmCommandAborted
+        rescue ScmCommandAborted => exception
+          logger.error exception
           nil
         end
 
@@ -134,7 +136,8 @@ module Redmine
             end
           end
           entries.sort_by_name
-        rescue ScmCommandAborted
+        rescue ScmCommandAborted => exception
+          logger.error exception
           nil
         end
 
@@ -162,7 +165,8 @@ module Redmine
               logger.error("The revision '#{path}' has a wrong format")
               return nil
           end
-        rescue ScmCommandAborted
+        rescue ScmCommandAborted => exception
+          logger.error exception
           nil
         end
 
@@ -257,7 +261,8 @@ module Redmine
             end
           end
           revisions
-        rescue ScmCommandAborted
+        rescue ScmCommandAborted => exception
+          logger.error exception
           revisions
         end
 
@@ -277,7 +282,8 @@ module Redmine
             end
           end
           diff
-        rescue ScmCommandAborted
+        rescue ScmCommandAborted => exception
+          logger.error exception
           nil
         end
 
@@ -312,7 +318,8 @@ module Redmine
             end
           end
           blame
-        rescue ScmCommandAborted
+        rescue ScmCommandAborted => exception
+          logger.error exception
           nil
         end
 
@@ -328,7 +335,8 @@ module Redmine
             cat = io.read
           end
           cat
-        rescue ScmCommandAborted
+        rescue ScmCommandAborted => exception
+          logger.error exception
           nil
         end
 
