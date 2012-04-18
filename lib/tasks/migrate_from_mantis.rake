@@ -19,6 +19,8 @@ require 'active_record'
 require 'iconv'
 require 'pp'
 
+#ActiveRecord::Base.record_timestamps = false
+
 namespace :redmine do
 task :migrate_from_mantis => :environment do
 
@@ -61,13 +63,13 @@ task :migrate_from_mantis => :environment do
                         }
 
       priorities = IssuePriority.all
-      DEFAULT_PRIORITY = priorities[2]
-      PRIORITY_MAPPING = {10 => priorities[1], # none
-                          20 => priorities[1], # low
-                          30 => priorities[2], # normal
-                          40 => priorities[3], # high
-                          50 => priorities[4], # urgent
-                          60 => priorities[5]  # immediate
+      DEFAULT_PRIORITY = priorities[1]
+      PRIORITY_MAPPING = {10 => priorities[0], # none
+                          20 => priorities[0], # low
+                          30 => priorities[1], # normal
+                          40 => priorities[2], # high
+                          50 => priorities[3], # urgent
+                          60 => priorities[4]  # immediate
                           }
 
       TRACKER_BUG = Tracker.find_by_position(1)
@@ -150,8 +152,12 @@ task :migrate_from_mantis => :environment do
       end
 
       def identifier
-        read_attribute(:name).underscore[0..19].gsub(/[^a-z0-9\-]/, '-')
+        read_attribute(:name).slice(0, Project::IDENTIFIER_MAX_LENGTH).downcase.gsub(/[^a-z0-9\-]+/, '-')
       end
+    end
+
+    class MantisProjectHierarchy < ActiveRecord::Base
+      set_table_name :mantis_project_hierarchy_table
     end
 
     class MantisVersion < ActiveRecord::Base
@@ -168,6 +174,9 @@ task :migrate_from_mantis => :environment do
 
     class MantisCategory < ActiveRecord::Base
       set_table_name :mantis_category_table
+      def category
+        read_attribute(:name).slice(0,30)
+      end
     end
 
     class MantisProjectUser < ActiveRecord::Base
@@ -181,6 +190,7 @@ task :migrate_from_mantis => :environment do
       has_many :bug_files, :class_name => "MantisBugFile", :foreign_key => :bug_id
       has_many :bug_monitors, :class_name => "MantisBugMonitor", :foreign_key => :bug_id
       has_many :bug_history, :class_name => "MantisBugHistory", :foreign_key => :bug_id
+      belongs_to :category, :class_name => "MantisCategory", :foreign_key => :category_id
     end
 
     class MantisBugText < ActiveRecord::Base
@@ -308,6 +318,7 @@ task :migrate_from_mantis => :environment do
                         :description => encode(project.description),
                         :trackers => [TRACKER_BUG, TRACKER_FEATURE]
     	p.identifier = project.identifier
+        p.is_public = (project.view_state == 10)
     	next unless p.save
     	projects_map[project.id] = p.id
     	p.enabled_module_names = ['issue_tracking', 'news', 'wiki']
@@ -343,6 +354,15 @@ task :migrate_from_mantis => :environment do
       end
       puts
 
+      # Project Hierarchy
+      print "Making Project Hierarchy"
+      MantisProjectHierarchy.find(:all).each do |link|
+        next unless p = Project.find_by_id(projects_map[link.child_id])
+        p.set_parent!(projects_map[link.parent_id])
+        print '.'
+      end
+      puts	
+
       # Bugs
       print "Migrating bugs"
       Issue.destroy_all
@@ -354,8 +374,8 @@ task :migrate_from_mantis => :environment do
                       :subject => encode(bug.summary),
                       :description => encode(bug.bug_text.full_description),
                       :priority => PRIORITY_MAPPING[bug.priority] || DEFAULT_PRIORITY,
-                      :created_on => Time.at(bug.date_submitted),
-                      :updated_on => Time.at(bug.last_updated)
+                      :created_on => DateTime.strptime(bug.date_submitted.to_s, "%s"),
+                      :updated_on => DateTime.strptime(bug.last_updated.to_s, "%s")
     	i.author = User.find_by_id(users_map[bug.reporter_id])
     	i.category = IssueCategory.find_by_project_id_and_id(i.project_id, bug.category_id) unless bug.category_id.blank?
     	i.fixed_version = Version.find_by_project_id_and_name(i.project_id, bug.fixed_in_version) unless bug.fixed_in_version.blank?
@@ -368,7 +388,6 @@ task :migrate_from_mantis => :environment do
         if (bug.handler_id && users_map[bug.handler_id])
           i.assigned_to = User.find_by_id(users_map[bug.handler_id])
         end
-
     	next unless i.save_with_validation(false)
     	issues_map[bug.id] = i.id
     	print '.'
