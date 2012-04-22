@@ -160,33 +160,6 @@ class ActiveSupport::TestCase
     end
   end
 
-  def self.should_show_the_old_and_new_values_for(prop_key, model, &block)
-    context "" do
-      setup do
-        if block_given?
-          instance_eval &block
-        else
-          @old_value = model.generate!
-          @new_value = model.generate!
-        end
-      end
-
-      should "use the new value's name" do
-        @detail = IssueJournal.generate(:version => 1, :journaled => Issue.last)
-        @detail.update_attribute(:changes, {prop_key => [@old_value.id, @new_value.id]})
-
-        assert_match @new_value.class.find(@new_value.id).name, @detail.render_detail(prop_key, true)
-      end
-
-      should "use the old value's name" do
-        @detail = IssueJournal.generate(:version => 1, :journaled => Issue.last)
-        @detail.update_attribute(:changes, {prop_key => [@old_value.id, @new_value.id]})
-
-        assert_match @old_value.class.find(@old_value.id).name, @detail.render_detail(prop_key, true)
-      end
-    end
-  end
-
   # Test that a request allows the three types of API authentication
   #
   # * HTTP Basic with username and password
