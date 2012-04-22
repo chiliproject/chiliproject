@@ -21,7 +21,6 @@ group :test do
   gem 'shoulda', '~> 2.10.3'
   # Shoulda doesn't work nice on 1.9.3 and seems to need test-unit explicitely…
   gem 'test-unit', :platforms => [:mri_19]
-  gem 'edavis10-object_daddy', :require => 'object_daddy'
   gem 'mocha'
   gem 'capybara'
   gem 'coveralls', :require => false
