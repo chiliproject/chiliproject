@@ -22,8 +22,8 @@ require 'test_help'
 require File.expand_path(File.dirname(__FILE__) + '/helper_testcase')
 require Rails.root.join('test', 'mocks', 'open_id_authentication_mock.rb')
 
-require File.expand_path(File.dirname(__FILE__) + '/object_daddy_helpers')
-include ObjectDaddyHelpers
+require File.expand_path(File.dirname(__FILE__) + '/object_helpers')
+include ObjectHelpers
 require File.expand_path(File.dirname(__FILE__) + '/integration_test_helpers')
 
 class ActiveSupport::TestCase
