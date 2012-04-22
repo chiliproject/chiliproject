@@ -118,40 +118,60 @@ class IssuesHelperTest < ActionView::TestCase
       end
     end
 
-    context "with a project attribute" do
-      should_show_the_old_and_new_values_for('project_id', Project)
+    should "show old and new values with a project attribute" do
+      journal = IssueJournal.new(:changes => {"project_id" => [1, 2]}, :journaled => Issue.last)
+      detail = journal.render_detail(journal.details.to_a.first, true)
+      assert_match 'eCookbook', detail
+      assert_match 'OnlineStore', detail
     end
 
-    context "with a issue status attribute" do
-      should_show_the_old_and_new_values_for('status_id', IssueStatus)
+    should "show old and new values with a issue status attribute" do
+      journal = IssueJournal.new(:changes => {"status_id" => [1, 2]}, :journaled => Issue.last)
+      detail = journal.render_detail(journal.details.to_a.first, true)
+      assert_match 'New', detail
+      assert_match 'Assigned', detail
     end
 
-    context "with a tracker attribute" do
-      should_show_the_old_and_new_values_for('tracker_id', Tracker)
+    should "show old and new values with a tracker attribute" do
+      journal = IssueJournal.new(:changes => {"tracker_id" => [1, 2]}, :journaled => Issue.last)
+      detail = journal.render_detail(journal.details.to_a.first, true)
+      assert_match 'Bug', detail
+      assert_match 'Feature request', detail
     end
 
-    context "with a assigned to attribute" do
-      should_show_the_old_and_new_values_for('assigned_to_id', User)
+    should "show old and new values with a assigned to attribute" do
+      journal = IssueJournal.new(:changes => {"assigned_to_id" => [1, 2]}, :journaled => Issue.last)
+      detail = journal.render_detail(journal.details.to_a.first, true)
+      assert_match 'redMine Admin', detail
+      assert_match 'John Smith', detail
     end
 
-    context "with a priority attribute" do
-      should_show_the_old_and_new_values_for('priority_id', IssuePriority) do
-        @old_value = IssuePriority.generate!(:type => 'IssuePriority')
-        @new_value = IssuePriority.generate!(:type => 'IssuePriority')
-      end
+    should "show old and new values with a priority attribute" do
+      journal = IssueJournal.new(:changes => {"priority_id" => [4, 5]}, :journaled => Issue.last)
+      detail = journal.render_detail(journal.details.to_a.first, true)
+      assert_match 'Low', detail
+      assert_match 'Normal', detail
     end
 
-    context "with a category attribute" do
-      should_show_the_old_and_new_values_for('category_id', IssueCategory)
+    should "show old and new values with a category attribute" do
+      journal = IssueJournal.new(:changes => {"category_id" => [1, 2]}, :journaled => Issue.last)
+      detail = journal.render_detail(journal.details.to_a.first, true)
+      assert_match 'Printing', detail
+      assert_match 'Recipes', detail
     end
 
-    context "with a fixed version attribute" do
-      should_show_the_old_and_new_values_for('fixed_version_id', Version)
+    should "show old and new values with a fixed version attribute" do
+      journal = IssueJournal.new(:changes => {"fixed_version_id" => [1, 2]}, :journaled => Issue.last)
+      detail = journal.render_detail(journal.details.to_a.first, true)
+      assert_match '0.1', detail
+      assert_match '1.0', detail
     end
 
-    context "with a estimated hours attribute" do
-      should "format the time into two decimal places"
-      should "format the old time into two decimal places"
+    should "show old and new values with a estimated hours attribute" do
+      journal = IssueJournal.new(:changes => {"estimated_hours" => [5, 6.3]}, :journaled => Issue.last)
+      detail = journal.render_detail(journal.details.to_a.first, true)
+      assert_match '5.00', detail
+      assert_match '6.30', detail
     end
     should "test custom fields"
     should "test attachments"
