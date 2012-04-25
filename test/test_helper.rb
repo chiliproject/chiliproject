@@ -70,7 +70,7 @@ class ActiveSupport::TestCase
   end
 
   def credentials(user, password=nil)
-    {:authorization => ActionController::HttpAuthentication::Basic.encode_credentials(user, password || user)}
+    {'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(user, password || user)}
   end
 
   # Mock out a file
@@ -137,7 +137,6 @@ class ActiveSupport::TestCase
     assert_tag({:attributes => { :id => 'errorExplanation' }}.merge(options))
   end
 
-  # Shoulda macros
   def self.should_render_404
     should_respond_with :not_found
     should_render_template 'common/error'
@@ -372,9 +371,13 @@ class ActiveSupport::TestCase
   def self.should_respond_with_content_type_based_on_url(url)
     case
     when url.match(/xml/i)
-      should_respond_with_content_type :xml
+      should "respond with XML" do
+        assert_equal 'application/xml', @response.content_type
+      end
     when url.match(/json/i)
-      should_respond_with_content_type :json
+      should "respond with JSON" do
+        assert_equal 'application/json', @response.content_type
+      end
     else
       raise "Unknown content type for should_respond_with_content_type_based_on_url: #{url}"
     end
@@ -413,6 +416,17 @@ class ActiveSupport::TestCase
     end
   end
 
+  def self.should_respond_with(status)
+    should "respond with #{status}" do
+      assert_response status
+    end
+  end
+
+  def self.should_route(method, path, route={})
+    should "route" do
+      assert_routing({:method => method, :path => path}, route)
+    end
+  end
 end
 
 class ActionController::IntegrationTest
