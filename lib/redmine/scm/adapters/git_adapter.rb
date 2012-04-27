@@ -142,7 +142,7 @@ module Redmine
           return nil if path.nil?
           cmd_args = %w|log --no-color --encoding=UTF-8 --date=iso --pretty=fuller --no-merges -n 1|
           cmd_args << rev if rev
-          cmd_args << "--" << path unless path.empty?
+          cmd_args << "--" << scm_iconv(@path_encoding, 'UTF-8', path) if path.present?
           lines = []
           scm_cmd(*cmd_args) { |io| lines = io.readlines }
           begin
@@ -177,7 +177,7 @@ module Redmine
           from_to << "#{identifier_to}" if identifier_to
           cmd_args << from_to if !from_to.empty?
           cmd_args << "--since='#{options[:since].strftime("%Y-%m-%d %H:%M:%S")}'" if options[:since]
-          cmd_args << "--" << scm_iconv(@path_encoding, 'UTF-8', path) if path && !path.empty?
+          cmd_args << "--" << scm_iconv(@path_encoding, 'UTF-8', path) if path.present?
 
           scm_cmd *cmd_args do |io|
             files=[]
@@ -269,7 +269,7 @@ module Redmine
           else
             cmd_args << "show" << "--no-color" << identifier_from
           end
-          cmd_args << "--" <<  scm_iconv(@path_encoding, 'UTF-8', path) unless path.empty?
+          cmd_args << "--" << scm_iconv(@path_encoding, 'UTF-8', path) if path.present?
           diff = []
           scm_cmd *cmd_args do |io|
             io.each_line do |line|
