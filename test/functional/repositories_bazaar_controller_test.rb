@@ -96,7 +96,9 @@ class RepositoriesBazaarControllerTest < ActionController::TestCase
       get :entry, :id => 3, :path => ['directory', 'doc-ls.txt'], :format => 'raw'
       assert_response :success
       # File content
-      assert @response.body.include?('Show help message')
+      output = StringIO.new
+      @response.body.call(@response, output)
+      assert_match('Show help message', output.string)
     end
 
     def test_directory_entry

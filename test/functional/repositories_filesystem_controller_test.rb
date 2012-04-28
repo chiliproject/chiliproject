@@ -55,6 +55,7 @@ class RepositoriesFilesystemControllerTest < ActionController::TestCase
       get :entry, :id => PRJ_ID, :path => ['test']
       assert_response :success
       assert_template 'entry'
+
       assert_tag :tag => 'th',
                  :content => '1',
                  :attributes => { :class => 'line-num' },
