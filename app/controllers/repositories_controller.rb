@@ -118,41 +118,47 @@ class RepositoriesController < ApplicationController
     # If the entry is a dir, show the browser
     (show; return) if @entry.is_dir?
 
-    @content = @repository.cat(@path, @rev)
-    (show_error_not_found; return) unless @content
-    if 'raw' == params[:format] ||
-         (@content.size && @content.size > Setting.file_max_size_displayed.to_i.kilobyte) ||
-         ! is_entry_text_data?(@content, @path)
-      # Force the download
-      send_opt = { :filename => filename_for_content_disposition(@path.split('/').last) }
-      send_type = Redmine::MimeType.of(@path)
-      send_opt[:type] = send_type.to_s if send_type
-      send_data @content, send_opt
-    else
-      # Prevent empty lines when displaying a file with Windows style eol
-      # TODO: UTF-16
-      # Is this needs? AttachmentsController reads file simply.
-      @content.gsub!("\r\n", "\n")
-      @changeset = @repository.find_changeset_by_name(@rev)
+    @repository.cat_to_tempfile(@path, @rev) do |f|
+      if params[:format] == 'raw' || is_too_large_to_show?(f) || is_binary?(f, @path)
+        send_type = Redmine::MimeType.of(@path)
+        options = {
+          :filename    => filename_for_content_disposition(@path.split('/').last),
+          :disposition => 'attachment',
+          :x_sendfile  => false # x_sendfile does not work well with tempfiles
+        }
+        options[:type] = send_type.to_s if send_type
+        send_file(f.path, options)
+      else
+        f.rewind
+        @content = f.read
+        @changeset = @repository.find_changeset_by_name(@rev)
+      end
     end
   end
 
-  def is_entry_text_data?(ent, path)
-    # UTF-16 contains "\x00".
-    # It is very strict that file contains less than 30% of ascii symbols
-    # in non Western Europe.
-    return true if Redmine::MimeType.is_type?('text', path)
-    # Ruby 1.8.6 has a bug of integer divisions.
-    # http://apidock.com/ruby/v1_8_6_287/String/is_binary_data%3F
-    if ent.respond_to?("is_binary_data?") && ent.is_binary_data? # Ruby 1.8.x and <1.9.2
-      return false
-    elsif ent.respond_to?(:force_encoding) && (ent.dup.force_encoding("UTF-8") != ent.dup.force_encoding("BINARY") ) # Ruby 1.9.2
-      # TODO: need to handle edge cases of non-binary content that isn't UTF-8
-      return false
-    end
-    true
+  def is_too_large_to_show?(f)
+    f.size > Setting.file_max_size_displayed.to_i.kilobyte
   end
-  private :is_entry_text_data?
+  private :is_too_large_to_show?
+
+  def is_binary?(file, path)
+
+    return false if Redmine::MimeType.is_type?('text', path)
+
+    # First block of the file is examined for odd
+    # characters such as strange control codes or char-
+    # acters with the high bit set.  If too many strange
+    # characters (>30%) are found, it's a binary file,
+    # otherwise it's a text file.  Also, any file con-
+    # taining null in the first block is considered a
+    # binary file.
+
+    blk = file.read(Setting.file_max_size_displayed.to_i.kilobyte)
+    return blk.size == 0 ||
+           blk.count("^ -~", "^\r\n") / blk.size > 0.3 ||
+           blk.count("\x00") > 0
+  end
+  private :is_binary?
 
   def annotate
     @entry = @repository.entry(@path, @rev)

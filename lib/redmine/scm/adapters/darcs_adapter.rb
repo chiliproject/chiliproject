@@ -50,7 +50,7 @@ module Redmine
           end
 
           def darcs_binary_version_from_command_line
-            shellout("#{sq_bin} --version") { |io| io.read }.to_s
+            shellout("#{sq_bin} --version"){ |io| io.read }.to_s
           end
         end
 
@@ -78,86 +78,79 @@ module Redmine
           if path.blank?
             path = ( self.class.client_version_above?([2, 2, 0]) ? @url : '.' )
           end
-          entries = Entries.new
-          cmd = "#{self.class.sq_bin} annotate --repodir #{shell_quote @url} --xml-output"
-          cmd << " --match #{shell_quote("hash #{identifier}")}" if identifier
-          cmd << " #{shell_quote path}"
-          shellout(cmd) do |io|
-            begin
-              doc = REXML::Document.new(io)
-              if doc.root.name == 'directory'
-                doc.elements.each('directory/*') do |element|
-                  next unless ['file', 'directory'].include? element.name
-                  entries << entry_from_xml(element, path_prefix)
-                end
-              elsif doc.root.name == 'file'
-                entries << entry_from_xml(doc.root, path_prefix)
+          cmd_args = %W|annotate --repodir #{shell_quote @url} --xml-output|
+          cmd_args << " --match #{shell_quote("hash #{identifier}")}" if identifier
+          cmd_args << " #{shell_quote path}"
+          scm_cmd(cmd_args) do |io|
+            entries = Entries.new
+            doc = REXML::Document.new(io)
+            if doc.root.name == 'directory'
+              doc.elements.each('directory/*') do |element|
+                next unless ['file', 'directory'].include? element.name
+                entries << entry_from_xml(element, path_prefix)
               end
-            rescue
+            elsif doc.root.name == 'file'
+              entries << entry_from_xml(doc.root, path_prefix)
             end
+            entries.compact.sort_by_name
           end
-          return nil if $? && $?.exitstatus != 0
-          entries.compact.sort_by_name
         end
 
         def revisions(path=nil, identifier_from=nil, identifier_to=nil, options={})
           path = '.' if path.blank?
-          revisions = Revisions.new
-          cmd = "#{self.class.sq_bin} changes --repodir #{shell_quote @url} --xml-output"
-          cmd << " --from-match #{shell_quote("hash #{identifier_from}")}" if identifier_from
-          cmd << " --last #{options[:limit].to_i}" if options[:limit]
-          shellout(cmd) do |io|
-            begin
-              doc = REXML::Document.new(io)
-              doc.elements.each("changelog/patch") do |patch|
-                message = patch.elements['name'].text
-                message << "\n" + patch.elements['comment'].text.gsub(/\*\*\*END OF DESCRIPTION\*\*\*.*\z/m, '') if patch.elements['comment']
-                revisions << Revision.new({:identifier => nil,
-                              :author => patch.attributes['author'],
-                              :scmid => patch.attributes['hash'],
-                              :time => Time.parse(patch.attributes['local_date']),
-                              :message => message,
-                              :paths => (options[:with_path] ? get_paths_for_patch(patch.attributes['hash']) : nil)
-                            })
-              end
-            rescue
+          cmd_args = %W|changes --repodir #{shell_quote @url} --xml-output|
+          cmd_args << " --from-match #{shell_quote("hash #{identifier_from}")}" if identifier_from
+          cmd_args << " --last #{options[:limit].to_i}" if options[:limit]
+          scm_cmd(cmd_args) do |io|
+            revisions = Revisions.new
+            doc = REXML::Document.new(io)
+            doc.elements.each("changelog/patch") do |patch|
+              message = patch.elements['name'].text
+              message << "\n" + patch.elements['comment'].text.gsub(/\*\*\*END OF DESCRIPTION\*\*\*.*\z/m, '') if patch.elements['comment']
+              revisions << Revision.new({:identifier => nil,
+                            :author => patch.attributes['author'],
+                            :scmid => patch.attributes['hash'],
+                            :time => Time.parse(patch.attributes['local_date']),
+                            :message => message,
+                            :paths => (options[:with_path] ? get_paths_for_patch(patch.attributes['hash']) : nil)
+                          })
             end
+            revisions
           end
-          return nil if $? && $?.exitstatus != 0
-          revisions
         end
 
         def diff(path, identifier_from, identifier_to=nil)
           path = '*' if path.blank?
-          cmd = "#{self.class.sq_bin} diff --repodir #{shell_quote @url}"
+          cmd_args = %W|diff --repodir #{shell_quote @url}|
           if identifier_to.nil?
-            cmd << " --match #{shell_quote("hash #{identifier_from}")}"
+            cmd_args << "--match #{shell_quote("hash #{identifier_from}")}"
           else
-            cmd << " --to-match #{shell_quote("hash #{identifier_from}")}"
-            cmd << " --from-match #{shell_quote("hash #{identifier_to}")}"
+            cmd_args << "--to-match #{shell_quote("hash #{identifier_from}")}"
+            cmd_args << "--from-match #{shell_quote("hash #{identifier_to}")}"
           end
-          cmd << " -u #{shell_quote path}"
-          diff = []
-          shellout(cmd) do |io|
-            io.each_line do |line|
-              diff << line
-            end
+          cmd_args << "-u #{shell_quote path}"
+          scm_cmd(cmd_args) do |io|
+            diff = []
+            io.each_line { |line| diff << line }
+            diff
           end
-          return nil if $? && $?.exitstatus != 0
-          diff
         end
 
         def cat(path, identifier=nil)
-          cmd = "#{self.class.sq_bin} show content --repodir #{shell_quote @url}"
-          cmd << " --match #{shell_quote("hash #{identifier}")}" if identifier
-          cmd << " #{shell_quote path}"
-          cat = nil
-          shellout(cmd) do |io|
+          cmd_args = %W|show content --repodir #{shell_quote @url}|
+          cmd_args << "--match #{shell_quote("hash #{identifier}")}" if identifier
+          cmd_args << shell_quote(path)
+          scm_cmd(cmd_args) do |io|
             io.binmode
-            cat = io.read
+            io.read
           end
-          return nil if $? && $?.exitstatus != 0
-          cat
+        end
+
+        def save_entry_in_file(f, path, identifier)
+          cmd_args = %W|show content --repodir #{shell_quote @url}|
+          cmd_args << "--match #{shell_quote("hash #{identifier}")}" if identifier
+          cmd_args << shell_quote(path)
+          scm_cmd(cmd_args, f.path)
         end
 
         private
@@ -212,25 +205,19 @@ module Redmine
 
         # Retrieve changed paths for a single patch
         def get_paths_for_patch_raw(hash)
-          cmd = "#{self.class.sq_bin} annotate --repodir #{shell_quote @url} --summary --xml-output"
-          cmd << " --match #{shell_quote("hash #{hash}")} "
-          paths = []
-          shellout(cmd) do |io|
-            begin
-              # Darcs xml output has multiple root elements in this case (tested with darcs 1.0.7)
-              # A root element is added so that REXML doesn't raise an error
-              doc = REXML::Document.new("<fake_root>" + io.read + "</fake_root>")
-              doc.elements.each('fake_root/summary/*') do |modif|
-                paths << {:action => modif.name[0,1].upcase,
-                          :path => "/" + modif.text.chomp.gsub(/^\s*/, '')
-                         }
-              end
-            rescue
+          cmd_args = %W|annotate --repodir #{shell_quote @url} --summary --xml-output --match #{shell_quote("hash #{hash}")}|
+          scm_cmd(cmd_args) do |io|
+            paths = []
+            # Darcs xml output has multiple root elements in this case (tested with darcs 1.0.7)
+            # A root element is added so that REXML doesn't raise an error
+            doc = REXML::Document.new("<fake_root>" + io.read + "</fake_root>")
+            doc.elements.each('fake_root/summary/*') do |modif|
+              paths << {:action => modif.name[0,1].upcase,
+                        :path => "/" + modif.text.chomp.gsub(/^\s*/, '')
+                       }
             end
-          end
-          paths
-        rescue CommandFailed
-          paths
+            paths
+          end || [] # this method should not return nil
         end
       end
     end

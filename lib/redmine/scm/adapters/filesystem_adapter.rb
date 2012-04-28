@@ -85,10 +85,20 @@ module Redmine
 
         def cat(path, identifier=nil)
           p = scm_iconv(@path_encoding, 'UTF-8', target(path))
-          File.new(p, "rb").read
+          src = File.new(p, "rb")
+          ret = src.read
+          src.close
+          ret
         rescue  => err
           logger.error "scm: filesystem: error: #{err.message}"
           raise CommandFailed.new(err.message)
+        end
+
+        def save_entry_in_file(dest, path, identifier)
+          p = scm_iconv(@path_encoding, 'UTF-8', target(path))
+          src = File.new(p, "rb")
+          FileUtils.copy_stream(src, dest)
+          src.close
         end
 
         private

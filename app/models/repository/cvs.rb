@@ -66,6 +66,11 @@ class Repository::Cvs < Repository
     scm.cat(path, rev.nil? ? nil : rev.committed_on)
   end
 
+  def cat_to_tempfile(path, identifier, &block)
+    rev = changesets.find_by_revision(identifier)
+    scm.cat_to_tempfile(path, rev.nil? ? nil : rev.committed_on, &block)
+  end
+
   def diff(path, rev, rev_to)
     #convert rev to revision. CVS can't handle changesets here
     diff=[]

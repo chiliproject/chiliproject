@@ -69,7 +69,7 @@ module Redmine
         end
 
         def adapter_name
-          'Abstract'
+          self.class.name.gsub("Adapter","")
         end
 
         def supports_cat?
@@ -143,6 +143,17 @@ module Redmine
           return nil
         end
 
+        def cat_to_tempfile(path, identifier, &block)
+          Tempfile.open('repository_download') do |f|
+            save_entry_in_file(f,path,identifier)
+            block.call(f)
+          end
+        end
+
+        def save_entry_in_file(file, path, identifier)
+          return nil
+        end
+
         def with_leading_slash(path)
           path ||= ''
           (path[0,1]!="/") ? "/#{path}" : path
@@ -183,37 +194,60 @@ module Redmine
           self.class.logger
         end
 
-        def shellout(cmd, &block)
-          self.class.shellout(cmd, &block)
+        def shellout(cmd, output_path=nil, &block)
+          self.class.shellout(cmd, output_path, &block)
+        end
+
+        def build_scm_cmd(cmd_args)
+          ([ self.class.sq_bin ] + cmd_args).join(' ')
+        end
+
+        def scm_cmd(cmd_args, output_path=nil, &block)
+          cmd = build_scm_cmd(cmd_args)
+          begin
+            ret = shellout(cmd, output_path, &block)
+          rescue Exception => e
+            msg = strip_credential(e.message)
+            cmd = strip_credential(cmd)
+            logger.error("Error executing #{adapter_name} command [#{cmd}]: #{msg}")
+          end
+          return nil if $? && $?.exitstatus != 0
+          ret
         end
 
         def self.logger
           RAILS_DEFAULT_LOGGER
         end
 
-        def self.shellout(cmd, &block)
-          logger.debug "Shelling out: #{strip_credential(cmd)}" if logger && logger.debug?
-          if Rails.env == 'development'
-            # Capture stderr when running in dev environment
-            cmd = "#{cmd} 2>>#{RAILS_ROOT}/log/scm.stderr.log"
-          end
+        def self.process_cmd(cmd, output_path)
+          cmd = Rails.env == 'development' ? "#{cmd} 2>>#{RAILS_ROOT}/log/scm.stderr.log" : cmd
+          cmd = "#{cmd} >> #{output_path}" if output_path.present?
+          cmd
+        end
+
+        def self.get_reading_mode_for_ruby_version
+          RUBY_VERSION < '1.9' ? 'r+' : 'r+:ASCII-8BIT'
+        end
+
+        def self.shellout(cmd, output_path=nil, &block)
+          logger.debug("Shelling out: #{strip_credential(cmd)}") if logger && logger.respond_to?(:debug)
+          cmd = process_cmd(cmd, output_path)
+          mode = get_reading_mode_for_ruby_version
           begin
-            if RUBY_VERSION < '1.9'
-              mode = "r+"
-            else
-              mode = "r+:ASCII-8BIT"
-            end
+            result = nil
             IO.popen(cmd, mode) do |io|
               io.close_write
-              block.call(io) if block_given?
+              result = block.call(io) if block_given?
             end
+            result
           rescue Errno::ENOENT => e
             msg = strip_credential(e.message)
-            # The command failed, log it and re-raise
-            logger.error("SCM command failed, make sure that your SCM binary (eg. svn) is in PATH (#{ENV['PATH']}): #{strip_credential(cmd)}\n  with: #{msg}")
+            cmd = strip_credential(cmd)
+            logger.error("SCM command failed, make sure that your SCM binary (eg. svn) is in PATH (#{ENV['PATH']}): #{cmd}\n  with: #{msg}")
             raise CommandFailed.new(msg)
           end
         end
+
 
         # Hides username/password in a given command
         def self.strip_credential(cmd)

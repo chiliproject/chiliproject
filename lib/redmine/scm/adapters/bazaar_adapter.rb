@@ -50,41 +50,33 @@ module Redmine
           end
 
           def scm_version_from_command_line
-            shellout("#{sq_bin} --version") { |io| io.read }.to_s
+            shellout("--version"){ |io| io.read }.to_s
           end
         end
 
         # Get info about the repository
         def info
-          cmd = "#{self.class.sq_bin} revno #{target('')}"
-          info = nil
-          shellout(cmd) do |io|
+          cmd_args = ['revno', target('')]
+          scm_cmd cmd_args do |io|
             if io.read =~ %r{^(\d+)\r?$}
-              info = Info.new({:root_url => url,
-                               :lastrev => Revision.new({
-                                 :identifier => $1
-                               })
-                             })
+              Info.new({
+                :root_url => url,
+                :lastrev => Revision.new({ :identifier => $1})
+              })
             end
           end
-          return nil if $? && $?.exitstatus != 0
-          info
-        rescue CommandFailed
-          return nil
         end
 
         # Returns an Entries collection
         # or nil if the given path doesn't exist in the repository
         def entries(path=nil, identifier=nil)
           path ||= ''
-          entries = Entries.new
-          cmd = "#{self.class.sq_bin} ls -v --show-ids"
-          identifier = -1 unless identifier && identifier.to_i > 0
-          cmd << " -r#{identifier.to_i}"
-          cmd << " #{target(path)}"
-          shellout(cmd) do |io|
+          identifier = initialize_identifier(identifier, -1)
+          cmd_args = %W|ls -v --show-ids -r#{identifier.to_i} #{target(path)}|
+          scm_cmd cmd_args do |io|
+            entries = Entries.new
             prefix = "#{url}/#{path}".gsub('\\', '/')
-            logger.debug "PREFIX: #{prefix}"
+            logger.debug "PREFIX: #{prefix}" if logger && logger.debug?
             re = %r{^V\s+(#{Regexp.escape(prefix)})?(\/?)([^\/]+)(\/?)\s+(\S+)\r?$}
             io.each_line do |line|
               next unless line =~ re
@@ -95,19 +87,18 @@ module Redmine
                                     :lastrev => Revision.new(:revision => $5.strip)
                                   })
             end
+            logger.debug("Found #{entries.size} entries in the repository for #{target(path)}") if logger && logger.debug?
+            entries.sort_by_name
           end
-          return nil if $? && $?.exitstatus != 0
-          logger.debug("Found #{entries.size} entries in the repository for #{target(path)}") if logger && logger.debug?
-          entries.sort_by_name
         end
 
         def revisions(path=nil, identifier_from=nil, identifier_to=nil, options={})
           path ||= ''
-          identifier_from = (identifier_from and identifier_from.to_i > 0) ? identifier_from.to_i : 'last:1'
-          identifier_to = (identifier_to and identifier_to.to_i > 0) ? identifier_to.to_i : 1
-          revisions = Revisions.new
-          cmd = "#{self.class.sq_bin} log -v --show-ids -r#{identifier_to}..#{identifier_from} #{target(path)}"
-          shellout(cmd) do |io|
+          identifier_from = initialize_identifier(identifier_from, 'last:1')
+          identifier_to =   initialize_identifier(identifier_to,   1)
+          cmd_args = %W|log -v --show-ids -r#{identifier_to}..#{identifier_from} #{target(path)}|
+          scm_cmd cmd_args do |io|
+            revisions = Revisions.new
             revision = nil
             parsing = nil
             io.each_line do |line|
@@ -157,61 +148,63 @@ module Redmine
               end
             end
             revisions << revision if revision
+            revisions
           end
-          return nil if $? && $?.exitstatus != 0
-          revisions
         end
 
         def diff(path, identifier_from, identifier_to=nil)
           path ||= ''
-          if identifier_to
-            identifier_to = identifier_to.to_i
-          else
-            identifier_to = identifier_from.to_i - 1
-          end
-          if identifier_from
-            identifier_from = identifier_from.to_i
-          end
-          cmd = "#{self.class.sq_bin} diff -r#{identifier_to}..#{identifier_from} #{target(path)}"
+          identifier_from = initialize_identifier(identifier_from)
+          identifier_to =   initialize_identifier(identifier_to, identifier_from.to_i - 1)
+          cmd_args = %W|diff -r#{identifier_to}..#{identifier_from} #{target(path)}|
           diff = []
-          shellout(cmd) do |io|
-            io.each_line do |line|
-              diff << line
-            end
+          scm_cmd cmd_args do |io|
+            io.each_line{ |ln| diff << ln }
           end
-          #return nil if $? && $?.exitstatus != 0
-          diff
+          diff # this method must not return nil
         end
 
         def cat(path, identifier=nil)
-          cmd = "#{self.class.sq_bin} cat"
-          cmd << " -r#{identifier.to_i}" if identifier && identifier.to_i > 0
-          cmd << " #{target(path)}"
-          cat = nil
-          shellout(cmd) do |io|
+          identifier = initialize_identifier(identifier)
+          cmd_args = ["cat", target(path)]
+          cmd_args << "-r#{identifier}" if identifier
+          scm_cmd(cmd_args) do |io|
             io.binmode
-            cat = io.read
+            io.read
           end
-          return nil if $? && $?.exitstatus != 0
-          cat
+        end
+
+        def save_entry_in_file(f, path, identifier)
+          identifier = initialize_identifier(identifier)
+          cmd_args = ["cat", target(path)]
+          cmd_args << "-r#{identifier}" if identifier
+          scm_cmd(cmd_args, f.path)
         end
 
         def annotate(path, identifier=nil)
-          cmd = "#{self.class.sq_bin} annotate --all"
-          cmd << " -r#{identifier.to_i}" if identifier && identifier.to_i > 0
-          cmd << " #{target(path)}"
-          blame = Annotate.new
-          shellout(cmd) do |io|
+          identifier = initialize_identifier(identifier)
+          cmd_args = %W|annotate --all|
+          cmd_args << "-r#{identifier}" if identifier
+          cmd_args << target(path)
+          scm_cmd(cmd_args) do |io|
+            blame = Annotate.new
             author = nil
             identifier = nil
             io.each_line do |line|
               next unless line =~ %r{^(\d+) ([^|]+)\| (.*)$}
               blame.add_line($3.rstrip, Revision.new(:identifier => $1.to_i, :author => $2.strip))
             end
+            blame
           end
-          return nil if $? && $?.exitstatus != 0
-          blame
         end
+
+        private
+
+        def initialize_identifier(identifier, default=nil)
+          return identifier.to_i if identifier && identifier.to_i > 0
+          default
+        end
+
       end
     end
   end

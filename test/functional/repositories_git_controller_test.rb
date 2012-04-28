@@ -13,6 +13,7 @@
 #++
 require File.expand_path('../../test_helper', __FILE__)
 require 'repositories_controller'
+require 'stringio'
 
 # Re-raise errors caught by the controller.
 class RepositoriesController; def rescue_action(e) raise e end; end
@@ -142,7 +143,9 @@ class RepositoriesGitControllerTest < ActionController::TestCase
       get :entry, :id => 3, :path => ['sources', 'watchers_controller.rb'], :format => 'raw'
       assert_response :success
       # File content
-      assert @response.body.include?('WITHOUT ANY WARRANTY')
+      output = StringIO.new
+      assert_nothing_raised{ @response.body.call(@response, output) }
+      assert output.string.include?('WITHOUT ANY WARRANTY')
     end
 
     def test_directory_entry

@@ -22,9 +22,6 @@ module Redmine
         # CVS executable name
         CVS_BIN = Redmine::Configuration['scm_cvs_command'] || "cvs"
 
-        # raised if scm command exited with error, e.g. unknown revision.
-        class ScmCommandAborted < CommandFailed; end
-
         class << self
           def client_command
             @@bin    ||= CVS_BIN
@@ -89,17 +86,14 @@ module Redmine
           CvsRevisionHelper.new(revision).prevRev
         end
 
-        # Returns an Entries collection
-        # or nil if the given path doesn't exist in the repository
-        # this method is used by the repository-browser (aka LIST)
         def entries(path=nil, identifier=nil)
           logger.debug "<cvs> entries '#{path}' with identifier '#{identifier}'"
-          path_with_project="#{url}#{with_leading_slash(path)}"
-          entries = Entries.new
+          path_with_project = create_path_with_project path
           cmd_args = %w|rls -e|
           cmd_args << "-D" << time_to_cvstime_rlog(identifier) if identifier
           cmd_args << path_with_project
-          scm_cmd(*cmd_args) do |io|
+          scm_cmd(cmd_args) do |io|
+            entries = Entries.new
             io.each_line() do |line|
               fields = line.chop.split('/',-1)
               logger.debug(">>InspectLine #{fields.inspect}")
@@ -114,36 +108,32 @@ module Redmine
                   rescue
                   end
                 end
-                entries << Entry.new(
-                 {
+                entries << Entry.new({
                   :name => fields[-5],
                   #:path => fields[-4].include?(path)?fields[-4]:(path + "/"+ fields[-4]),
                   :path => "#{path}/#{fields[-5]}",
                   :kind => 'file',
                   :size => nil,
-                  :lastrev => Revision.new(
-                      {
-                        :revision => fields[-4],
-                        :name => fields[-4],
-                        :time => time,
-                        :author => ''
-                      })
+                  :lastrev => Revision.new({
+                    :revision => fields[-4],
+                    :name => fields[-4],
+                    :time => time,
+                    :author => ''
                   })
+                })
               else
-                entries << Entry.new(
-                 {
+                entries << Entry.new({
                   :name => fields[1],
                   :path => "#{path}/#{fields[1]}",
                   :kind => 'dir',
                   :size => nil,
                   :lastrev => nil
-                 })
+                })
               end
             end
+
+            entries.sort_by_name
           end
-          entries.sort_by_name
-        rescue ScmCommandAborted
-          nil
         end
 
         STARTLOG="----------------------------"
@@ -155,11 +145,11 @@ module Redmine
         def revisions(path=nil, identifier_from=nil, identifier_to=nil, options={}, &block)
           logger.debug "<cvs> revisions path:'#{path}',identifier_from #{identifier_from}, identifier_to #{identifier_to}"
 
-          path_with_project="#{url}#{with_leading_slash(path)}"
+          path_with_project = create_path_with_project path
           cmd_args = %w|rlog|
           cmd_args << "-d" << ">#{time_to_cvstime_rlog(identifier_from)}" if identifier_from
           cmd_args << path_with_project
-          scm_cmd(*cmd_args) do |io|
+          result = scm_cmd(cmd_args) do |io|
             state="entry_start"
 
             commit_log=String.new
@@ -272,57 +262,65 @@ module Redmine
               end
             end
           end
-        rescue ScmCommandAborted
-          Revisions.new
+          result || Revisions.new
         end
 
         def diff(path, identifier_from, identifier_to=nil)
           logger.debug "<cvs> diff path:'#{path}',identifier_from #{identifier_from}, identifier_to #{identifier_to}"
-          path_with_project="#{url}#{with_leading_slash(path)}"
-          cmd = "#{self.class.sq_bin} -d #{shell_quote root_url} rdiff -u -r#{identifier_to} -r#{identifier_from} #{shell_quote path_with_project}"
-          diff = []
-          shellout(cmd) do |io|
+          path_with_project= create_path_with_project path
+          cmd_args = %W|rdiff -u -r#{identifier_to} -r#{identifier_from} #{path_with_project}|
+          scm_cmd(cmd_args) do |io|
+            diff = []
             io.each_line do |line|
               diff << line
             end
+            diff
           end
-          return nil if $? && $?.exitstatus != 0
-          diff
         end
 
         def cat(path, identifier=nil)
-          identifier = (identifier) ? identifier : "HEAD"
-          logger.debug "<cvs> cat path:'#{path}',identifier #{identifier}"
-          path_with_project="#{url}#{with_leading_slash(path)}"
-          cmd = "#{self.class.sq_bin} -d #{shell_quote root_url} co"
-          cmd << " -D \"#{time_to_cvstime(identifier)}\"" if identifier
-          cmd << " -p #{shell_quote path_with_project}"
-          cat = nil
-          shellout(cmd) do |io|
+          scm_cmd(cmd_args_for_cat(path, identifier)) do |io|
             io.binmode
-            cat = io.read
+            io.read
           end
-          return nil if $? && $?.exitstatus != 0
-          cat
+        end
+
+        def save_entry_in_file(f, path, identifier)
+          scm_cmd(cmd_args_for_cat(path, identifier), f.path)
         end
 
         def annotate(path, identifier=nil)
-          identifier = (identifier) ? identifier.to_i : "HEAD"
+          identifier = initialize_identifier(identifier, "HEAD")
           logger.debug "<cvs> annotate path:'#{path}',identifier #{identifier}"
-          path_with_project="#{url}#{with_leading_slash(path)}"
-          cmd = "#{self.class.sq_bin} -d #{shell_quote root_url} rannotate -r#{identifier} #{shell_quote path_with_project}"
-          blame = Annotate.new
-          shellout(cmd) do |io|
+          path_with_project= create_path_with_project path
+          cmd_args = %W|rannotate -r#{identifier} #{path_with_project}|
+          scm_cmd(cmd_args) do |io|
+            blame = Annotate.new
             io.each_line do |line|
               next unless line =~ %r{^([\d\.]+)\s+\(([^\)]+)\s+[^\)]+\):\s(.*)$}
               blame.add_line($3.rstrip, Revision.new(:revision => $1, :author => $2.strip))
             end
+            blame
           end
-          return nil if $? && $?.exitstatus != 0
-          blame
         end
 
         private
+
+        def cmd_args_for_cat(path, identifier)
+          identifier = initialize_identifier(identifier, "HEAD")
+          path_with_project= create_path_with_project path
+          cmd_args = ['co']
+          cmd_args << "-D" << time_to_cvstime(identifier) if identifier
+          cmd_args << "-p" << path_with_project
+        end
+
+        def create_path_with_project(path)
+          "#{url}#{with_leading_slash(path)}"
+        end
+
+        def initialize_identifier(identifier, default)
+          identifier ? identifier : default
+        end
 
         # Returns the root url without the connexion string
         # :pserver:anonymous@foo.bar:/path => /path
@@ -333,12 +331,10 @@ module Redmine
 
         # convert a date/time into the CVS-format
         def time_to_cvstime(time)
-          return nil if time.nil?
           return Time.now if time == 'HEAD'
 
-          unless time.kind_of? Time
-            time = Time.parse(time)
-          end
+          time = Time.parse(time) unless time.kind_of? Time
+
           return time.strftime("%Y-%m-%d %H:%M:%S")
         end
 
@@ -356,16 +352,11 @@ module Redmine
           path.sub(/^(\/)*(.*)/,'\2').sub(/(.*)(,v)+/,'\1')
         end
 
-        def scm_cmd(*args, &block)
+        def build_scm_cmd(args)
           full_args = [CVS_BIN, '-d', root_url]
           full_args += args
-          ret = shellout(full_args.map { |e| shell_quote e.to_s }.join(' '), &block)
-          if $? && $?.exitstatus != 0
-            raise ScmCommandAborted, "cvs exited with non-zero status: #{$?.exitstatus}"
-          end
-          ret
+          full_args.map { |e| shell_quote e.to_s }.join(' ')
         end
-        private :scm_cmd
       end
 
       class CvsRevisionHelper

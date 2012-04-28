@@ -212,7 +212,9 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
       get :entry, :id => PRJ_ID, :path => ['sources', 'watchers_controller.rb'], :format => 'raw'
       assert_response :success
       # File content
-      assert @response.body.include?('WITHOUT ANY WARRANTY')
+      output = StringIO.new
+      assert_nothing_raised{ @response.body.call(@response, output) }
+      assert output.string.include?('WITHOUT ANY WARRANTY')
     end
 
     def test_entry_binary_force_download

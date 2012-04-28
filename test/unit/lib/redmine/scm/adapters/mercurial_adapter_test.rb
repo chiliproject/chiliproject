@@ -150,7 +150,7 @@ begin
       end
 
       def test_annotate
-        assert_equal [], @adapter.annotate("sources/welcome_controller.rb").lines
+        assert_nil @adapter.annotate("sources/welcome_controller.rb")
         [2, '400bb8672109', '400', 400].each do |r|
           ann = @adapter.annotate('sources/welcome_controller.rb', r)
           assert ann
