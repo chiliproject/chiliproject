@@ -128,7 +128,7 @@ class User < Principal
       return [nil, {:type => :invalid_credentials}] if !user.active?
       if user.auth_source
         attrs, error = user.auth_source.authenticate(login, password)
-        return [nil, {:type => :auth_soucre, :message => I18n.t(:error_auth_source_offline)}] if error
+        return [nil, {:type => :auth_source, :message => I18n.t(:error_auth_source_offline)}] if error
         return [nil, {:type => :invalid_credentials}] unless attrs
       else
         return [nil, {:type => :invalid_credentials}] unless user.check_password?(password)
