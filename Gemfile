@@ -13,6 +13,10 @@ gem "acts-as-taggable-on", "= 2.1.0"
 gem "fastercsv", "~> 1.5.0", :platforms => [:ruby_18, :jruby, :mingw_18]
 gem "tzinfo", "~> 0.3.31" # Fixes #903. Not required for Rails >= 3.2
 
+group :development do
+  gem 'ruby-debug'
+end
+
 group :test do
   gem 'shoulda', '~> 2.10.3'
   gem 'edavis10-object_daddy', :require => 'object_daddy'
