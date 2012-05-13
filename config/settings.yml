@@ -184,3 +184,5 @@ mail_handler_confirmation_on_failure:
   default: 1
 issue_startdate_is_adddate:
   default: 1
+issue_closed_is_fully_done: 
+  default: 0
