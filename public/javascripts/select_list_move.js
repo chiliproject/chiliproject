@@ -1,31 +1,33 @@
 (function($) {
-    $(document).ready(function() {
-        var moveButtons = $('.query-columns .buttons.move');
-        var positionButtons = $('.query-columns .buttons.position');
+    $(function() {
+        var avaliableColumns = '#available_columns';
+        var selectedColumns = '#selected_columns';
+        var queryForm = '#query_form';
+        var main = $('#main');
 
-        var avaliableColumns = $('#available_columns');
-        var selectedColumns = $('#selected_columns');
-
-        moveButtons.find('.add').on('click', function() {
+        main.on('click', queryForm + ' .add', function() {
             moveOptions(avaliableColumns, selectedColumns);
         });
-        moveButtons.find('.remove').on('click', function() {
+        main.on('click', queryForm + ' .remove', function() {
             moveOptions(selectedColumns, avaliableColumns);
         });
 
-        positionButtons.find('.up').on('click', function() {
+        main.on('click', queryForm + ' .up', function() {
             changeOptionPosition(selectedColumns, 0);
         });
-        positionButtons.find('.down').on('click', function() {
+        main.on('click', queryForm + ' .down', function() {
             changeOptionPosition(selectedColumns, 1);
         });
 
         function moveOptions(theSelFrom, theSelTo) {
+            theSelFrom = $(theSelFrom);
+            theSelTo = $(theSelTo);
             selectedOptions = theSelFrom.find('option:selected');
-            selectedOptions.appendTo(theSelTo);
+            selectedOptions.appendTo(theSelTo).attr('selected', false);
         }
 
         function changeOptionPosition(theSelForm, direction) {
+            theSelForm = $(theSelForm);
             var selectedItems = theSelForm.find('option:selected');
             if(direction === 1) {
                 selectedItems = $(selectedItems.get().reverse());
