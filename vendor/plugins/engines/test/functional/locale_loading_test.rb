@@ -4,7 +4,7 @@
 # * translations in the application take precedence over those in plugins
 # * translations in subsequently loaded plugins take precendence over those in previously loaded plugins
 
-require File.expand_path('../test_helper', File.dirname(__FILE__))
+require File.dirname(__FILE__) + '/../test_helper'
 
 class LocaleLoadingTest < ActionController::TestCase
   def setup

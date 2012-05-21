@@ -6,7 +6,7 @@
 # * views in subsequently loaded plugins take precendence over those in previously loaded plugins
 # * this works for namespaced views accordingly
 
-require File.expand_path('../test_helper', File.dirname(__FILE__))
+require File.dirname(__FILE__) + '/../test_helper'
 
 class ViewLoadingTest < ActionController::TestCase
   def setup

@@ -1,5 +1,5 @@
 #-- encoding: UTF-8
-require File.expand_path('../test_helper', File.dirname(__FILE__))
+require File.dirname(__FILE__) + '/../test_helper'
 require 'rails_generator'
 require 'rails_generator/scripts/generate'
 

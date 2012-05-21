@@ -1,5 +1,5 @@
 #-- encoding: UTF-8
-require File.expand_path('../test_helper', File.dirname(__FILE__))
+require File.dirname(__FILE__) + '/../test_helper'
 
 class TestingTest < Test::Unit::TestCase
   def setup

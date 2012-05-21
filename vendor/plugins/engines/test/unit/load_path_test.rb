@@ -6,7 +6,7 @@
 # * the plugin paths are added to $LOAD_PATH in the order in which plugins are 
 #   loaded
 
-require File.expand_path('../test_helper', File.dirname(__FILE__))
+require File.dirname(__FILE__) + '/../test_helper'
 
 class LoadPathTest < Test::Unit::TestCase
   def setup

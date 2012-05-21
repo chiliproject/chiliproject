@@ -6,7 +6,7 @@
 # * actions in controllers in subsequently loaded plugins take precendence over those in previously loaded plugins
 # * this works for actions in namespaced controllers accordingly
 
-require File.expand_path('../test_helper', File.dirname(__FILE__))
+require File.dirname(__FILE__) + '/../test_helper'
 
 class ControllerLoadingTest < ActionController::TestCase
   def setup
