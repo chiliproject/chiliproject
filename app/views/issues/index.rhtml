@@ -55,13 +55,7 @@
 		</div>
     <p class="buttons hide-when-print">
 
-    <%= link_to_remote l(:button_apply),
-                       { :url => { :set_filter => 1 },
-                         :before => 'selectAllOptions("selected_columns");',
-                         :update => "content",
-                         :complete => "apply_filters_observer()",
-                         :with => "Form.serialize('query_form')"
-                       }, :class => 'icon icon-checked' %>
+    <%= link_to l(:button_apply), '#',  :class => 'icon icon-checked apply' %>
 
     <%= link_to_remote l(:button_clear),
                        { :url => { :set_filter => 1, :project_id => @project },

@@ -19,6 +19,24 @@
             changeOptionPosition(selectedColumns, 1);
         });
 
+        main.on('click', queryForm + ' .apply', function(e) {
+            e.preventDefault();
+            selectAllOptions(selectedColumns);
+
+            var data = $(queryForm).serializeArray();
+            var url = jQuery('form[action*="issues"]').attr('action');
+            $.ajax({
+                url: url + '?set_filter=1',
+                data: data,
+                type: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    $('#content').html(response);
+                    apply_filters_observer();
+                }
+            });
+        });
+
         function moveOptions(theSelFrom, theSelTo) {
             theSelFrom = $(theSelFrom);
             theSelTo = $(theSelTo);
@@ -45,6 +63,10 @@
                     }
                 }
             });
+        }
+
+        function selectAllOptions(id) {
+            $(id + ' option').attr('selected', true);
         }
     });
 })(jQuery);
