@@ -340,6 +340,9 @@ module Redmine
         end
 
         def scm_cmd(*args, &block)
+          args.each do |a|
+            a.gsub!([^\.\-\w_\:]/, '')
+          end
           repo_path = root_url || url
           full_args = [GIT_BIN, '--git-dir', repo_path]
           if self.class.client_version_above?([1, 7, 2])
