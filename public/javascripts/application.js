@@ -579,6 +579,12 @@ jQuery(document).ready(function($) {
       menuUl.css({'height': windowHeight});
     }
 
+    var windowHeight = Math.floor($.viewportHeight() * 0.8);
+    if(menuItem.find("ul").height() > $.viewportHeight())
+    {
+      menuItem.find("ul").css({'height':windowHeight, 'overflow-y':'scroll'});
+    }
+
     toggleTopMenu(menuItem);
 
     if (menuItem.hasClass('open')) {
