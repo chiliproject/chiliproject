@@ -4360,3 +4360,119 @@ Additional wiki styles
   height: 1px;
   overflow: hidden;
 }
+
+/* IE6 how i love to hate thee */
+
+.lt-ie7 #account-nav li a {
+  width: 45px;
+}
+
+.lt-ie7 #account-nav li li a {
+  width: 150px;
+}
+
+.lt-ie7 .title-bar {
+  zoom: 1;
+}
+
+.lt-ie7 .title-bar-extras label {
+  float: none;
+  display: inline;
+  padding-right: 10px;
+}
+
+.lt-ie7 .issue-dropdown li.hover {
+  background-color: #fff;
+}
+
+.lt-ie7 .issue-dropdown li.hover ul {
+  display: block;
+  left: 112px;
+}
+
+.lt-ie7 body .file-thumbs a {
+  width: 150px;
+}
+
+.lt-ie7 #history .journal {
+  zoom: 1;
+}
+
+.lt-ie7 body #history .wiki {
+  overflow: hidden;
+  zoom: 1;
+}
+
+.lt-ie7 #main-menu li li {
+  height: 30px;
+}
+
+.lt-ie7 #main-menu li li li {
+  height: auto;
+}
+
+.lt-ie7 a.has-thumb.active {
+  background: none;
+}
+
+.lt-ie7 .title-bar-extras ul {
+  background-image: none;
+  border-top: 1px solid #154E5D;
+}
+
+/* These will be included for IE6 & IE7 */
+
+.lt-ie8 .title-bar h2 {
+  height: 21px;
+}
+
+.lt-ie8 td.dropdown {
+  z-index: 50;
+  position: relative;
+}
+
+.lt-ie8 body .title-bar-extras {
+  overflow: hidden;
+}
+
+.lt-ie8 #main-menu,
+.lt-ie8 .title-bar {
+  z-index: 4;
+}
+
+.lt-ie8 .title-bar .button-large ul {
+  z-index: 15;
+}
+
+.lt-ie8 form.tooltip-active {
+  z-index: 14;
+}
+
+.lt-ie8 #main-menu li li a span {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: block;
+}
+
+.lt-ie8 #main-menu li li li a span {
+  right: 10px;
+}
+
+.lt-ie8 body .file-thumbs a {
+  max-width: 150px;
+}
+
+.lt-ie8 #watchers {
+  position: relative;
+  z-index: 5;
+}
+
+.lt-ie8 div.attachments {
+  position: relative;
+  z-index: 4;
+}
+
+.lt-ie8 fieldset.collapsible.header_collapsible legend {
+  margin-left: -15px;
+}

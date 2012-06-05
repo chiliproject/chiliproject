@@ -1,6 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
+<meta charset="utf-8">
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title><%= html_title %></title>
 <meta name="description" content="<%= Redmine::Info.app_name %>" />
@@ -12,9 +17,6 @@
 <%= stylesheet_link_tag 'application', :media => 'all' %>
 <%= stylesheet_link_tag 'print', :media => 'print' %>
 <%= stylesheet_link_tag 'rtl', :media => 'all' if l(:direction) == 'rtl' %>
-<!--[if lte IE 6]><%= stylesheet_link_tag 'ie6', :media => 'all' %><![endif]-->
-<!--[if lte IE 7]><%= stylesheet_link_tag 'ie7', :media => 'all' %><![endif]-->
-<!--[if gte IE 8]><![endif]-->
 
 <%= javascript_include_tag 'jquery.min.js' %>
 <%= javascript_include_tag 'jquery-ui.min.js' %>
