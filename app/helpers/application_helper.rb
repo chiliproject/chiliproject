@@ -17,7 +17,7 @@ require 'cgi'
 
 module ApplicationHelper
   include Redmine::I18n
-  include GravatarHelper::PublicMethods
+  include Gravatarify::Helper
 
   extend Forwardable
   def_delegators :wiki_helper, :wikitoolbar_for, :heads_for_wiki_formatter
@@ -952,6 +952,19 @@ module ApplicationHelper
 
   def has_content?(name)
     (@has_content && @has_content[name]) || false
+  end
+
+  # Returns the gravatar image tag for the given email
+  # +email+ is a string with an email address
+  def gravatar(email, options={})
+    gravatarify_options = {}
+    gravatarify_options[:secure] = options.delete :ssl
+    [:default, :size, :rating, :filetype].each {|key| gravatarify_options[key] = options.delete key}
+    # Default size is 50x50 px
+    gravatarify_options[:size] ||= 50
+    options[:class] ||= 'gravatar'
+    gravatarify_options[:html] = options
+    gravatar_tag email, gravatarify_options
   end
 
   # Returns the avatar image tag for the given +user+ if avatars are enabled
