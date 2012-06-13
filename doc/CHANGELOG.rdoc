@@ -1,5 +1,10 @@
 = ChiliProject changelog
 
+== 2012-06-13 v2.7.3
+
+* Bug #1036: Ruby on Rails Unsafe Query Generation Risk in Ruby on Rails (CVE-2012-2694)
+* Bug #1037: SQL Injection Vulnerability in Ruby on Rails (CVE-2012-2695)
+
 == 2012-06-09 v2.7.2
 
 * Bug #1025: Rails: Unsafe Query Generation Risk in Ruby on Rails (CVE-2012-2660)
