@@ -102,4 +102,18 @@ module ProjectsHelper
     sharing = 'none' unless Version::VERSION_SHARINGS.include?(sharing)
     l("label_version_sharing_#{sharing}")
   end
+
+  # check if the SCM tool can be found, returing a string that can be shown for its availability
+  def repository_scm_status
+    if @repository
+      scm_kind = @repository.class.name.demodulize
+      if @repository.scm.class.client_available
+        t(:scm_status_is_available, :scm_kind => scm_kind, :version => @repository.scm.class.client_version_string)
+      else
+        t(:scm_status_not_available, :scm_kind => scm_kind)
+        logger.error t(:scm_status_not_available, :scm_kind => scm_kind)
+      end
+    end
+  end
+
 end

@@ -40,6 +40,9 @@ class RepositoriesController < ApplicationController
     if request.post? && @repository
       @repository.attributes = params[:repository]
       @repository.save
+      unless @repository.scm.class.client_available
+        logger.error t(:scm_status_not_available, :scm_kind => params[:repository_scm])
+      end
     end
     render(:update) do |page|
       page.replace_html "tab-content-repository", :partial => 'projects/settings/repository'

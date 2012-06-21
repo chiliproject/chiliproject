@@ -8,6 +8,12 @@
 <div class="box tabular">
 <p><%= label_tag('repository_scm', l(:label_scm)) %><%= scm_select_tag(@repository) %></p>
 <%= repository_field_tags(f, @repository) if @repository %>
+<% if @repository %>
+  <p>
+    <label><%= t(:label_scm_status) %></label>
+    <span><%= repository_scm_status %></span>
+  </p>
+<% end %>
 </div>
 
 <div class="contextual">

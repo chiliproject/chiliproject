@@ -1001,3 +1001,7 @@ en:
   description_date_range_interval: Choose range by selecting start and end date
   description_date_from: Enter start date
   description_date_to: Enter end date
+
+  label_scm_status: "SCM Status"
+  scm_status_is_available: "%{scm_kind} is available, version = %{version}"
+  scm_status_not_available: "%{scm_kind} is not available. Please check your installation and 'config/configuration.yml' for executable path."
