@@ -203,7 +203,7 @@ namespace :test do
     mirror_test_files('functional', 'test')
     mirror_test_files('initializers', 'config')
   end
-  
+
   desc 'Prepare the engines test environment'
   task :test_app do
     version_tag = File.join(test_app_dir, 'RAILS_VERSION')
