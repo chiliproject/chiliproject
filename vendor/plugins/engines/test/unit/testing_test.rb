@@ -7,7 +7,7 @@ class TestingTest < Test::Unit::TestCase
     @filename = File.join(Engines::Testing.temporary_fixtures_directory, 'testing_fixtures.yml')
     File.delete(@filename) if File.exists?(@filename)
   end
-  
+
   def teardown
     File.delete(@filename) if File.exists?(@filename)
     if File.directory?(Engines::Testing.temporary_fixtures_directory)
