@@ -503,7 +503,7 @@ module ApplicationHelper
 
     @parsed_headings = []
     text = parse_non_pre_blocks(text) do |text|
-      [:parse_inline_attachments, :parse_wiki_links, :parse_redmine_links, :parse_headings, :parse_relative_urls].each do |method_name|
+      [:parse_inline_attachments, :parse_wiki_links, :parse_redmine_links, :parse_headings, :parse_relative_urls, :parse_user_references].each do |method_name|
         send method_name, text, project, obj, attr, only_path, options
       end
     end
@@ -784,6 +784,25 @@ module ApplicationHelper
       anchor = item.gsub(%r{[^\w\s\-]}, '').gsub(%r{\s+(\-+\s*)?}, '-')
       @parsed_headings << [level, anchor, item]
       "<a name=\"#{anchor}\"></a>\n<h#{level} #{attrs}>#{content}<a href=\"##{anchor}\" class=\"wiki-anchor\">&para;</a></h#{level}>"
+    end
+  end
+
+  USER_REF_RE = /\B\@([\w\-]+)/
+
+  # parse text and replace references to navigate inside the application
+  # ie :
+  #
+  #    parse_user_references("lorem ipsum @jney")
+  #    # => 'lorem ipsum <a href="...">Jean-Sébastien Ney</a>
+  #
+  def parse_user_references(text, project, obj, attr, only_path, options)
+    text.gsub!(USER_REF_RE) do
+      user = User.find_by_login($1)
+      if user
+        link_to_user(user)
+      else
+        $0
+      end
     end
   end
 
