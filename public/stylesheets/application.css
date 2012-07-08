@@ -2918,10 +2918,6 @@ div#optional_login_fields {
   padding: 2px 0 2px 20px;
   margin: 0 0 6px 0;
   display: block;
-  width: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
   text-decoration: none;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
