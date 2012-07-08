@@ -598,14 +598,16 @@ jQuery(document).ready(function($) {
 	// deal with potentially problematic super-long titles
 	$(".title-bar h2").css({paddingRight: $(".title-bar-actions").outerWidth() + 15 });
 
+  var anchorHeight = $('#main-menu li > a').eq(0).innerHeight();
   $("#main-menu li:has(ul) > a").not("ul ul a")
-    .append("<span class='toggler'></span>")
+    .after("<span class='toggler'></span>");
+
+  $('#main-menu .toggler')
+    .height(anchorHeight)
     .click(function(e) {
-      if ($(e.target).hasClass("toggler") ) {
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).toggleClass("open").parent().find("ul").not("ul ul ul").mySlide();
-      }
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).prev('a').toggleClass("open").parent().find(">ul").mySlide();
     });
 
   // Do not close the login window when using it
