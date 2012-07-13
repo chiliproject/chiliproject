@@ -2908,8 +2908,8 @@ div#optional_login_fields {
 #main-menu a {
   color: #333;
   font-size: 12px;
-  font-weight: bold;
-  padding: 8px 0 8px 20px;
+  font-weight: normal;
+  padding: 6px 0 6px 20px;
   display: block;
   text-decoration: none;
   text-overflow: ellipsis;
@@ -2931,6 +2931,7 @@ div#optional_login_fields {
 #main-menu a.selected,
 #main-menu a:hover {
   color: #fff;
+  font-weight: bold;
 }
 
 #main-menu ul.menu-children a {
