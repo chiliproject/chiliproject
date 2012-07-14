@@ -2931,7 +2931,6 @@ div#optional_login_fields {
 #main-menu a.selected,
 #main-menu a:hover {
   color: #fff;
-  font-weight: bold;
 }
 
 #main-menu ul.menu-children a {
