@@ -38,8 +38,9 @@
     <%= call_hook(:view_issues_edit_notes_bottom, { :issue => @issue, :notes => @notes, :form => f }) %>
     </fieldset>
 
-    <fieldset id="attachments" class="header_collapsible collapsible collapsed"><legend onclick="toggleFieldset(this);"><%=l(:label_attachment_plural)%></legend>
-      <div style="display: none;">
+    <fieldset id="attachments" class="header_collapsible collapsible collapsed">
+      <legend><%=l(:label_attachment_plural)%></legend>
+      <div>
       <%= render :partial => 'attachments/form' %>
       </div>
     </fieldset>
