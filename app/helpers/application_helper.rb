@@ -800,7 +800,7 @@ module ApplicationHelper
         toc_class << ' left' if $1 == '_left'
 
         out = "<fieldset class=\"header_collapsible collapsible #{toc_class}\">"
-        out << "<legend onclick=\"toggleFieldset(this);\"><span>#{l(:label_toc)}</span></legend>"
+        out << "<legend><span>#{l(:label_toc)}</span></legend>"
         out << "<div>"
         out << "<ul class=\"toc\"><li>"
         root = headings.map(&:first).min

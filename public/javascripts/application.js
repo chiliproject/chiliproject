@@ -658,4 +658,8 @@ jQuery(document).ready(function($) {
   }
 
   setUpDialogWindow();
+
+  $('.collapsible').on('click', 'legend', function(e) {
+    $(this).parent().toggleClass('collapsed');
+  });
 });
