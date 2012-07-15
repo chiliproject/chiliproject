@@ -32,3 +32,5 @@ doc/app
 /*.iml
 /.idea
 .rbx
+/vendor/chiliproject_plugins/chiliproject_time_tracker/
+
