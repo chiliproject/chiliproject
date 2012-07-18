@@ -156,7 +156,6 @@ Redmine::Application.routes.draw do
       post 'context_menu' => 'context_menus#issues'
       get 'bulk_edit'
       post 'bulk_edit' => 'issues#bulk_update'
-
       # TODO: make this a real journals resource
       get 'changes' => 'journals#index', :format => :atom
       post 'preview' => 'previews#issue' # For new issues
