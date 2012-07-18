@@ -159,13 +159,6 @@ module ActionController
   end
 end
 
-require 'action_view/helpers/tag_helper'
-module ActionView::Helpers::TagHelper
-  def escape_once(html)
-    ActiveSupport::Multibyte.clean(html.to_s).gsub(/[\"\'><]|&(?!([a-zA-Z]+|(#\d+));)/) { |special| ERB::Util::HTML_ESCAPE[special] }
-  end
-end
-
 # Workaround for CVE-2013-0333
 # https://groups.google.com/forum/?fromgroups=#!msg/rubyonrails-security/1h2DR63ViGo/GOUVafeaF1IJ
 ActiveSupport::JSON.backend = "JSONGem"
