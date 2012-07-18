@@ -3,14 +3,16 @@
 production:
   adapter: mysql
   database: chiliproject
+  pool: 5
   host: localhost
   username: root
   password:
   encoding: utf8
- 
+
 development:
   adapter: mysql
   database: chiliproject_development
+  pool: 5
   host: localhost
   username: root
   password:
@@ -22,6 +24,7 @@ development:
 test:
   adapter: mysql
   database: chiliproject_test
+  pool: 5
   host: localhost
   username: root
   password:
@@ -30,6 +33,7 @@ test:
 test_pgsql:
   adapter: postgresql
   database: chiliproject_test
+  pool: 5
   host: localhost
   username: postgres
   password: "postgres"
@@ -37,3 +41,5 @@ test_pgsql:
 test_sqlite3:
   adapter: sqlite3
   database: db/test.sqlite3
+  pool: 5
+  timeout: 5000
