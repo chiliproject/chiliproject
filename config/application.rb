@@ -57,6 +57,11 @@ module ChiliProject
 
     config.session_store :cookie_store, :key => '_chiliproject_session'
 
+    config.assets.enabled = false
+
+    # Version of your assets, change this if you want to expire all your assets
+    config.assets.version = '1.0'
+
     if File.exists?(File.join(File.dirname(__FILE__), 'additional_environment.rb'))
       instance_eval File.read(File.join(File.dirname(__FILE__), 'additional_environment.rb'))
     end
