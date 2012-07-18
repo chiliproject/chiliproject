@@ -1,5 +1,5 @@
 # Copy this file to additional_environment.rb and add any statements
-# that need to be passed to the Rails::Initializer.  `config` is
+# that need to be passed to the ChiliProject::Application.  `config` is
 # available in this context.
 #
 # Example:
