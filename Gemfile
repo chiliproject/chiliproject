@@ -12,6 +12,8 @@ gem "acts-as-taggable-on", "= 2.1.0"
 gem 'gravatarify', '~> 3.0.0'
 # Needed only on RUBY_VERSION = 1.8, ruby 1.9+ compatible interpreters should bring their csv
 gem "fastercsv", "~> 1.5.0", :platforms => [:ruby_18, :jruby, :mingw_18]
+# TODO rails-3.2: review the core changes to awesome_nested_set and decide on actions
+gem 'awesome_nested_set'
 
 # Gems used only for assets and not required
 # in production environments by default.
