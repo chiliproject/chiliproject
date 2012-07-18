@@ -78,3 +78,7 @@ module ActionController
     end
   end
 end
+
+# Workaround for CVE-2013-0333
+# https://groups.google.com/forum/?fromgroups=#!msg/rubyonrails-security/1h2DR63ViGo/GOUVafeaF1IJ
+ActiveSupport::JSON.backend = "JSONGem"
