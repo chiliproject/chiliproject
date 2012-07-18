@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 source "https://rubygems.org"
 
-gem "rails", "2.3.18"
+gem "rails", "3.2.8"
 
 gem "json", "~> 1.7.7"
 gem "coderay", "~> 1.0.0"
-gem "i18n", "~> 0.4.2"
 gem "rubytree", "~> 0.5.2", :require => 'tree'
 gem "rdoc", ">= 2.4.2"
 gem "liquid", "~> 2.3.0"
@@ -13,7 +12,18 @@ gem "acts-as-taggable-on", "= 2.1.0"
 gem 'gravatarify', '~> 3.0.0'
 # Needed only on RUBY_VERSION = 1.8, ruby 1.9+ compatible interpreters should bring their csv
 gem "fastercsv", "~> 1.5.0", :platforms => [:ruby_18, :jruby, :mingw_18]
-gem "tzinfo", "~> 0.3.31" # Fixes #903. Not required for Rails >= 3.2
+
+# Gems used only for assets and not required
+# in production environments by default.
+group :assets do
+  gem 'sass-rails',   '~> 3.2.3'
+  gem 'coffee-rails', '~> 3.2.1'
+
+  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
+  # gem 'therubyracer', :platforms => :ruby
+
+  gem 'uglifier', '>= 1.0.3'
+end
 
 group :test do
   gem 'shoulda', '~> 2.10.3'
