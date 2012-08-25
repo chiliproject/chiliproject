@@ -24,7 +24,7 @@ Or, use the included generators to install or upgrade:
   ./script/generate open_id_authentication_tables MigrationName
   ./script/generate upgrade_open_id_authentication_tables MigrationName
 
-Alternatively, you can use the file-based store, which just relies on on tmp/openids being present in RAILS_ROOT. But be aware that this store only works if you have a single application server. And it's not safe to use across NFS. It's recommended that you use the database store if at all possible. To use the file-based store, you'll also have to add this line to your config/environment.rb:
+Alternatively, you can use the file-based store, which just relies on on tmp/openids being present in Rails.root. But be aware that this store only works if you have a single application server. And it's not safe to use across NFS. It's recommended that you use the database store if at all possible. To use the file-based store, you'll also have to add this line to your config/environment.rb:
 
   OpenIdAuthentication.store = :file
 
