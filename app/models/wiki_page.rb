@@ -44,10 +44,10 @@ class WikiPage < ActiveRecord::Base
   before_save :handle_redirects
 
   # eager load information about last updates, without loading text
-  scope :with_updated_on, {
-    :select => "#{WikiPage.table_name}.*, #{WikiContent.table_name}.updated_on",
-    :joins => "LEFT JOIN #{WikiContent.table_name} ON #{WikiContent.table_name}.page_id = #{WikiPage.table_name}.id"
-  }
+  def self.with_updated_on
+    select("#{WikiPage.table_name}.*, #{WikiContent.table_name}.updated_on").
+    joins("LEFT JOIN #{WikiContent.table_name} ON #{WikiContent.table_name}.page_id = #{WikiPage.table_name}.id")
+  end
 
   # Wiki pages that are protected by default
   DEFAULT_PROTECTED_PAGES = %w(sidebar)
