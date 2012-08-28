@@ -50,7 +50,6 @@ class ApplicationController < ActionController::Base
   end
 
   before_filter :user_setup, :check_if_login_required, :set_localization
-  filter_parameter_logging :password
 
   # FIXME: This doesn't work with Rails >= 3.0 anymore
   # Possible workaround: https://github.com/rails/rails/issues/671#issuecomment-1780159
