@@ -50,7 +50,9 @@ class User < Principal
   belongs_to :auth_source
 
   # Active non-anonymous users scope
-  named_scope :active, :conditions => "#{User.table_name}.status = #{STATUS_ACTIVE}"
+  def self.active
+    where(:status => STATUS_ACTIVE)
+  end
 
   acts_as_customizable
 
@@ -71,14 +73,15 @@ class User < Principal
   validates_inclusion_of :mail_notification, :in => MAIL_NOTIFICATION_OPTIONS.collect(&:first), :allow_blank => true
   validates_inclusion_of :status, :in => [STATUS_ANONYMOUS, STATUS_ACTIVE, STATUS_REGISTERED, STATUS_LOCKED]
 
-  named_scope :in_group, lambda {|group|
+  def self.in_group(group)
     group_id = group.is_a?(Group) ? group.id : group.to_i
-    { :conditions => ["#{User.table_name}.id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id] }
-  }
-  named_scope :not_in_group, lambda {|group|
+    joins(:groups).where(:groups => {:group_id => group_id})
+  end
+
+  def self.not_in_group(group)
     group_id = group.is_a?(Group) ? group.id : group.to_i
-    { :conditions => ["#{User.table_name}.id NOT IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id] }
-  }
+    joins(:groups).where(:groups => ["group_id != ?", group_id])
+  end
 
   def before_create
     self.mail_notification = Setting.default_notification_option if self.mail_notification.blank?
