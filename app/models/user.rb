@@ -50,7 +50,9 @@ class User < Principal
   belongs_to :auth_source
 
   # Active non-anonymous users scope
-  scope :active, :conditions => "#{User.table_name}.status = #{STATUS_ACTIVE}"
+  def self.active
+    where(:status => STATUS_ACTIVE)
+  end
 
   acts_as_customizable
 
@@ -75,14 +77,15 @@ class User < Principal
   before_create :set_mail_notification
   before_save :update_hashed_password
 
-  scope :in_group, lambda {|group|
+  def self.in_group(group)
     group_id = group.is_a?(Group) ? group.id : group.to_i
-    { :conditions => ["#{User.table_name}.id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id] }
-  }
-  scope :not_in_group, lambda {|group|
+    joins(:groups).where(:groups => {:group_id => group_id})
+  end
+
+  def self.not_in_group(group)
     group_id = group.is_a?(Group) ? group.id : group.to_i
-    { :conditions => ["#{User.table_name}.id NOT IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id] }
-  }
+    joins(:groups).where(:groups => ["group_id != ?", group_id])
+  end
 
   def set_mail_notification
     self.mail_notification = Setting.default_notification_option if self.mail_notification.blank?
