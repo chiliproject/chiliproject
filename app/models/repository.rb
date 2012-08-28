@@ -25,13 +25,7 @@ class Repository < ActiveRecord::Base
 
   validates_length_of :password, :maximum => 255, :allow_nil => true
   # Checks if the SCM is enabled when creating a repository
-  validate :repo_create_validation, :on => :create
-
-  def repo_create_validation
-    unless Setting.enabled_scm.include?(self.class.name.demodulize)
-      errors.add(:type, :invalid)
-    end
-  end
+  validate(:on => :create) { |r| r.errors.add(:type, :invalid) unless Setting.enabled_scm.include?(r.class.name.demodulize) }
 
   # Removes leading and trailing whitespace
   def url=(arg)
