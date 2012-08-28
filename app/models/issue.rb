@@ -66,27 +66,34 @@ class Issue < ActiveRecord::Base
   validates_inclusion_of :done_ratio, :in => 0..100
   validates_numericality_of :estimated_hours, :allow_nil => true
 
-  named_scope :visible, lambda {|*args| { :include => :project,
-                                          :conditions => Issue.visible_condition(args.first || User.current) } }
+  def self.visible(user=User.current)
+    joins(:project).where self.visible_condition(user)
+  end
 
-  named_scope :open, :conditions => ["#{IssueStatus.table_name}.is_closed = ?", false], :include => :status
+  def self.open
+    joins(:status).where(:status => {:is_closed => false})
+  end
 
-  named_scope :recently_updated, :order => "#{Issue.table_name}.updated_on DESC"
-  named_scope :with_limit, lambda { |limit| { :limit => limit} }
-  named_scope :on_active_project, :include => [:status, :project, :tracker],
-                                  :conditions => ["#{Project.table_name}.status=#{Project::STATUS_ACTIVE}"]
+  def self.recently_updated
+    order("updated_on DESC")
+  end
 
-  named_scope :without_version, lambda {
-    {
-      :conditions => { :fixed_version_id => nil}
-    }
-  }
+  def self.with_limit(limit)
+    ActiveSupport::Deprecation.warn "with_limit is deprecated. Use limit instead."
+    self.limit(limit)
+  end
 
-  named_scope :with_query, lambda {|query|
-    {
-      :conditions => Query.merge_conditions(query.statement)
-    }
-  }
+  def self.on_active_project
+    joins(:project).where(:project => {:status => Project::STATUS_ACTIVE})
+  end
+
+  def self.without_version
+    where(:fixed_version_id => nil)
+  end
+
+  def self.with_query(query)
+    where(Query.merge_conditions(query.statement))
+  end
 
   before_create :default_assign
   before_save :close_duplicates, :update_done_ratio_from_issue_status
