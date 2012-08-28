@@ -32,7 +32,7 @@ module Redmine
                                    :include => :custom_field,
                                    :order => "#{CustomField.table_name}.position",
                                    :dependent => :delete_all
-          before_validation { |customized| customized.custom_field_values if customized.new_record? }
+          before_validation(:on => :create) { |customized| customized.custom_field_values }
           # Trigger validation only if custom values were changed
           validates_associated :custom_values, :on => :update, :if => Proc.new { |customized| customized.custom_field_values_changed? }
           send :include, Redmine::Acts::Customizable::InstanceMethods
