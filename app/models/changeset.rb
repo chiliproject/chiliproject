@@ -40,8 +40,9 @@ class Changeset < ActiveRecord::Base
   before_create :before_create_cs
   after_create :scan_for_issues
 
-  scope :visible, lambda {|*args| { :include => {:repository => :project},
-                                          :conditions => Project.allowed_to_condition(args.first || User.current, :view_changesets) } }
+  def self.visible(user=User.current)
+    joins(:repository => :project).where(Project.allowed_to_condition(user, :view_changesets))
+  end
 
 
   def revision=(r)
