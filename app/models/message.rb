@@ -47,8 +47,9 @@ class Message < ActiveRecord::Base
   after_create :add_author_as_watcher, :update_parent_last_reply
   after_update :update_messages_board
 
-  scope :visible, lambda {|*args| { :include => {:board => :project},
-                                          :conditions => Project.allowed_to_condition(args.first || User.current, :view_messages) } }
+  def self.visible(user=User.current)
+    joins(:board => :project).where(Project.allowed_to_condition(user, :view_messages))
+  end
 
   safe_attributes 'subject', 'content'
   safe_attributes 'locked', 'sticky', 'board_id',
