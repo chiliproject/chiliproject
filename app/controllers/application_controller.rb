@@ -18,6 +18,9 @@ require 'cgi'
 class ApplicationController < ActionController::Base
   helper :all
 
+  class_attribute :accept_key_auth_actions
+  self.accept_key_auth_actions = []
+
   protected
 
   include Redmine::I18n
@@ -338,11 +341,7 @@ class ApplicationController < ActionController::Base
 
   def self.accept_key_auth(*actions)
     actions = actions.flatten.map(&:to_s)
-    write_inheritable_attribute('accept_key_auth_actions', actions)
-  end
-
-  def accept_key_auth_actions
-    self.class.read_inheritable_attribute('accept_key_auth_actions') || []
+    self.accept_key_auth_actions = actions if actions.any?
   end
 
   # Returns the number of objects that should be displayed
