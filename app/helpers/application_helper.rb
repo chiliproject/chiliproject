@@ -48,7 +48,7 @@ module ApplicationHelper
     if user.is_a?(User)
       name = h(user.name(options[:format]))
       if user.active?
-        link_to name, :controller => 'users', :action => 'show', :id => user
+        link_to name, user_path(user)
       else
         name
       end
