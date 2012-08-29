@@ -35,7 +35,7 @@ module Redmine
       # Example:
       #   random_hex(4) # => "89b8c729"
       def random_hex(n)
-        ActiveSupport::SecureRandom.hex(n)
+        SecureRandom.hex(n)
       end
     end
   end
