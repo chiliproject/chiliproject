@@ -47,15 +47,15 @@
             <%= render_menu_node(item) %>
         <% end %>
         <li class="drop-down">
-          <%= link_to l(:label_project_plural), { :controller => 'projects', :action => 'index' }, :class => "projects" %>
+          <%= link_to l(:label_project_plural), projects_path, :class => "projects" %>
           <ul style="display:none;">
-            <li><%= link_to l(:label_project_all), { :controller => 'projects', :action => 'index' }, :class => "projects separator" %></li>
+            <li><%= link_to l(:label_project_all), projects_path, :class => "projects separator" %></li>
             <%
             project_content = ''
             project_tree(User.current.projects.all) do |project, level|
               name_prefix = (level > 0 ? ('&nbsp;' * 2 * level + '&#187; ') : '')
               project_content << content_tag(:li,
-                                     link_to(name_prefix + h(project), {:controller => 'projects', :action => 'show', :id => project, :jump => current_menu_item}))
+                                     link_to(name_prefix + h(project), project_path(project, :jump => current_menu_item)))
             end
             %>
             <%= project_content %>
@@ -82,11 +82,11 @@
           <% unless User.current.logged? %>
             <% if Setting.self_registration? %>
             <li>
-              <%= link_to l(:label_register), { :controller => 'account', :action => 'register' } %>
+              <%= link_to l(:label_register), register_account_path %>
             </li>
             <% end %>
             <li id="login-menu" class="drop-down last-child">
-              <%= link_to l(:label_login), {:controller => 'account', :action => 'login'}, :class => 'login' %>
+              <%= link_to l(:label_login), signin_path, :class => 'login' %>
               <div id="nav-login" style="display:none;">
                 <%= render :partial => 'account/login' %>
               </div>

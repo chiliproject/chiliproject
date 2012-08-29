@@ -18,6 +18,11 @@ ChiliProject::Application.routes.draw do
 
   match '/login' => 'account#login', :as => 'signin'
   match '/logout' => 'account#login', :as => 'signout'
+  resource :account, :controller => 'account', :only => [] do
+    match 'register', :via => [:get, :post]
+    match 'lost_password', :via => [:get, :post]
+    get 'activate'
+  end
 
   resources :p, :controller => :projects, :as => :projects do
     get 'activity' => 'activities#index' # CHANGED :id is not :project_id
@@ -27,6 +32,7 @@ ChiliProject::Application.routes.draw do
     get '/destroy' => 'projects#destroy', :as => 'destroy'
     post 'modules' # should be PUT?
     get 'roadmap' => 'versions#index'
+    get 'search' => 'search#index'
     get 'settings(/:tab)' => 'projects#settings', :as => 'settings'
     post 'unarchive' # should be PUT?
 
@@ -184,6 +190,16 @@ ChiliProject::Application.routes.draw do
 
     resources :comments, :only => [:create, :destroy]
   end
+
+  resources :users do
+    # TODO: resourcify these routes
+    put    'memberships/:membership_id', :to => 'users#edit_membership', :as => 'membership'
+    delete 'memberships/:membership_id', :to => 'users#destroy_membership'
+    post   'memberships', :to => 'users#edit_membership'
+  end
+
+
+  get 'search' => 'search#index'
 
   namespace :sys do
     get 'projects' => 'sys#projects'
