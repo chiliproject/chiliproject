@@ -189,6 +189,7 @@ en:
   error_workflow_copy_source: 'Please select a source tracker or role'
   error_workflow_copy_target: 'Please select target tracker(s) and role(s)'
   error_unable_delete_issue_status: 'Unable to delete issue status'
+  error_unable_add_to_workflows: 'Unable to add issue status to all workflows. Please add it manually.'
   error_unable_to_connect: "Unable to connect (%{value})"
   warning_attachments_not_saved: "%{count} file(s) could not be saved."
 
@@ -480,6 +481,7 @@ en:
   label_issue_status: Issue status
   label_issue_status_plural: Issue statuses
   label_issue_status_new: New status
+  label_add_to_all_workflows: Add to all workflows
   label_issue_category: Issue category
   label_issue_category_plural: Issue categories
   label_issue_category_new: New category

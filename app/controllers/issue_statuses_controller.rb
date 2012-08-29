@@ -32,6 +32,22 @@ class IssueStatusesController < ApplicationController
   def create
     @issue_status = IssueStatus.new(params[:issue_status])
     if @issue_status.save
+      if params[:add_to_all_workflows]
+        begin
+          Workflow.transaction do
+            Tracker.all.each do |tracker|
+              Role.all.each do |role|
+                (IssueStatus.all - [@issue_status]).each do |status|
+                  Workflow.create! :tracker_id => tracker.id, :old_status => @issue_status, :new_status => status, :role => role # from
+                  Workflow.create! :tracker_id => tracker.id, :old_status => status, :new_status => @issue_status, :role => role # to
+                end
+              end
+            end
+          end
+        rescue
+          flash[:warning] = l(:error_unable_add_to_workflows)
+        end
+      end
       flash[:notice] = l(:notice_successful_create)
       redirect_to :action => 'index'
     else
