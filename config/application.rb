@@ -64,5 +64,16 @@ module ChiliProject
     if File.exists?(File.join(File.dirname(__FILE__), 'additional_environment.rb'))
       instance_eval File.read(File.join(File.dirname(__FILE__), 'additional_environment.rb'))
     end
+
+    # FIXME: Fix the circular dependencies during model class loading
+    # This is a really nasty loading issue which is was just not exposed
+    # until now due to some recursive auto loading. Due to recursive/circular
+    # dependencies, the Project model needs to be loaded before the user model
+    # can properly loaded. If this is not the case, the User class fails to
+    # auto-load.
+    config.after_initialize do
+      # required to properly load the User class because of circular class dependencies
+      require_dependency 'project'
+    end
   end
 end
