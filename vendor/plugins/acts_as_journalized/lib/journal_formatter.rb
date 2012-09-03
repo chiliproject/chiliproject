@@ -26,6 +26,7 @@ module JournalFormatter
   mattr_accessor :formatters, :registered_fields
   include ApplicationHelper
   include CustomFieldsHelper
+  include ERB::Util
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::UrlHelper
   include ActionView::Helpers::TextHelper
