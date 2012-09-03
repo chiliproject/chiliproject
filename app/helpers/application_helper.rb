@@ -18,6 +18,7 @@ require 'cgi'
 module ApplicationHelper
   include Redmine::I18n
   include Gravatarify::Helper
+  include ERB::Util
 
   extend Forwardable
   def_delegators :wiki_helper, :wikitoolbar_for, :heads_for_wiki_formatter
