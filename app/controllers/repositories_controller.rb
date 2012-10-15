@@ -299,11 +299,26 @@ class RepositoriesController < ApplicationController
     graph.burn
   end
 
+  def consolidate_author_to_user(repository, by_authors)
+    by_users = Hash.new
+
+    by_authors.each { |c|
+      user = repository.find_committer_user(c.first).name
+      if by_users.has_key?(user)
+        by_users[user] += c.last
+      else
+        by_users[user] = c.last
+      end
+    }
+
+    return by_users
+  end
+
   def graph_commits_per_author(repository)
-    commits_by_author = repository.changesets.count(:all, :group => :committer)
+    commits_by_author = consolidate_author_to_user(repository, repository.changesets.count(:all, :group => :committer))
     commits_by_author.to_a.sort! {|x, y| x.last <=> y.last}
 
-    changes_by_author = repository.changes.count(:all, :group => :committer)
+    changes_by_author = consolidate_author_to_user(repository, repository.changes.count(:all, :group => :committer))
     h = changes_by_author.inject({}) {|o, i| o[i.first] = i.last; o}
 
     fields = commits_by_author.collect {|r| r.first}
