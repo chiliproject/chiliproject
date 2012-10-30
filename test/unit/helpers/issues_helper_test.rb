@@ -86,7 +86,7 @@ class IssuesHelperTest < ActionView::TestCase
     context "with no_html" do
       should 'show a changing attribute' do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"done_ratio" => [40, 100]}
+          j.changed_data = {"done_ratio" => [40, 100]}
           j.journaled = Issue.last
         end
         assert_equal "% Done changed from 40 to 100", @journal.render_detail(@journal.details.to_a.first, true)
@@ -94,7 +94,7 @@ class IssuesHelperTest < ActionView::TestCase
 
       should 'show a new attribute' do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"done_ratio" => [nil, 100]}
+          j.changed_data = {"done_ratio" => [nil, 100]}
           j.journaled = Issue.last
         end
         assert_equal "% Done set to 100", @journal.render_detail(@journal.details.to_a.first, true)
@@ -102,7 +102,7 @@ class IssuesHelperTest < ActionView::TestCase
 
       should 'show a deleted attribute' do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"done_ratio" => [50, nil]}
+          j.changed_data = {"done_ratio" => [50, nil]}
           j.journaled = Issue.last
         end
         assert_equal "% Done deleted (50)", @journal.render_detail(@journal.details.to_a.first, true)
@@ -112,7 +112,7 @@ class IssuesHelperTest < ActionView::TestCase
     context "with html" do
       should 'show a changing attribute with HTML highlights' do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"done_ratio" => [40, 100]}
+          j.changed_data = {"done_ratio" => [40, 100]}
           j.journaled = Issue.last
         end
         html = @journal.render_detail(@journal.details.to_a.first, false)
@@ -121,7 +121,7 @@ class IssuesHelperTest < ActionView::TestCase
 
       should 'show a new attribute with HTML highlights' do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"done_ratio" => [nil, 100]}
+          j.changed_data = {"done_ratio" => [nil, 100]}
           j.journaled = Issue.last
         end
         html = @journal.render_detail(@journal.details.to_a.first, false)
@@ -130,7 +130,7 @@ class IssuesHelperTest < ActionView::TestCase
 
       should 'show a deleted attribute with HTML highlights' do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"done_ratio" => [50, nil]}
+          j.changed_data = {"done_ratio" => [50, nil]}
           j.journaled = Issue.last
         end
         html = @journal.render_detail(@journal.details.to_a.first, false)
@@ -141,7 +141,7 @@ class IssuesHelperTest < ActionView::TestCase
     context "with a start_date attribute" do
       should "format the current date" do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"start_date" => ['2010-01-01', '2010-01-31']}
+          j.changed_data = {"start_date" => ['2010-01-01', '2010-01-31']}
           j.journaled = Issue.last
         end
         assert_match "01/31/2010", @journal.render_detail(@journal.details.to_a.first, true)
@@ -149,7 +149,7 @@ class IssuesHelperTest < ActionView::TestCase
 
       should "format the old date" do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"start_date" => ['2010-01-01', '2010-01-31']}
+          j.changed_data = {"start_date" => ['2010-01-01', '2010-01-31']}
           j.journaled = Issue.last
         end
         assert_match "01/01/2010", @journal.render_detail(@journal.details.to_a.first, true)
@@ -159,7 +159,7 @@ class IssuesHelperTest < ActionView::TestCase
     context "with a due_date attribute" do
       should "format the current date" do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"due_date" => ['2010-01-01', '2010-01-31']}
+          j.changed_data = {"due_date" => ['2010-01-01', '2010-01-31']}
           j.journaled = Issue.last
         end
         assert_match "01/31/2010", @journal.render_detail(@journal.details.to_a.first, true)
@@ -167,7 +167,7 @@ class IssuesHelperTest < ActionView::TestCase
 
       should "format the old date" do
         @journal = IssueJournal.create! do |j|
-          j.changes = {"due_date" => ['2010-01-01', '2010-01-31']}
+          j.changed_data = {"due_date" => ['2010-01-01', '2010-01-31']}
           j.journaled = Issue.last
         end
         assert_match "01/01/2010", @journal.render_detail(@journal.details.to_a.first, true)
@@ -175,56 +175,56 @@ class IssuesHelperTest < ActionView::TestCase
     end
 
     should "show old and new values with a project attribute" do
-      journal = IssueJournal.new(:changes => {"project_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"project_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'eCookbook', detail
       assert_match 'OnlineStore', detail
     end
 
     should "show old and new values with a issue status attribute" do
-      journal = IssueJournal.new(:changes => {"status_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"status_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'New', detail
       assert_match 'Assigned', detail
     end
 
     should "show old and new values with a tracker attribute" do
-      journal = IssueJournal.new(:changes => {"tracker_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"tracker_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'Bug', detail
       assert_match 'Feature request', detail
     end
 
     should "show old and new values with a assigned to attribute" do
-      journal = IssueJournal.new(:changes => {"assigned_to_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"assigned_to_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'redMine Admin', detail
       assert_match 'John Smith', detail
     end
 
     should "show old and new values with a priority attribute" do
-      journal = IssueJournal.new(:changes => {"priority_id" => [4, 5]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"priority_id" => [4, 5]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'Low', detail
       assert_match 'Normal', detail
     end
 
     should "show old and new values with a category attribute" do
-      journal = IssueJournal.new(:changes => {"category_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"category_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'Printing', detail
       assert_match 'Recipes', detail
     end
 
     should "show old and new values with a fixed version attribute" do
-      journal = IssueJournal.new(:changes => {"fixed_version_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"fixed_version_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match '0.1', detail
       assert_match '1.0', detail
     end
 
     should "show old and new values with a estimated hours attribute" do
-      journal = IssueJournal.new(:changes => {"estimated_hours" => [5, 6.3]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"estimated_hours" => [5, 6.3]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match '5.00', detail
       assert_match '6.30', detail
