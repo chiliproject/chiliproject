@@ -45,24 +45,36 @@ class IssuesHelperTest < HelperTestCase
   context "IssuesHelper#show_detail" do
     context "with no_html" do
       should 'show a changing attribute' do
-        @journal = IssueJournal.generate!(:changes => {"done_ratio" => [40, 100]}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"done_ratio" => [40, 100]}
+          j.journaled = Issue.last
+        end
         assert_equal "% Done changed from 40 to 100", @journal.render_detail(@journal.details.to_a.first, true)
       end
 
       should 'show a new attribute' do
-        @journal = IssueJournal.generate!(:changes => {"done_ratio" => [nil, 100]}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"done_ratio" => [nil, 100]}
+          j.journaled = Issue.last
+        end
         assert_equal "% Done set to 100", @journal.render_detail(@journal.details.to_a.first, true)
       end
 
       should 'show a deleted attribute' do
-        @journal = IssueJournal.generate!(:changes => {"done_ratio" => [50, nil]}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"done_ratio" => [50, nil]}
+          j.journaled = Issue.last
+        end
         assert_equal "% Done deleted (50)", @journal.render_detail(@journal.details.to_a.first, true)
       end
     end
 
     context "with html" do
       should 'show a changing attribute with HTML highlights' do
-        @journal = IssueJournal.generate!(:changes => {"done_ratio" => [40, 100]}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"done_ratio" => [40, 100]}
+          j.journaled = Issue.last
+        end
         @response.body = @journal.render_detail(@journal.details.to_a.first, false)
 
         assert_select 'strong', :text => '% Done'
@@ -71,7 +83,10 @@ class IssuesHelperTest < HelperTestCase
       end
 
       should 'show a new attribute with HTML highlights' do
-        @journal = IssueJournal.generate!(:changes => {"done_ratio" => [nil, 100]}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"done_ratio" => [nil, 100]}
+          j.journaled = Issue.last
+        end
         @response.body = @journal.render_detail(@journal.details.to_a.first, false)
 
         assert_select 'strong', :text => '% Done'
@@ -79,7 +94,10 @@ class IssuesHelperTest < HelperTestCase
       end
 
       should 'show a deleted attribute with HTML highlights' do
-        @journal = IssueJournal.generate!(:changes => {"done_ratio" => [50, nil]}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"done_ratio" => [50, nil]}
+          j.journaled = Issue.last
+        end
         @response.body = @journal.render_detail(@journal.details.to_a.first, false)
 
         assert_select 'strong', :text => '% Done'
@@ -91,24 +109,36 @@ class IssuesHelperTest < HelperTestCase
 
     context "with a start_date attribute" do
       should "format the current date" do
-        @journal = IssueJournal.generate!(:changes => {"start_date" => ['2010-01-01', '2010-01-31']}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"start_date" => ['2010-01-01', '2010-01-31']}
+          j.journaled = Issue.last
+        end
         assert_match "01/31/2010", @journal.render_detail(@journal.details.to_a.first, true)
       end
 
       should "format the old date" do
-        @journal = IssueJournal.generate!(:changes => {"start_date" => ['2010-01-01', '2010-01-31']}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"start_date" => ['2010-01-01', '2010-01-31']}
+          j.journaled = Issue.last
+        end
         assert_match "01/01/2010", @journal.render_detail(@journal.details.to_a.first, true)
       end
     end
 
     context "with a due_date attribute" do
       should "format the current date" do
-        @journal = IssueJournal.generate!(:changes => {"due_date" => ['2010-01-01', '2010-01-31']}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"due_date" => ['2010-01-01', '2010-01-31']}
+          j.journaled = Issue.last
+        end
         assert_match "01/31/2010", @journal.render_detail(@journal.details.to_a.first, true)
       end
 
       should "format the old date" do
-        @journal = IssueJournal.generate!(:changes => {"due_date" => ['2010-01-01', '2010-01-31']}, :journaled => Issue.last)
+        @journal = IssueJournal.create! do |j|
+          j.changes = {"due_date" => ['2010-01-01', '2010-01-31']}
+          j.journaled = Issue.last
+        end
         assert_match "01/01/2010", @journal.render_detail(@journal.details.to_a.first, true)
       end
     end
@@ -148,10 +178,7 @@ class IssuesHelperTest < HelperTestCase
       should "format the time into two decimal places"
       should "format the old time into two decimal places"
     end
-
     should "test custom fields"
     should "test attachments"
-
   end
-
 end
