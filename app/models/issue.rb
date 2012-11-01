@@ -367,8 +367,9 @@ class Issue < ActiveRecord::Base
   # Callback on attachment deletion
   def attachment_removed(obj)
     init_journal(User.current)
+    changes = {"attachments_" + obj.id.to_s => [obj.filename, nil]}
+    @extra_journal_attributes = {:changes => changes.to_yaml}
     create_journal
-    last_journal.update_attribute(:changes, {"attachments_" + obj.id.to_s => [obj.filename, nil]}.to_yaml)
   end
 
   # Return true if the issue is closed, otherwise false
