@@ -366,7 +366,7 @@ class Issue < ActiveRecord::Base
 
   # Set the done_ratio to 100% when the issue status set the issue to "closed".
   def issue_closed_is_fully_done
-    if Setting.issue_closed_is_fully_done == 1 && self.status.is_closed?
+    if Setting.issue_closed_is_fully_done? && self.status.is_closed?
       self.done_ratio = 100
     end
   end

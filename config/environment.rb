@@ -16,7 +16,7 @@
 
 # Uncomment below to force Rails into production mode when
 # you don't control web/app server and can't set it the proper way
-# ENV['RAILS_ENV'] ||= 'production'
+ENV['RAILS_ENV'] ||= 'test'
 
 # use RACK_ENV if we are running as a simple rack app
 ENV['RAILS_ENV'] ||= ENV['RACK_ENV'] if ENV['RACK_ENV']
