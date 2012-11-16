@@ -58,7 +58,7 @@ platforms :mri, :mingw do
   end
 
   group :postgres do
-    #   gem "pg"
+    gem "pg"
     #   gem "postgres-pr"
   end
 end
