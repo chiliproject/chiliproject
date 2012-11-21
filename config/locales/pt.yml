@@ -275,6 +275,8 @@ pt:
   field_default_value: Valor por omissão
   field_comments_sorting: Mostrar comentários
   field_parent_title: Página pai
+  field_new_timelog: Novo registo tempos
+  field_report_timelog: Relatório de tempos
 
   setting_app_title: Título da aplicação
   setting_app_subtitle: Sub-título da aplicação
@@ -633,6 +635,7 @@ pt:
   label_incoming_emails: E-mails a chegar
   label_generate_key: Gerar uma chave
   label_issue_watchers: Observadores
+  label_timelog_plural: Registo de Tempos
 
   button_login: Entrar
   button_submit: Submeter
