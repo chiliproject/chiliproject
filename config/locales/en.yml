@@ -312,6 +312,8 @@ en:
   field_issue_summary: Issue summary
   field_new_saved_query: New saved query
   field_issue_view_all_open: View all open issues
+  field_new_timelog: New time entry
+  field_report_timelog: Time entry report
 
   setting_app_title: Application title
   setting_app_subtitle: Application subtitle
@@ -829,6 +831,7 @@ en:
   label_mail_handler_confirmation: "Confirmation of email submission: %{subject}"
   label_mail_handler_failure: "Failed email submission: %{subject}"
   label_mail_handler_errors_with_submission: "There were errors with your email submission:"
+  label_timelog_plural: Time entries
 
   button_login: Login
   button_submit: Submit
