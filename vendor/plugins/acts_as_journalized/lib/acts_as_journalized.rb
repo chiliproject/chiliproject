@@ -94,6 +94,7 @@ module Redmine
             Object.const_get(journal_class_name)
           else
             Object.const_set(journal_class_name, Class.new(Journal)).tap do |c|
+              c.class_eval("unloadable")
               # Run after the inherited hook to associate with the parent record.
               # This eager loads the associated project (for permissions) if possible
               if project_assoc = reflect_on_association(:project).try(:name)
