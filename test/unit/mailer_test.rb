@@ -37,7 +37,7 @@ class MailerTest < ActiveSupport::TestCase
 
     assert_select_email do
       # link to the main ticket
-      assert_select "a[href=?]", "https://mydomain.foo/issues/1", :text => "Bug #1: Can't print recipes"
+      assert_select "a[href=?]", "https://mydomain.foo/issues/1", :text => "Bug #1: Can&#39;t print recipes"
       # link to a referenced ticket
       assert_select "a[href=?][title=?]", "https://mydomain.foo/issues/2", "Add ingredients categories (Assigned)", :text => "#2"
       # link to a changeset
@@ -59,7 +59,7 @@ class MailerTest < ActiveSupport::TestCase
 
     assert_select_email do
       # link to the main ticket
-      assert_select "a[href=?]", "http://mydomain.foo/rdm/issues/1", :text => "Bug #1: Can't print recipes"
+      assert_select "a[href=?]", "http://mydomain.foo/rdm/issues/1", :text => "Bug #1: Can&#39;t print recipes"
       # link to a referenced ticket
       assert_select "a[href=?][title=?]", "http://mydomain.foo/rdm/issues/2", "Add ingredients categories (Assigned)", :text => "#2"
       # link to a changeset
@@ -84,7 +84,7 @@ class MailerTest < ActiveSupport::TestCase
 
     assert_select_email do
       # link to the main ticket
-      assert_select "a[href=?]", "http://mydomain.foo/rdm/issues/1", :text => "Bug #1: Can't print recipes"
+      assert_select "a[href=?]", "http://mydomain.foo/rdm/issues/1", :text => "Bug #1: Can&#39;t print recipes"
       # link to a referenced ticket
       assert_select "a[href=?][title=?]", "http://mydomain.foo/rdm/issues/2", "Add ingredients categories (Assigned)", :text => "#2"
       # link to a changeset
