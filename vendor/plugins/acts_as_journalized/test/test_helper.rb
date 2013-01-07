@@ -1,12 +1,7 @@
-#-- encoding: UTF-8
-$: << File.join(File.dirname(__FILE__), '..', 'lib')
-$: << File.dirname(__FILE__)
+# Load the normal Rails helper
+require File.expand_path(File.dirname(__FILE__) + '/../../../../test/test_helper')
 
-require 'rubygems'
-require 'test/unit'
-require 'active_record'
-require 'shoulda'
-require 'mocha'
-require 'vestal_versions'
-require 'schema'
-begin; require 'redgreen'; rescue LoadError; end
+# Ensure that we are using the temporary fixture path
+Engines::Testing.set_fixture_path
+
+require File.expand_path(File.dirname(__FILE__) + '/schema')
