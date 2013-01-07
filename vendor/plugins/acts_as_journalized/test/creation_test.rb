@@ -1,16 +1,16 @@
 #-- encoding: UTF-8
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class CreationTest < Test::Unit::TestCase
+class CreationTest < ActiveSupport::TestCase
   context 'The number of journals' do
     setup do
       @name = 'Steve Richert'
-      @user = User.create(:name => @name)
+      @user = TestUser.create(:name => @name)
       @count = @user.journals.count
     end
 
     should 'initially equal zero' do
-      assert_equal 0, @count
+      assert_equal 1, @count
     end
 
     should 'not increase when no changes are made in an update' do
@@ -47,7 +47,7 @@ class CreationTest < Test::Unit::TestCase
 
   context "A created journal's changes" do
     setup do
-      @user = User.create(:name => 'Steve Richert')
+      @user = TestUser.create(:name => 'Steve Richert')
       @user.update_attribute(:last_name, 'Jobs')
     end
 
@@ -60,7 +60,7 @@ class CreationTest < Test::Unit::TestCase
     context '(with :only options)' do
       setup do
         @only = %w(first_name)
-        User.prepare_journaled_options(:only => @only)
+        TestUser.prepare_journaled_options(:only => @only)
         @user.update_attribute(:name, 'Steven Tyler')
       end
 
@@ -69,14 +69,14 @@ class CreationTest < Test::Unit::TestCase
       end
 
       teardown do
-        User.prepare_journaled_options(:only => nil)
+        TestUser.prepare_journaled_options(:only => nil)
       end
     end
 
     context '(with :except options)' do
       setup do
         @except = %w(first_name)
-        User.prepare_journaled_options(:except => @except)
+        TestUser.prepare_journaled_options(:except => @except)
         @user.update_attribute(:name, 'Steven Tyler')
       end
 
@@ -87,7 +87,7 @@ class CreationTest < Test::Unit::TestCase
       end
 
       teardown do
-        User.prepare_journaled_options(:except => nil)
+        TestUser.prepare_journaled_options(:except => nil)
       end
     end
 
@@ -95,7 +95,7 @@ class CreationTest < Test::Unit::TestCase
       setup do
         @only = %w(first_name)
         @except = @only
-        User.prepare_journaled_options(:only => @only, :except => @except)
+        TestUser.prepare_journaled_options(:only => @only, :except => @except)
         @user.update_attribute(:name, 'Steven Tyler')
       end
 
@@ -104,7 +104,7 @@ class CreationTest < Test::Unit::TestCase
       end
 
       teardown do
-        User.prepare_journaled_options(:only => nil, :except => nil)
+        TestUser.prepare_journaled_options(:only => nil, :except => nil)
       end
     end
   end
