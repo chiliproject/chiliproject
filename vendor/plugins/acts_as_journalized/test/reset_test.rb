@@ -1,15 +1,15 @@
 #-- encoding: UTF-8
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class ResetTest < Test::Unit::TestCase
+class ResetTest < ActiveSupport::TestCase
   context 'Resetting a model' do
     setup do
-      @original_dependent = User.reflect_on_association(:journals).options[:dependent]
-      @user, @journals = User.new, []
+      @original_dependent = TestUser.reflect_on_association(:journals).options[:dependent]
+      @user, @journals = TestUser.new, []
       @names = ['Steve Richert', 'Stephen Richert', 'Stephen Jobs', 'Steve Jobs']
       @names.each do |name|
         @user.update_attribute(:name, name)
-        @journals << @user.journal
+        @journals << @user.version
       end
     end
 
@@ -29,7 +29,7 @@ class ResetTest < Test::Unit::TestCase
 
     context 'with the :dependent option as :delete_all' do
       setup do
-        User.reflect_on_association(:journals).options[:dependent] = :delete_all
+        TestUser.reflect_on_association(:journals).options[:dependent] = :delete_all
       end
 
       should 'delete all journals after the target journal' do
@@ -45,7 +45,7 @@ class ResetTest < Test::Unit::TestCase
       end
 
       should 'not destroy all journals after the target journal' do
-        VestalVersions::Version.any_instance.stubs(:destroy).raises(RuntimeError)
+        TestUserJournal.any_instance.stubs(:destroy).raises(RuntimeError)
         @journals.reverse.each do |journal|
           assert_nothing_raised do
             @user.reset_to!(journal)
@@ -56,7 +56,7 @@ class ResetTest < Test::Unit::TestCase
 
     context 'with the :dependent option as :destroy' do
       setup do
-        User.reflect_on_association(:journals).options[:dependent] = :destroy
+        TestUser.reflect_on_association(:journals).options[:dependent] = :destroy
       end
 
       should 'delete all journals after the target journal' do
@@ -72,7 +72,7 @@ class ResetTest < Test::Unit::TestCase
       end
 
       should 'destroy all journals after the target journal' do
-        VestalVersions::Version.any_instance.stubs(:destroy).raises(RuntimeError)
+        TestUserJournal.any_instance.stubs(:destroy).raises(RuntimeError)
         @journals.reverse.each do |journal|
           later_journals = @user.journals.after(journal)
           if later_journals.empty?
@@ -90,16 +90,19 @@ class ResetTest < Test::Unit::TestCase
 
     context 'with the :dependent option as :nullify' do
       setup do
-        User.reflect_on_association(:journals).options[:dependent] = :nullify
+        TestUser.reflect_on_association(:journals).options[:dependent] = :nullify
       end
 
-      should 'leave all journals after the target journal' do
+      should 'raise an exception because journaled_id may not be null for Journal' do
         @journals.reverse.each do |journal|
           later_journals = @user.journals.after(journal)
-          @user.reset_to!(journal)
-          later_journals.each do |later_journal|
+          if later_journals.empty?
             assert_nothing_raised do
-              later_journal.reload
+              @user.reset_to!(journal)
+            end
+          else
+            assert_raise ActiveRecord::StatementInvalid do
+              @user.reset_to!(journal)
             end
           end
         end
@@ -107,7 +110,7 @@ class ResetTest < Test::Unit::TestCase
     end
 
     teardown do
-      User.reflect_on_association(:journals).options[:dependent] = @original_dependent
+      TestUser.reflect_on_association(:journals).options[:dependent] = @original_dependent
     end
   end
 end
