@@ -26,6 +26,10 @@ module Redmine
   module Acts
     module Journalized
 
+      class << self
+        include Configuration
+      end
+
       def self.included(base)
         base.extend ClassMethods
         base.extend Versioned
