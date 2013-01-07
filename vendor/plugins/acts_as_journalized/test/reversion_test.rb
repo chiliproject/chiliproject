@@ -1,20 +1,20 @@
 #-- encoding: UTF-8
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class RejournalTest < Test::Unit::TestCase
+class RejournalTest < ActiveSupport::TestCase
   context 'A model rejournal' do
     setup do
-      @user, @attributes, @times = User.new, {}, {}
+      @user, @attributes, @times = TestUser.new, {}, {}
       names = ['Steve Richert', 'Stephen Richert', 'Stephen Jobs', 'Steve Jobs']
       time = names.size.hours.ago
       names.each do |name|
         @user.update_attribute(:name, name)
-        @attributes[@user.journal] = @user.attributes
+        @attributes[@user.version] = @user.attributes
         time += 1.hour
         if last_journal = @user.journals.last
           last_journal.update_attribute(:created_at, time)
         end
-        @times[@user.journal] = time
+        @times[@user.version] = time
       end
       @user.reload.journals.reload
       @first_journal, @last_journal = @attributes.keys.min, @attributes.keys.max
@@ -26,35 +26,35 @@ class RejournalTest < Test::Unit::TestCase
     end
 
     should 'change the journal number when saved' do
-      current_journal = @user.journal
+      current_journal = @user.version
       @user.revert_to!(@first_journal)
-      assert_not_equal current_journal, @user.journal
+      assert_not_equal current_journal, @user.version
     end
 
     should 'do nothing for a invalid argument' do
-      current_journal = @user.journal
+      current_journal = @user.version
       [nil, :bogus, 'bogus', (1..2)].each do |invalid|
         @user.revert_to(invalid)
-        assert_equal current_journal, @user.journal
+        assert_equal current_journal, @user.version
       end
     end
 
     should 'be able to target a journal number' do
       @user.revert_to(1)
-      assert 1, @user.journal
+      assert_equal 1, @user.version
     end
 
     should 'be able to target a date and time' do
       @times.each do |journal, time|
         @user.revert_to(time + 1.second)
-        assert_equal journal, @user.journal
+        assert_equal journal, @user.version
       end
     end
 
     should 'be able to target a journal object' do
       @user.journals.each do |journal|
         @user.revert_to(journal)
-        assert_equal journal.number, @user.journal
+        assert_equal journal.version, @user.version
       end
     end
 
