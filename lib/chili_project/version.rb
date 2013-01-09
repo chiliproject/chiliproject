@@ -18,8 +18,8 @@ module ChiliProject
   module VERSION #:nodoc:
 
     MAJOR = 2
-    MINOR = 7
-    PATCH = 4
+    MINOR = 8
+    PATCH = 0
     TINY  = PATCH # Redmine compat
 
     # Used by semver to define the special version (if any).
