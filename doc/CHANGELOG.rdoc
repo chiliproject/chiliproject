@@ -1,6 +1,10 @@
 = ChiliProject changelog
 
-== 2013-01-00 v2.8.0
+== 2013-01-16 v2.8.1
+
+* Security - Bug #1208: Unsafe Query Generation Risk in Ruby on Rails (CVE-2013-0155)
+
+== 2013-01-09 v2.8.0
 
 * Security – Bug #1200: Multiple vulnerabilities in parameter parsing in Action Pack (CVE-2013-0156)
 
