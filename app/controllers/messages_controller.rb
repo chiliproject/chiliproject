@@ -19,9 +19,6 @@ class MessagesController < ApplicationController
   before_filter :find_message, :except => [:new, :preview]
   before_filter :authorize, :except => [:preview, :edit, :destroy]
 
-  verify :method => :post, :only => [ :reply, :destroy ], :redirect_to => { :action => :show }
-  verify :xhr => true, :only => :quote
-
   include AttachmentsHelper
 
   REPLIES_PER_PAGE = 25 unless const_defined?(:REPLIES_PER_PAGE)
