@@ -17,9 +17,6 @@ class IssueStatusesController < ApplicationController
 
   before_filter :require_admin
 
-  verify :method => :post, :only => [ :destroy, :create, :update, :move, :update_issue_done_ratio ],
-         :redirect_to => { :action => :index }
-
   def index
     @issue_status_pages, @issue_statuses = paginate :issue_statuses, :per_page => 25, :order => "position"
     render :action => "index", :layout => false if request.xhr?
