@@ -240,7 +240,7 @@ Redmine::MenuManager.map :project_menu do |menu|
 
                 versions.collect do |version|
                   Redmine::MenuManager::MenuItem.new("version-#{version.id}".to_sym,
-                                                     { :controller => 'versions', :action => 'show', :id => version },
+                                                     { :controller => 'version', :action => 'show', :id => version.id },
                                                      {
                                                        :caption => version.name,
                                                        :parent => :roadmap
@@ -270,6 +270,7 @@ Redmine::MenuManager.map :project_menu do |menu|
               :parent => :issues
             })
   menu.push(:issue_summary, { :controller => 'reports', :action => 'issue_report' }, {
+              :param => :project_id,
               :caption => :field_issue_summary,
               :parent => :issues
             })
