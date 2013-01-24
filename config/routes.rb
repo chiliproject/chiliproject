@@ -150,6 +150,8 @@ Redmine::Application.routes.draw do
 
     resources :news, :only => [:new, :create]
 
+    resources :queries, :only => [:new, :create]
+
     resource 'repository', :controller => 'repositories' do
       get 'statistics' => 'repositories#stats'
 
