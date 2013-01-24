@@ -224,7 +224,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_model_object
-    model = self.class.read_inheritable_attribute('model_object')
+    model = self._model_object
     if model
       @object = model.find(params[:id])
       self.instance_variable_set('@' + controller_name.singularize, @object) if @object
@@ -233,8 +233,9 @@ class ApplicationController < ActionController::Base
     render_404
   end
 
+  class_attribute :_model_object
   def self.model_object(model)
-    write_inheritable_attribute('model_object', model)
+    self._model_object = model
   end
 
   # Filter for bulk issue operations
