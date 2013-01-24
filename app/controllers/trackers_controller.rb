@@ -17,8 +17,6 @@ class TrackersController < ApplicationController
 
   before_filter :require_admin
 
-  verify :method => :post, :only => :destroy, :redirect_to => { :action => :index }
-
   def index
     @tracker_pages, @trackers = paginate :trackers, :per_page => 10, :order => 'position'
     render :action => "index", :layout => false if request.xhr?
