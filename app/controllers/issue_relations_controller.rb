@@ -26,7 +26,6 @@ class IssueRelationsController < ApplicationController
     render_404
   end
 
-  verify :method => :post, :only => :create, :render => {:nothing => true, :status => :method_not_allowed }
   def create
     @relation = IssueRelation.new(params[:relation])
     @relation.issue_from = @issue
@@ -57,7 +56,6 @@ class IssueRelationsController < ApplicationController
     end
   end
 
-  verify :method => :delete, :only => :destroy, :render => {:nothing => true, :status => :method_not_allowed }
   def destroy
     relation = @issue.find_relation(params[:id])
     relation.destroy
