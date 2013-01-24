@@ -59,7 +59,7 @@ module ApplicationHelper
 
   # Show a sorted linkified (if active) comma-joined list of users
   def list_users(users, options={})
-    users.sort.collect{|u| link_to_user(u, options)}.join(", ")
+    users.sort.collect{|u| link_to_user(u, options)}.join(", ".html_safe)
   end
 
   # Displays a link to +issue+ with its subject.
@@ -318,7 +318,7 @@ module ApplicationHelper
   end
 
   def authoring(created, author, options={})
-    l(options[:label] || :label_added_time_by, :author => link_to_user(author), :age => time_tag(created))
+    l(options[:label] || :label_added_time_by, :author => link_to_user(author), :age => time_tag(created)).html_safe
   end
 
   def time_tag(time)
