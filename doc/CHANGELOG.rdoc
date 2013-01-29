@@ -1,5 +1,9 @@
 = ChiliProject changelog
 
+== 2013-01-29 v2.9.0
+
+* Security - Bug #1219: Vulnerability in JSON Parser in Ruby on Rails (CVE-2013-0333)
+
 == 2013-01-16 v2.8.1
 
 * Security - Bug #1208: Unsafe Query Generation Risk in Ruby on Rails (CVE-2013-0155)
