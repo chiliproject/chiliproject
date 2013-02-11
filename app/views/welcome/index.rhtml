@@ -1,7 +1,9 @@
 <h2><%= l(:label_home) %></h2>
 
 <div class="splitcontentleft">
+  <%= call_hook(:view_welcome_index_left_top, :projects => @projects) %>
   <div class="wiki"><%= textilizable Setting.welcome_text %></div>
+  <%= call_hook(:view_welcome_index_left_after_welcome, :projects => @projects) %>
   <% if @news.any? %>
   <div class="news box">
 	<h3><%=l(:label_news_latest)%></h3>
@@ -10,9 +12,11 @@
   </div>
   <% end %>
   <%= call_hook(:view_welcome_index_left, :projects => @projects) %>
+  <%= call_hook(:view_welcome_index_left_bottom, :projects => @projects) %>
 </div>
 
 <div class="splitcontentright">
+	<%= call_hook(:view_welcome_index_right_top, :projects => @projects) %>
     <% if @projects.any? %>
 	<div class="projects box">
 	<h3><%=l(:label_project_latest)%></h3>
@@ -29,6 +33,7 @@
 	</div>
 	<% end %>
     <%= call_hook(:view_welcome_index_right, :projects => @projects) %>
+    <%= call_hook(:view_welcome_index_right_bottom, :projects => @projects) %>
 </div>
 
 <% content_for :header_tags do %>
