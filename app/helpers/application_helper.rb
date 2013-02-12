@@ -728,7 +728,7 @@ module ApplicationHelper
         elsif sep == '@'
           name = identifier.gsub(%r{^"(.*)"$}, "\\1")
           if user = User.find_by_login(name)
-            link = link_to_user(user)            
+            link = link_to( user.login, {:controller => 'users', :action => 'show', :id => user}, :class => 'user', :title => "#{user.lastname}, #{user.firstname} <#{user.mail}>" )
           end
         elsif sep == ':'
           # removes the double quotes if any
