@@ -197,6 +197,9 @@ RAW
 
     source_url = {:controller => 'repositories', :action => 'entry', :id => 'ecookbook', :path => ['some', 'file']}
     source_url_with_ext = {:controller => 'repositories', :action => 'entry', :id => 'ecookbook', :path => ['some', 'file.ext']}
+    
+    user_url = link_to('jsmith', { :controller=>"users", :action=>"show", :id => 2}, 
+                                  :class => 'user', :title => 'Smith, John <jsmith@somenet.foo>')
 
     to_test = {
       # tickets
@@ -248,6 +251,8 @@ RAW
       'source:'                     => 'source:',
       # url hash
       "http://foo.bar/FAQ#3"       => '<a class="external" href="http://foo.bar/FAQ#3">http://foo.bar/FAQ#3</a>',
+      # username linking
+      "@jsmith"                    => user_url,
     }
     @project = Project.find(1)
     to_test.each { |text, result| assert_equal "<p>#{result}</p>", textilizable(text), "#{text} failed" }
