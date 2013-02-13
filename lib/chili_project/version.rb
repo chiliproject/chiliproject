@@ -18,7 +18,7 @@ module ChiliProject
   module VERSION #:nodoc:
 
     MAJOR = 2
-    MINOR = 9
+    MINOR = 10
     PATCH = 0
     TINY  = PATCH # Redmine compat
 
