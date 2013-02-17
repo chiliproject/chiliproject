@@ -13,11 +13,42 @@
 </div>
 
 <div class="splitcontentright">
-    <% if @projects.any? %>
+
+    <% if Setting.show_visible_projects? && @my_projects.any? %>
+    <div class="box projects" id="my_projects">
+      <h3 class=""><%=l(:label_my_projects)%></h3>
+      <% if @my_projects.any? %>
+        <ul>
+          <% @my_projects.each do |project| %>
+            <li><%= link_to_project project %> (<span id="<%= User.current %>-roles"><%= User.current.roles_for_project(project).sort.collect(&:to_s).join(', ') %></span>)</li>
+            <span style="font-size:85%;"><%=project_sublinks(project, project.enabled_module_names & Setting.visible_projects_links) unless Setting.visible_projects_links.count == 0 %></span>
+            <%= textilizable project.short_description, :project => project %>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="nodata"><%=l(:label_no_data) %></p>
+      <% end %>
+    </div>
+  <% end %>
+  
+  <% if User.current.admin? && Setting.show_admin_projects? && @admin_projects.any? %>
+  <div class="box projects" id="admin_projects">
+      <h3><%=l(:label_admin_projects)%></h3>
+      <ul>
+        <% @admin_projects.each do |project| %>
+          <li><%= link_to_project project %> (<span id="<%= User.current %>-roles"><%= User.current.roles_for_project(project).sort.collect(&:to_s).join(', ') %></span>)</li>
+          <span style="font-size:85%;"><%=project_sublinks(project, project.enabled_module_names & Setting.visible_projects_links) unless Setting.visible_projects_links.count == 0 %></span>
+          <%= textilizable project.short_description, :project => project %>
+        <% end %>
+      </ul>
+  </div>
+  <% end %>
+  
+  <% if Setting.show_latest_projects? && @latest_projects.any? %>
 	<div class="projects box">
 	<h3><%=l(:label_project_latest)%></h3>
 		<ul>
-		<% for project in @projects %>
+		<% for project in @latest_projects %>
 		  <% @project = project %>
 			<li>
 			<%= link_to_project project %> (<%= format_time(project.created_on) %>)
@@ -28,7 +59,7 @@
 		</ul>
 	</div>
 	<% end %>
-    <%= call_hook(:view_welcome_index_right, :projects => @projects) %>
+  <%= call_hook(:view_welcome_index_right, :projects => @visible_projects) %>
 </div>
 
 <% content_for :header_tags do %>
