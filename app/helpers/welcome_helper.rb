@@ -13,7 +13,6 @@
 #++
 
 module WelcomeHelper
-  
   def project_sublinks(project, modules=[])
     html = ""
     html += " | #{link_to l(:label_issue_plural), :controller => 'issues', :action => 'index', :project_id => project } " if modules.include?("issue_tracking")
