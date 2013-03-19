@@ -1,5 +1,9 @@
 = ChiliProject changelog
 
+== 2013-03-19 2.11.0
+
+* Security - Feature #1252: Update Rails to 2.3.18
+
 == 2013-02-13 2.10.0
 
 * Security - Feature #1233: Bump rails to 2.3.17 to address [CVE-2013-0276]
