@@ -24,7 +24,7 @@ ChiliProject::Application.routes.draw do
     get 'activate'
   end
 
-  resources :p, :controller => :projects, :as => :projects do
+  resources :projects do
     get 'activity' => 'activities#index' # CHANGED :id is not :project_id
     post 'archive' # should be PUT?
     get 'copy'
