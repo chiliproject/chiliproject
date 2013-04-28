@@ -73,7 +73,7 @@ module ChiliProject
     # dependencies, the Project model needs to be loaded before the user model
     # can properly loaded. If this is not the case, the User class fails to
     # auto-load.
-    config.after_initialize do
+    config.to_prepare do
       # required to properly load the User class because of circular class dependencies
       require_dependency 'project'
     end
