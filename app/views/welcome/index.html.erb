@@ -4,31 +4,31 @@
   <div class="wiki"><%= textilizable Setting.welcome_text %></div>
   <% if @news.any? %>
   <div class="news box">
-	<h3><%=l(:label_news_latest)%></h3>
-		<%= render :partial => 'news/news', :collection => @news %>
-		<%= link_to l(:label_news_view_all), :controller => 'news' %>
+  <h3><%=t :label_news_latest %></h3>
+    <%= render :partial => 'news/news', :collection => @news %>
+    <%= link_to t(:label_news_view_all), news_index_path %>
   </div>
   <% end %>
   <%= call_hook(:view_welcome_index_left, :projects => @projects) %>
 </div>
 
 <div class="splitcontentright">
-    <% if @projects.any? %>
-	<div class="projects box">
-	<h3><%=l(:label_project_latest)%></h3>
-		<ul>
-		<% for project in @projects %>
-		  <% @project = project %>
-			<li>
-			<%= link_to_project project %> (<%= format_time(project.created_on) %>)
-			<%= textilizable project.short_description, :project => project %>
-			</li>
-		<% end %>
+  <% if @projects.any? %>
+  <div class="projects box">
+  <h3><%=t :label_project_latest %></h3>
+    <ul>
+    <% @projects.each do |project| %>
+      <% @project = project %>
+      <li>
+        <%= link_to_project project %> (<%= format_time(project.created_on) %>)
+        <%= textilizable project.short_description, :project => project %>
+      </li>
+    <% end %>
     <% @project = nil %>
-		</ul>
-	</div>
-	<% end %>
-    <%= call_hook(:view_welcome_index_right, :projects => @projects) %>
+    </ul>
+  </div>
+  <% end %>
+  <%= call_hook(:view_welcome_index_right, :projects => @projects) %>
 </div>
 
 <% content_for :header_tags do %>
