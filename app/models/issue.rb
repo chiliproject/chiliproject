@@ -71,7 +71,7 @@ class Issue < ActiveRecord::Base
   end
 
   def self.open
-    joins(:status).where(:status => {:is_closed => false})
+    joins(:status).where(:issue_statuses => {:is_closed => false})
   end
 
   def self.recently_updated
