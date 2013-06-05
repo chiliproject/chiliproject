@@ -15,6 +15,10 @@ gem 'awesome_nested_set'
 # TODO rails-3.2: review the core changes to open_id_authentication and decide on actions
 gem 'open_id_authentication'
 
+# Non-asset pipeline setup: run rails generate jquery:install to install
+# newest jquery and jquery_ujs versions to public/javascripts/
+gem 'jquery-rails'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
