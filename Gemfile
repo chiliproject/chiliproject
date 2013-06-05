@@ -24,6 +24,8 @@ gem "open_id_authentication",
 
 gem "ruby-prof"
 
+gem 'jquery-rails'
+
 group :test do
   gem 'shoulda', '~> 2.11.0'
   # Shoulda doesn't work nice on 1.9.3 and seems to need test-unit explicitely…
