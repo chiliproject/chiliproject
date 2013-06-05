@@ -388,9 +388,10 @@ module ApplicationHelper
   end
 
   def other_formats_links(&block)
-    concat('<p class="other-formats">' + l(:label_export_to))
-    yield Redmine::Views::OtherFormatsBuilder.new(self)
-    concat('</p>')
+    content_tag :p, :class => "other-formats" do
+      concat l(:label_export_to)
+      concat capture(Redmine::Views::OtherFormatsBuilder.new(self), &block)
+    end
   end
 
   def page_header_title
