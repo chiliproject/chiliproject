@@ -45,7 +45,7 @@
 </div>
 <% end %>
 
-<% other_formats_links do |f| %>
+<%= other_formats_links do |f| %>
   <%= f.link_to 'Atom', :url => {:controller => 'activities', :action => 'index', :id => @project, :show_wiki_edits => 1, :key => User.current.rss_key} %>
   <%= f.link_to 'HTML', :url => {:id => @page.title, :version => @content.version} %>
   <%= f.link_to 'TXT', :url => {:id => @page.title, :version => @content.version} %>
