@@ -19,7 +19,7 @@
   <td class="roles">
     <span id="member-<%= member.id %>-roles"><%=h member.roles.sort.collect(&:to_s).join(', ') %></span>
     <% if authorize_for('members', 'edit') %>
-      <% remote_form_for(:member, member, :url => {:controller => 'members', :action => 'edit', :id => member},
+      <%= form_for(member, :remote => true, :url => {:controller => 'members', :action => 'edit', :id => member},
       																		:method => :post,
       																		:html => { :id => "member-#{member.id}-roles-form", :class => 'hol' }) do |f| %>
       	<p><% roles.each do |role| %>
@@ -55,7 +55,7 @@
 
 <div class="splitcontentright">
 <% if roles.any? && principals.any? %>
-  <% remote_form_for(:member, @member, :url => {:controller => 'members', :action => 'new', :id => @project}, :method => :post,
+  <%= form_for(@member, :remote => true, :url => {:controller => 'members', :action => 'new', :id => @project}, :method => :post,
 									   :loading => '$(\'member-add-submit\').disable();',
 									   :complete => 'if($(\'member-add-submit\')) $(\'member-add-submit\').enable();') do |f| %>
     <fieldset><legend><%=l(:label_member_new)%></legend>
