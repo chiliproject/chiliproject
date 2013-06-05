@@ -33,7 +33,7 @@ module Redmine::MenuManager::MenuHelper
     menu_items_for(menu, project) do |node|
       links << render_menu_node(node, project)
     end
-    links.empty? ? nil : content_tag('ul', links.join("\n"))
+    links.empty? ? nil : content_tag(:ul, safe_join(links, "\n".html_safe))
   end
 
   def render_menu_node(node, project=nil)
@@ -41,7 +41,7 @@ module Redmine::MenuManager::MenuHelper
       return render_menu_node_with_children(node, project)
     else
       caption, url, selected = extract_node_details(node, project)
-      return content_tag('li',
+      return content_tag(:li,
                            render_single_menu_node(node, caption, url, selected))
     end
   end
@@ -50,12 +50,12 @@ module Redmine::MenuManager::MenuHelper
     caption, url, selected = extract_node_details(node, project)
 
     html = [].tap do |html|
-      html << '<li>'
+      html << '<li>'.html_safe
       # Parent
       html << render_single_menu_node(node, caption, url, selected)
 
       # Standard children
-      standard_children_list = "".tap do |child_html|
+      standard_children_list = "".html_safe.tap do |child_html|
         node.children.each do |child|
           child_html << render_menu_node(child, project)
         end
@@ -67,16 +67,16 @@ module Redmine::MenuManager::MenuHelper
       unattached_children_list = render_unattached_children_menu(node, project)
       html << content_tag(:ul, unattached_children_list, :class => 'menu-children unattached') unless unattached_children_list.blank?
 
-      html << '</li>'
+      html << '</li>'.html_safe
     end
-    return html.join("\n")
+    return safe_join(html, "\n".html_safe)
   end
 
   # Returns a list of unattached children menu items
   def render_unattached_children_menu(node, project)
     return nil unless node.child_menus
 
-    "".tap do |child_html|
+    "".html_safe.tap do |child_html|
       unattached_children = node.child_menus.call(project)
       # Tree nodes support #each so we need to do object detection
       if unattached_children.is_a? Array
