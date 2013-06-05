@@ -17,6 +17,8 @@ gem 'awesome_nested_set'
 # TODO rails-3.2: review the core changes to open_id_authentication and decide on actions
 gem 'open_id_authentication'
 
+gem 'jquery-rails'
+
 group :test do
   gem 'shoulda', '~> 2.11.0'
   # Shoulda doesn't work nice on 1.9.3 and seems to need test-unit explicitely…
