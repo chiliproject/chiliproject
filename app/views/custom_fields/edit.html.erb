@@ -3,7 +3,7 @@
   &#187; <%=h @custom_field.name %></h2>
 
 <%# TODO: Might need an :as => :custom_field parameter %>
-<% labelled_tabular_form_for @custom_field, :url => { :action => "edit", :id => @custom_field } do |f| %>
+<%= labelled_tabular_form_for @custom_field, :url => { :action => "edit", :id => @custom_field } do |f| %>
 <%= render :partial => 'form', :locals => { :f => f } %>
 <%= submit_tag l(:button_save) %>
 <% end %>
