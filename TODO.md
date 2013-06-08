@@ -5,6 +5,7 @@
 * review changes to openid_authentication
 * refactor routes and controllers to REST/Rails 3 style
 * refactor MenuHelper to avoid explicit `html_safe` calls
+* refactor TabularFormBuilder to avoid explicit `html_safe` calls
 
 TO REVIEW:
 ==========
