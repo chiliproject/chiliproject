@@ -3,7 +3,7 @@
   &#187; <%= l(:label_custom_field_new) %></h2>
 
 <%# TODO: Might need an :as => :custom_field parameter %>
-<% labelled_tabular_form_for @custom_field, :url => { :action => "new" } do |f| %>
+<%= labelled_tabular_form_for @custom_field, :url => { :action => "new" } do |f| %>
 <%= render :partial => 'form', :locals => { :f => f } %>
 <%= hidden_field_tag 'type', @custom_field.type %>
 <%= submit_tag l(:button_save) %>
