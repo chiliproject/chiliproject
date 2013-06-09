@@ -847,6 +847,7 @@ module ApplicationHelper
   def labelled_tabular_form_for(record, options = {} , &proc)
     options[:html] ||= {}
     options[:html][:class] = 'tabular' unless options[:html].has_key?(:class)
+    # TODO: no mention of lang in actionview, probably not needed anymore
     form_for(record, options.merge({ :builder => TabularFormBuilder, :lang => current_language}), &proc)
   end
 
