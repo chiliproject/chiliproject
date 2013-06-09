@@ -10,6 +10,7 @@
 TO REVIEW:
 ==========
 
+UJS, html escaping and ARel compatibility everywhere, see TODO.filelist
 User.in_group
 User.not_in_group
 News.latest
