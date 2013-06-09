@@ -18,7 +18,7 @@ begin
 
   class BazaarAdapterTest < ActiveSupport::TestCase
 
-    REPOSITORY_PATH = Rails.root.join('tmp/test/bazaar_repository'
+    REPOSITORY_PATH = Rails.root.join('tmp/test/bazaar_repository')
 
     if File.directory?(REPOSITORY_PATH)
       def setup
