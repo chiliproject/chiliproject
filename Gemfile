@@ -23,6 +23,7 @@ group :test do
   gem 'mocha', '0.12.1'
   # capybara 2 drops ruby 1.8.7 compatibility
   gem 'capybara', '< 2.0.0'
+  gem 'nokogiri', '< 1.6.0'
 end
 
 group :ldap do
