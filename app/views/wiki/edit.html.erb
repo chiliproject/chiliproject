@@ -9,13 +9,13 @@
 <p><label><%=l(:label_attachment_plural)%></label><br /><%= render :partial => 'attachments/form' %></p>
 
 <p><%= submit_tag l(:button_save) %>
-   <%= link_to_remote l(:label_preview),
+   <%= link_to l(:label_preview),
                        { :url => { :controller => 'wiki', :action => 'preview', :project_id => @project, :id => @page.title },
                          :method => :post,
                          :update => 'preview',
                          :with => "Form.serialize('wiki_form')",
                          :complete => "Element.scrollTo('preview')"
-                       }, :accesskey => accesskey(:preview) %></p>
+                       }, :remote => true, :accesskey => accesskey(:preview) %></p>
 <%= wikitoolbar_for 'content_text' %>
 <% end %>
 
