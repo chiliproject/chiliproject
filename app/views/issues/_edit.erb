@@ -49,13 +49,13 @@
 
     <%= f.hidden_field :lock_version %>
     <%= submit_tag l(:button_submit) %>
-    <%= link_to_remote l(:label_preview),
+    <%= link_to l(:label_preview),
                        { :url => preview_issue_path(:project_id => @project, :id => @issue),
                          :method => 'post',
                          :update => 'preview',
                          :with => 'Form.serialize("issue-form")',
                          :complete => "Element.scrollTo('preview')"
-                       }, :accesskey => accesskey(:preview) %>
+                       }, :remote => true, :accesskey => accesskey(:preview) %>
 <% end %>
 
 <div id="preview" class="wiki"></div>
