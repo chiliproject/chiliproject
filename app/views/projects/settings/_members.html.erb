@@ -36,11 +36,12 @@
       <%= link_to_function l(:button_edit),
                            "$('member-#{member.id}-roles').hide(); $('member-#{member.id}-roles-form').show(); return false;",
                            :class => 'icon icon-edit' %>
-      <%= link_to_remote(
+      <%= link_to(
             l(:button_delete),
             { :url => membership_path(member),
               :method => :delete,
               :confirm => (!User.current.admin? && member.include?(User.current) ? l(:text_own_membership_delete_confirmation) : nil) },
+            :remote => true,
             :title => l(:button_delete),
             :class => 'icon icon-del'
           ) if member.deletable? %>
