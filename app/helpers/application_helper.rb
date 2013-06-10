@@ -37,12 +37,6 @@ module ApplicationHelper
     link_to(name, options, html_options, *parameters_for_method_reference) if authorize_for(options[:controller] || params[:controller], options[:action])
   end
 
-  # Display a link to remote if user is authorized
-  def link_to_remote_if_authorized(name, options = {}, html_options = nil)
-    url = options[:url] || {}
-    link_to_remote(name, options, html_options) if authorize_for(url[:controller] || params[:controller], url[:action])
-  end
-
   # Displays a link to user's account page if active
   def link_to_user(user, options={})
     if user.is_a?(User)
