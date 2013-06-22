@@ -3196,13 +3196,20 @@ form#issue-list {
   width: 100%;
 }
 
-#content table th {
+#content table thead th {
   font-weight: normal;
   background: #f3f3f3 url(../images/gradient-down.png) repeat-x;
 }
 
-#content table.issues td,
-#content table th {
+#content table.issues td {
+  border: 1px solid #e6e6e6;
+  padding: 6px;
+  text-align: left;
+  position: relative;
+  vertical-align: top;
+}
+
+#content table thead th {
   border: 1px solid #e6e6e6;
   padding: 6px;
   text-align: left;
@@ -4091,9 +4098,12 @@ tr.time-entry {
 
 /* Weird Safari cascade bug. More specificity */
 div.issue p,
-div.issue div,
-#content td {
+div.issue div {
   font-size: 11px;
+}
+
+#content td {
+  /* font-size: 11px; */
 }
 
 /* comments */
