@@ -11,7 +11,7 @@
 </div>
 
 <div class="contextual">
-<%= link_to(l(:button_delete), {:controller => 'wikis', :action => 'destroy', :id => @project},
+<%= link_to(l(:button_delete), {:controller => 'wikis', :action => 'destroy', :project_id => @project},
             :class => 'icon icon-del') if @wiki && !@wiki.new_record? %>
 </div>
 
