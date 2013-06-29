@@ -4,6 +4,7 @@
 ** this removes the need to patch the rfpdf plugin
 * review changes to openid_authentication
 * refactor routes and controllers to REST/Rails 3 style
+* refactor MenuHelper to avoid explicit `html_safe` calls
 
 TO REVIEW:
 ==========
