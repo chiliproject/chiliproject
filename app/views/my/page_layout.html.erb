@@ -73,36 +73,27 @@ function removeBlock(block) {
 	<% end if @blocks['right'] %>
 </div>
 
-<%= sortable_element 'list-top',
-      :tag => 'div',
-      :only => 'mypage-box',
-      :handle => "handle",
-      :dropOnEmpty => true,
-      :containment => ['list-top', 'list-left', 'list-right'],
-      :constraint => false,
-      :url => { :action => "order_blocks", :group => "top" }
-       %>
-
-
-<%= sortable_element 'list-left',
-      :tag => 'div',
-      :only => 'mypage-box',
-      :handle => "handle",
-      :dropOnEmpty => true,
-      :containment => ['list-top', 'list-left', 'list-right'],
-      :constraint => false,
-      :url => { :action => "order_blocks", :group => "left" }
-       %>
-
-<%= sortable_element 'list-right',
-      :tag => 'div',
-      :only => 'mypage-box',
-      :handle => "handle",
-      :dropOnEmpty => true,
-      :containment => ['list-top', 'list-left', 'list-right'],
-      :constraint => false,
-      :url => { :action => "order_blocks", :group => "right" }
-       %>
+<%# TODO: Doesn't talk back to the server yet %>
+<%= javascript_tag("
+      jQuery('#list-top').sortable({
+        items: '> div.mypage-box',
+        handle: '.handle',
+        dropOnEmpty: true,
+        connectWith: ['#list-left', '#list-right']
+      });
+      jQuery('#list-left').sortable({
+        items: '> div.mypage-box',
+        handle: '.handle',
+        dropOnEmpty: true,
+        connectWith: ['#list-top', '#list-right']
+      });
+      jQuery('#list-right').sortable({
+        items: '> div.mypage-box',
+        handle: '.handle',
+        dropOnEmpty: true,
+        connectWith: ['#list-top', '#list-left']
+      });
+    ") -%>
 
 <%= javascript_tag "updateSelect()" %>
 <% html_title(l(:label_my_page)) -%>
