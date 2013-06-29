@@ -24,7 +24,7 @@
 </table>
 <% end %>
 
-<% remote_form_for(:relation, @relation,
+<%= form_for(@relation, :remote => true,
                  :url => {:controller => 'issue_relations', :action => 'new', :issue_id => @issue},
                  :method => :post,
                  :complete => "Form.Element.focus('relation_issue_to_id');",
