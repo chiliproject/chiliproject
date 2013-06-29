@@ -17,7 +17,8 @@ class ProjectsController < ApplicationController
   menu_item :roadmap, :only => :roadmap
   menu_item :settings, :only => :settings
 
-  before_filter :find_project, :except => [ :index, :new, :create, :copy ]
+  before_filter :find_project, :only => [:edit, :show, :update, :destroy]
+  before_filter :find_project_by_project_id, :only => [:archive, :copy, :modules, :settings, :unarchive]
   before_filter :authorize, :only => [ :show, :settings, :edit, :update, :modules ]
   before_filter :authorize_global, :only => [:new, :create]
   before_filter :require_admin, :only => [ :copy, :archive, :unarchive, :destroy ]
