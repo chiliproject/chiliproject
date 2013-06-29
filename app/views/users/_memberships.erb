@@ -19,7 +19,7 @@
   </td>
   <td class="roles">
     <span id="member-<%= membership.id %>-roles"><%=h membership.roles.sort.collect(&:to_s).join(', ') %></span>
-    <% remote_form_for(:membership, :url => { :action => 'edit_membership', :id => @user, :membership_id => membership },
+    <%= form_for(:membership, :remote => true, :url => { :action => 'edit_membership', :id => @user, :membership_id => membership },
       														  :html => { :id => "member-#{membership.id}-roles-form", :style => 'display:none;'}) do %>
       	<p><% roles.each do |role| %>
         <label><%= check_box_tag 'membership[role_ids][]', role.id, membership.roles.include?(role),
