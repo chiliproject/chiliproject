@@ -5,7 +5,7 @@
 <h3><%= l(:label_issue_watchers) %> (<%= watched.watcher_users.size %>)</h3>
 
 <% if User.current.allowed_to?("add_#{watched.class.name.underscore}_watchers".to_sym, @project) %>
-	<% remote_form_for(:watcher, @watcher,
+	<%= form_for(@watcher, :remote => true,
                 	   :url => {:controller => 'watchers',
               	              :action => 'new',
             	                :object_type => watched.class.name.underscore,
