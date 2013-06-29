@@ -24,13 +24,83 @@ ChiliProject::Application.routes.draw do
     get 'activate'
   end
 
+  resource :help, :controller => :help, :only => [] do
+    get 'wiki_syntax'
+    get 'wiki_syntax_detailed'
+  end
+
+  resources :roles, :only => [:index, :new, :edit, :destroy] do
+    collection do
+      get 'report'
+    end
+  end
+
+  resources :trackers, :only => [:index, :new, :edit, :destroy]
+
+  resources :workflows, :only => [:index] do
+    collection do
+      match 'edit', :via => [:get, :post]
+      match 'copy', :via => [:get, :post]
+    end
+  end
+
+  resources :custom_fields, :only => [:index, :destroy] do
+    collection do
+      match 'new', :via => [:get, :post]
+      match 'edit', :via => [:get, :post]
+    end
+  end
+
+  resources :enumerations, :only => [:index, :new, :create, :edit, :update, :destroy] do
+    collection do
+      get 'list'
+    end
+  end
+
+  resources :settings, :only => [:index] do
+    collection do
+      match 'edit', :via => [:get, :post]
+      match 'plugin', :via => [:get, :post]
+    end
+  end
+
+  resources :ldap_auth_sources, :only => [:index, :new, :create, :edit, :update, :destroy] do
+    get 'test_connection'
+  end
+
+  resources :issue_statuses, :only => [:index, :new, :edit, :update, :destroy] do
+    collection do
+      post 'update_issue_done_ratio'
+    end
+  end
+
+  get 'my' => 'my#index'
+  resource :my, :controller => 'my', :only => [] do
+    get 'page'
+    get 'account'
+    get 'page_layout'
+    match 'password', :via => [:get, :post]
+    post 'reset_rss_key'
+    post 'reset_api_key'
+    get 'add_block'
+    get 'remove_block'
+    get 'order_blocks'
+  end
+
+  get 'admin' => 'admin#index'
+  resource :admin, :controller => 'admin', :only => [] do
+    get 'projects'
+    get 'plugins'
+    get 'info'
+  end
+
   resources :projects do
     get 'activity' => 'activities#index' # CHANGED :id is not :project_id
     post 'archive' # should be PUT?
     get 'copy'
     post 'copy'
     get '/destroy' => 'projects#destroy', :as => 'destroy'
-    post 'modules' # should be PUT?
+    put 'modules'
     get 'roadmap' => 'versions#index'
     get 'search' => 'search#index'
     get 'settings(/:tab)' => 'projects#settings', :as => 'settings'
@@ -54,14 +124,16 @@ ChiliProject::Application.routes.draw do
 
     resources :issue_categories, :except => [:index, :show]
 
-    resources :issues, :only => [:new, :create] do
+    resources :issues, :only => [:new, :create, :index] do
       collection do
         get 'report' => 'reports#issue_report'
         get 'report/:detail' => 'reports#issue_report_details'
       end
-      member do
-        get 'copy' => 'issues#new'
-      end
+    end
+
+    resources :issues, :only => [] do
+      # copy needs to be declared after new as long as both point to issues#new
+      get 'copy' => 'issues#new'
     end
 
     # CHANGED: Members are only managed through the members controller
@@ -97,12 +169,15 @@ ChiliProject::Application.routes.draw do
     end
 
     resources :versions do
-      put 'close_completed'
+      collection do
+        put 'close_completed'
+      end
       post 'status_by', :on => :member
     end
 
     # TODO: Adapt the actions in the WikisController
-    resources :wiki do
+    resources :wiki, :shallow => true
+    resources :wiki, :only => [] do
       collection do
         get 'index' => 'wiki#show', :as => 'start_page'
 
@@ -111,15 +186,15 @@ ChiliProject::Application.routes.draw do
 
         put 'update' => 'wikis#update'
         get 'export' => 'wiki#export'
+
+        # To display the confirmation
+        # TODO: Is this RESTful?
+        match '/destroy' => 'wikis#destroy', :via => [:get, :post], :as => 'destroy'
       end
 
       member do
         post 'add_attachment'
         get 'annotate/:version' => 'wiki#annotate', :as => 'annotate'
-
-        # To display the confirmation
-        # TODO: Is this RESTful?
-        match '/destroy' => 'wikis#destroy', :via => [:get, :post], :as => 'destroy'
 
         get 'diff/:version(/vs/:version_from)' => 'wiki#diff', :as => 'diff'
         get 'history'
