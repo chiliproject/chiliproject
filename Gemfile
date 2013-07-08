@@ -10,8 +10,6 @@ gem "rdoc", ">= 2.4.2"
 gem "liquid", "~> 2.3.0"
 gem "acts-as-taggable-on", "= 2.1.0"
 gem 'gravatarify', '~> 3.0.0'
-# Needed only on RUBY_VERSION = 1.8, ruby 1.9+ compatible interpreters should bring their csv
-gem "fastercsv", "~> 1.5.0", :platforms => [:ruby_18, :jruby, :mingw_18]
 # TODO rails-3.2: review the core changes to awesome_nested_set and decide on actions
 gem 'awesome_nested_set'
 # TODO rails-3.2: review the core changes to open_id_authentication and decide on actions
@@ -67,7 +65,8 @@ end
 # warned.
 
 platforms :mri, :mingw, :rbx do
-  group :mysql2 do
+  # keep mysql group as backwards compat
+  group :mysql2, :mysql do
     gem "mysql2", "~> 0.2.7"
   end
 
@@ -78,13 +77,6 @@ platforms :mri, :mingw, :rbx do
 
   group :sqlite do
     gem "sqlite3"
-  end
-end
-
-platforms :mri_18, :mingw_18 do
-  group :mysql do
-    gem "mysql"
-    #   gem "ruby-mysql"
   end
 end
 
