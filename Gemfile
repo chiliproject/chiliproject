@@ -23,10 +23,15 @@ group :test do
   gem 'shoulda', '~> 2.11.0'
   # Shoulda doesn't work nice on 1.9.3 and seems to need test-unit explicitely…
   gem 'test-unit', :platforms => [:mri_19]
-  gem 'mocha', '0.12.1'
+  gem 'mocha'
   gem 'capybara'
   gem 'nokogiri'
   gem 'coveralls', :require => false
+
+  gem 'minitest'
+  gem 'turn'
+  gem 'minitest-matchers'
+  gem 'valid_attribute'
 end
 
 group :ldap do
