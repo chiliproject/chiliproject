@@ -34,6 +34,11 @@ group :test do
   gem 'capybara'
   gem 'nokogiri'
   gem 'coveralls', :require => false
+
+  gem 'minitest'
+  gem 'turn'
+  gem 'minitest-matchers'
+  gem 'valid_attribute'
 end
 
 group :ldap do
