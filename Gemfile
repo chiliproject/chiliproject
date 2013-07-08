@@ -25,6 +25,7 @@ group :test do
   gem 'capybara', '< 2.0.0'
   # nokogiri 1.6 requires ruby 1.9.2 or higher
   gem 'nokogiri', '< 1.6.0'
+  gem 'coveralls', :require => false
 end
 
 group :ldap do
