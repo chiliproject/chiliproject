@@ -240,8 +240,11 @@ class Redmine::Helpers::GanttTest < ActiveSupport::TestCase
                                :start_date => Date.yesterday,
                                :due_date => 1.week.from_now.to_date)
       @project.issues << @issue
-
-      @response.body = @gantt.lines
+      body = @gantt.lines
+      if body.respond_to?(:force_encoding) && Rails::VERSION::MAJOR < 3
+        body.force_encoding('UTF-8')
+      end
+      @response.body = body
     end
 
     context "project" do
@@ -760,7 +763,11 @@ class Redmine::Helpers::GanttTest < ActiveSupport::TestCase
     end
 
     should "have an issue tooltip" do
-      @response.body = @gantt.line_for_issue(@issue, {:format => :html, :zoom => 4})
+      body = @gantt.line_for_issue(@issue, {:format => :html, :zoom => 4})
+      if body.respond_to?(:force_encoding) && Rails::VERSION::MAJOR < 3
+        body.force_encoding('UTF-8')
+      end
+      @response.body = body
       issue_subject = @issue.subject
       if issue_subject.respond_to?(:force_encoding) && Rails::VERSION::MAJOR < 3
         issue_subject.force_encoding('UTF-8')
