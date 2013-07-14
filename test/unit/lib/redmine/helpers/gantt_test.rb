@@ -266,7 +266,11 @@ class Redmine::Helpers::GanttTest < ActiveSupport::TestCase
       should "be rendered" do
         assert_select "div.task_todo"
         assert_select "div.task.label", /#{@issue.done_ratio}/
-        assert_select "div.tooltip", /#{@issue.subject}/
+        issue_subject = @issue.subject
+        if issue_subject.respond_to?(:force_encoding) && Rails::VERSION::MAJOR < 3
+          issue_subject.force_encoding("UTF-8")
+        end
+        assert_select "div.tooltip", /#{issue_subject}/
       end
     end
   end
@@ -757,7 +761,11 @@ class Redmine::Helpers::GanttTest < ActiveSupport::TestCase
 
     should "have an issue tooltip" do
       @response.body = @gantt.line_for_issue(@issue, {:format => :html, :zoom => 4})
-      assert_select "div.tooltip", /#{@issue.subject}/
+      issue_subject = @issue.subject
+      if issue_subject.respond_to?(:force_encoding) && Rails::VERSION::MAJOR < 3
+        issue_subject.force_encoding('UTF-8')
+      end
+      assert_select "div.tooltip", /#{issue_subject}/
     end
 
     should "test the PNG format"
