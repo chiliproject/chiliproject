@@ -484,7 +484,10 @@ class MailHandlerTest < ActiveSupport::TestCase
     should "deliver an email error confirmation to the sender for a missing other attributes" do
       # Add a required custom field to simulate the error
       project = Project.find('onlinestore')
-      project.issue_custom_fields << IssueCustomField.generate(:name => 'Required Custom Field0', :is_required => true, :trackers => project.trackers)
+      project.issue_custom_fields << IssueCustomField.create(
+                                       :name => 'Required Custom Field0', :is_required => true, :trackers => project.trackers,
+                                       :field_format => 'string'
+                                     )
       project.save
 
       ActionMailer::Base.deliveries.clear
