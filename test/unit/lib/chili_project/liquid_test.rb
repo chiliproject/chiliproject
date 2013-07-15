@@ -14,6 +14,8 @@
 require File.expand_path('../../../../test_helper', __FILE__)
 
 class ChiliProject::LiquidTest < ActionView::TestCase
+  fixtures :all
+
   include ApplicationHelper
 
   context "hello_world tag" do
@@ -51,8 +53,8 @@ class ChiliProject::LiquidTest < ActionView::TestCase
         should "should list all wiki pages for the current project" do
           @project = Project.generate!.reload
           wiki = @project.wiki
-          top = WikiPage.generate!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
-          child1 = WikiPage.generate!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
+          top = WikiPage.create!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
+          child1 = WikiPage.create!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
 
           text = "{% child_pages %}"
           formatted = textilizable(text)
@@ -79,8 +81,8 @@ class ChiliProject::LiquidTest < ActionView::TestCase
       should "list all child pages for the wiki page" do
         @project = Project.generate!.reload
         wiki = @project.wiki
-        top = WikiPage.generate!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
-        child1 = WikiPage.generate!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
+        top = WikiPage.create!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
+        child1 = WikiPage.create!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
 
         text = "{% child_pages 'Top' %}"
         formatted = textilizable(text)
@@ -93,8 +95,8 @@ class ChiliProject::LiquidTest < ActionView::TestCase
       should "allow cross project listings even when outside of a project" do
         project = Project.generate!.reload # project not an ivar
         wiki = project.wiki
-        top = WikiPage.generate!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
-        child1 = WikiPage.generate!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
+        top = WikiPage.create!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
+        child1 = WikiPage.create!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
 
         text = "{% child_pages #{project.identifier}:'Top' %}"
         formatted = textilizable(text)
@@ -107,8 +109,8 @@ class ChiliProject::LiquidTest < ActionView::TestCase
       should "show the WikiPage when parent=1 is set" do
         @project = Project.generate!.reload
         wiki = @project.wiki
-        top = WikiPage.generate!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
-        child1 = WikiPage.generate!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
+        top = WikiPage.create!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
+        child1 = WikiPage.create!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
 
         text = "{% child_pages 'Top', 'parent=1' %}"
         formatted = textilizable(text)
@@ -124,8 +126,8 @@ class ChiliProject::LiquidTest < ActionView::TestCase
       should "render a warning" do
         @project = Project.generate!.reload
         wiki = @project.wiki
-        top = WikiPage.generate!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
-        child1 = WikiPage.generate!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
+        top = WikiPage.create!(:wiki => wiki, :title => 'Top', :content => WikiContent.new(:text => 'top page'))
+        child1 = WikiPage.create!(:wiki => wiki, :title => 'Child1', :content => WikiContent.new(:text => 'child'), :parent => top)
 
         text = "{% child_pages 1 %}"
         formatted = textilizable(text)
@@ -141,10 +143,10 @@ class ChiliProject::LiquidTest < ActionView::TestCase
     setup do
       @project = Project.generate!.reload
       @wiki = @project.wiki
-      @included_page = WikiPage.generate!(:wiki => @wiki, :title => 'Included_Page', :content => WikiContent.new(:text => 'included page [[Second_Page]]'))
+      @included_page = WikiPage.create!(:wiki => @wiki, :title => 'Included_Page', :content => WikiContent.new(:text => 'included page [[Second_Page]]'))
 
       @project2 = Project.generate!.reload
-      @cross_project_page = WikiPage.generate!(:wiki => @project2.wiki, :title => 'Second_Page', :content => WikiContent.new(:text => 'second page'))
+      @cross_project_page = WikiPage.create!(:wiki => @project2.wiki, :title => 'Second_Page', :content => WikiContent.new(:text => 'second page'))
 
     end
 
@@ -168,9 +170,9 @@ class ChiliProject::LiquidTest < ActionView::TestCase
 
     context "with recursive includes" do
       should "render all child pages" do
-        parent = WikiPage.generate!(:wiki => @wiki, :title => 'Recursive_Parent', :content => WikiContent.new(:text => "h1. Parent\r\n{% include 'Recursive_Child1' %}"))
-        child1 = WikiPage.generate!(:wiki => @wiki, :title => 'Recursive_Child1', :content => WikiContent.new(:text => "h1. Child1\r\n{% include 'Recursive_Child2' %}"))
-        child2 = WikiPage.generate!(:wiki => @wiki, :title => 'Recursive_Child2', :content => WikiContent.new(:text => 'h1. Child2'))
+        parent = WikiPage.create!(:wiki => @wiki, :title => 'Recursive_Parent', :content => WikiContent.new(:text => "h1. Parent\r\n{% include 'Recursive_Child1' %}"))
+        child1 = WikiPage.create!(:wiki => @wiki, :title => 'Recursive_Child1', :content => WikiContent.new(:text => "h1. Child1\r\n{% include 'Recursive_Child2' %}"))
+        child2 = WikiPage.create!(:wiki => @wiki, :title => 'Recursive_Child2', :content => WikiContent.new(:text => 'h1. Child2'))
 
         formatted = textilizable(parent.reload.text)
 
@@ -185,8 +187,8 @@ class ChiliProject::LiquidTest < ActionView::TestCase
 
     context "with a circular inclusion" do
       should "render a warning" do
-        circle_page = WikiPage.generate!(:wiki => @wiki, :title => 'Circle', :content => WikiContent.new(:text => '{% include "Circle2" %}'))
-        circle_page2 = WikiPage.generate!(:wiki => @wiki, :title => 'Circle2', :content => WikiContent.new(:text => '{% include "Circle" %}'))
+        circle_page = WikiPage.create!(:wiki => @wiki, :title => 'Circle', :content => WikiContent.new(:text => '{% include "Circle2" %}'))
+        circle_page2 = WikiPage.create!(:wiki => @wiki, :title => 'Circle2', :content => WikiContent.new(:text => '{% include "Circle" %}'))
         formatted = textilizable(circle_page.reload.text)
 
         assert_match /flash error/, formatted
