@@ -15,8 +15,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class IssueDropTest < ActiveSupport::TestCase
-  fixtures :all
-
   include ApplicationHelper
 
   def setup
@@ -24,7 +22,7 @@ class IssueDropTest < ActiveSupport::TestCase
     @issue = Issue.generate_for_project!(@project)
     User.current = @user = User.generate!
     @role = Role.generate!(:permissions => [:view_issues])
-    Member.create!(:principal => @user, :project => @project, :roles => [@role])
+    Member.generate!(:principal => @user, :project => @project, :roles => [@role])
     @drop = @issue.to_liquid
   end
 
@@ -33,6 +31,7 @@ class IssueDropTest < ActiveSupport::TestCase
       assert @drop.is_a?(IssueDrop), "drop is not a IssueDrop"
     end
   end
+
 
   [
    :tracker,
@@ -57,14 +56,15 @@ class IssueDropTest < ActiveSupport::TestCase
     should "IssueDrop##{attribute} should return the actual #{attribute} attribute" do
       assert @issue.respond_to?(attribute), "Issue does not have an #{attribute} method"
       assert @drop.respond_to?(attribute), "IssueDrop does not have an #{attribute} method"
+
       assert_equal @issue.send(attribute), @drop.send(attribute)
     end
   end
 
   context "custom fields" do
     setup do
-      @field = IssueCustomField.create!(:name => 'The Name', :field_format => 'string', :is_for_all => true, :trackers => @project.trackers)
-      @field_name_conflict = IssueCustomField.create!(:name => 'Subject', :field_format => 'string', :is_for_all => true, :trackers => @project.trackers)
+      @field = IssueCustomField.generate!(:name => 'The Name', :field_format => 'string', :is_for_all => true, :trackers => @project.trackers)
+      @field_name_conflict = IssueCustomField.generate!(:name => 'Subject', :field_format => 'string', :is_for_all => true, :trackers => @project.trackers)
       @issue.custom_fields = [{'id' => @field.id, 'value' => 'Custom field value'},
                               {'id' => @field_name_conflict.id, 'value' => 'Second subject'}]
       assert @issue.save
