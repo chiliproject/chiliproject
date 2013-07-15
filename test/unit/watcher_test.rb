@@ -124,8 +124,8 @@ class WatcherTest < ActiveSupport::TestCase
 
   context "group watch" do
     setup do
-      @group = Group.generate!
-      Member.generate!(:project => Project.find(1), :roles => [Role.find(1)], :principal => @group)
+      @group = Group.create!(:lastname => "test")
+      Member.create!(:project => Project.find(1), :roles => [Role.find(1)], :principal => @group)
       @group.users << @user = User.find(1)
       @group.users << @user2 = User.find(2)
     end
