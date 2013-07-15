@@ -132,9 +132,7 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "select the exact matching user first" do
-      case_sensitive_user = User.generate! do |user|
-        user.password = "admin"
-      end
+      case_sensitive_user = User.generate_with_protected!(:login => 'changed', :password => 'admin', :password_confirmation => 'admin')
       # bypass validations to make it appear like existing data
       case_sensitive_user.update_attribute(:login, 'ADMIN')
 
@@ -282,7 +280,7 @@ class UserTest < ActiveSupport::TestCase
 
     should "return the existing api token value" do
       user = User.generate_with_protected!
-      token = Token.create!(:action => 'api')
+      token = Token.generate!(:action => 'api')
       user.api_token = token
       assert user.save
 
@@ -297,7 +295,7 @@ class UserTest < ActiveSupport::TestCase
 
     should "return nil if the key is found for an inactive user" do
       user = User.generate_with_protected!(:status => User::STATUS_LOCKED)
-      token = Token.create!(:action => 'api')
+      token = Token.generate!(:action => 'api')
       user.api_token = token
       user.save
 
@@ -306,7 +304,7 @@ class UserTest < ActiveSupport::TestCase
 
     should "return the user if the key is found for an active user" do
       user = User.generate_with_protected!(:status => User::STATUS_ACTIVE)
-      token = Token.create!(:action => 'api')
+      token = Token.generate!(:action => 'api')
       user.api_token = token
       user.save
 
@@ -422,6 +420,7 @@ class UserTest < ActiveSupport::TestCase
       user.auth_source = denied_auth_source
       assert !user.change_password_allowed?, "User allowed to change password, though auth source does not"
     end
+
   end
 
   context "#allowed_to?" do
