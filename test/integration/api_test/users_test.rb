@@ -244,6 +244,12 @@ class ApiTest::UsersTest < ActionController::IntegrationTest
   end
 
   context "DELETE /users/:temp:" do
+    setup do
+      @parameters = {:user => {:login => 'jsmith',
+                     :firstname => 'John', :lastname => 'Renamed',
+                     :mail => 'jsmith@somenet.foo'}}
+    end
+
     context ".xml" do
       should "delete the user" do
         u = User.new(:firstname => 'Death', :lastname => 'Row', :mail => 'death.row@example.com', :language => 'en')
@@ -252,7 +258,7 @@ class ApiTest::UsersTest < ActionController::IntegrationTest
         u.save!
 
         assert_difference('User.count',-1) do
-          delete "/users/#{u.id}.xml", {}, credentials('admin')
+          delete "/users/#{u.id}.xml", @parameters, credentials('admin')
         end
 
         assert_response :success
@@ -261,7 +267,7 @@ class ApiTest::UsersTest < ActionController::IntegrationTest
 
       should "not delete active user" do
         assert_difference('User.count',0) do
-          delete "/users/2.xml", {}, :authorization => credentials('jsmith')
+          delete "/users/2.xml", @parameters, credentials('jsmith')
         end
         assert_response :forbidden
       end
@@ -275,7 +281,7 @@ class ApiTest::UsersTest < ActionController::IntegrationTest
         u.save!
 
         assert_difference('User.count',-1) do
-          delete "/users/#{u.id}.json", {}, credentials('admin')
+          delete "/users/#{u.id}.json", @parameters, credentials('admin')
         end
 
         assert_response :success
@@ -284,7 +290,7 @@ class ApiTest::UsersTest < ActionController::IntegrationTest
 
       should "not delete active user" do
         assert_difference('User.count',0) do
-          delete "/users/2.json", {}, :authorization => credentials('jsmith')
+          delete "/users/2.json", @parameters, credentials('jsmith')
         end
         assert_response :forbidden
       end
