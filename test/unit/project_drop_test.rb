@@ -59,7 +59,7 @@ class ProjectDropTest < ActiveSupport::TestCase
     @project = Project.generate!
     User.current = @user = User.generate!
     @role = Role.generate!
-    Member.generate!(:principal => @user, :project => @project, :roles => [@role])
+    Member.create!(:principal => @user, :project => @project, :roles => [@role])
     @drop = @project.to_liquid
   end
 
