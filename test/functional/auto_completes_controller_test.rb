@@ -84,11 +84,17 @@ class AutoCompletesControllerTest < ActionController::TestCase
 
   context "GET :users" do
     setup do
-      @login = User.generate!(:login => 'Acomplete')
-      @firstname = User.generate!(:firstname => 'Complete')
-      @lastname = User.generate!(:lastname => 'Complete')
-      @none = User.generate!(:login => 'hello', :firstname => 'ABC', :lastname => 'DEF')
-      @inactive = User.generate!(:firstname => 'Complete', :status => User::STATUS_LOCKED)
+      if @login.nil?
+        @login = User.new(:firstname => "new", :lastname => "user", :mail => "newuser@somenet.foo")
+        @login.login = "Acomplete"
+        @login.password, @login.password_confirmation = "password", "password"
+        assert @login.save
+      end
+      assert_equal @login.login, 'Acomplete'
+      @firstname ||= User.generate!(:firstname => 'Complete').reload
+      @lastname ||= User.generate!(:lastname => 'Complete').reload
+      @none ||= User.generate!(:login => 'hello', :firstname => 'ABC', :lastname => 'DEF').reload
+      @inactive ||= User.generate!(:firstname => 'Complete', :status => User::STATUS_LOCKED).reload
     end
 
     context "with no restrictions" do
