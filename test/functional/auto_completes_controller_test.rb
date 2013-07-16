@@ -31,21 +31,39 @@ class AutoCompletesControllerTest < ActionController::TestCase
     assert assigns(:issues).include?(Issue.find(13))
   end
 
-  test 'should return issues matching a given id' do
-    @project = Project.find('subproject1')
-    @issue_21 = Issue.generate_for_project!(@project, :id => 21)
-    @issue_2101 = Issue.generate_for_project!(@project, :id => 2101)
-    @issue_2102 = Issue.generate_for_project!(@project, :id => 2102)
-    @issue_with_subject = Issue.generate_for_project!(@project, :subject => 'This has 21 in the subject')
+  def test_should_return_issues_matching_a_given_id
+    project = Project.find('subproject1')
+    issue_21 = Issue.new(:project_id => project.id, :tracker_id => project.trackers.first.id,
+                         :author_id => User.find(2).id,
+                         :priority => IssuePriority.all.first,
+                         :subject => 'test_create')
+    issue_21.id = 21
+    issue_21.save!
+    assert_equal 21, issue_21.id
+    issue_2101 = Issue.new(:project_id => project.id, :tracker_id => project.trackers.first.id,
+                         :author_id => User.find(2).id,
+                         :priority => IssuePriority.all.first,
+                         :subject => 'test_create')
+    issue_2101.id = 2101
+    issue_2101.save!
+    assert_equal 2101, issue_2101.id
+    issue_2102 = Issue.new(:project_id => project.id, :tracker_id => project.trackers.first.id,
+                         :author_id => User.find(2).id,
+                         :priority => IssuePriority.all.first,
+                         :subject => 'test_create')
+    issue_2102.id = 2102
+    issue_2102.save!
+    assert_equal 2102, issue_2102.id
+    issue_with_subject = Issue.generate_for_project!(project, :subject => 'This has 21 in the subject')
+    project.reload
 
-    get :issues, :project_id => @project.id, :q => '21'
-
+    get :issues, :project_id => project.id, :q => '21'
     assert_response :success
     assert_not_nil assigns(:issues)
-    assert assigns(:issues).include?(@issue_21)
-    assert assigns(:issues).include?(@issue_2101)
-    assert assigns(:issues).include?(@issue_2102)
-    assert assigns(:issues).include?(@issue_with_subject)
+    assert assigns(:issues).include?(issue_21)
+    assert assigns(:issues).include?(issue_2101)
+    assert assigns(:issues).include?(issue_2102)
+    assert assigns(:issues).include?(issue_with_subject)
     assert_equal assigns(:issues).size, assigns(:issues).uniq.size, "Issues list includes duplicates"
   end
 
