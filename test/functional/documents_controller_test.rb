@@ -121,7 +121,7 @@ LOREM
     setup do
       @request.session[:user_id] = 2
       set_tmp_attachments_directory
-      @document = Document.generate!(:project => Project.find('ecookbook'),
+      @document = Document.create!(:project => Project.find('ecookbook'),
                                      :title => 'Test')
     end
 
@@ -160,7 +160,7 @@ LOREM
     setup do
       @request.session[:user_id] = 2
       set_tmp_attachments_directory
-      @document = Document.generate!(:project => Project.find('ecookbook'),
+      @document = Document.create!(:project => Project.find('ecookbook'),
                                      :title => 'Test')
     end
 
