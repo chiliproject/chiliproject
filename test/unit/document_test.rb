@@ -70,14 +70,11 @@ class DocumentTest < ActiveSupport::TestCase
 
   context "#recipients" do
     should "include watchers" do
-      document = Document.generate!(:project => Project.find(1))
+      document = Document.create!(:project => Project.find(1), :title => "test")
       user = User.find(1)
       assert document.add_watcher(user)
-
       assert document.save
-
       assert document.recipients.include?(user.mail), "Watcher not included in recipients"
     end
   end
-
 end
