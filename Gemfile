@@ -35,7 +35,7 @@ group :test do
   gem 'nokogiri'
   gem 'coveralls', :require => false
 
-  gem 'minitest'
+  gem 'minitest', '~> 4.0'
   gem 'turn'
   gem 'minitest-matchers'
   gem 'valid_attribute'
