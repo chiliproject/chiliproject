@@ -69,20 +69,17 @@ class JournalObserverTest < ActiveSupport::TestCase
       Setting.notified_events = ['issue_status_updated']
       assert_difference('ActionMailer::Base.deliveries.size', 2) do
         @issue.init_journal(@user)
-        @issue.status = IssueStatus.generate!
+        @issue.status = IssueStatus.create!(:name => "test")
         assert @issue.save
-
       end
-
     end
 
     should "not send a notification with not configured" do
       Setting.notified_events = []
       assert_no_difference('ActionMailer::Base.deliveries.size') do
         @issue.init_journal(@user)
-        @issue.status = IssueStatus.generate!
+        @issue.status = IssueStatus.create!(:name => "test")
         assert @issue.save
-
       end
     end
   end
@@ -92,20 +89,18 @@ class JournalObserverTest < ActiveSupport::TestCase
       Setting.notified_events = ['issue_priority_updated']
       assert_difference('ActionMailer::Base.deliveries.size', 2) do
         @issue.init_journal(@user)
-        @issue.priority = IssuePriority.generate!
+        @issue.priority = IssuePriority.create!(:name => "test")
         assert @issue.save
       end
-
     end
 
     should "not send a notification with not configured" do
       Setting.notified_events = []
       assert_no_difference('ActionMailer::Base.deliveries.size') do
         @issue.init_journal(@user)
-        @issue.priority = IssuePriority.generate!
+        @issue.priority = IssuePriority.create!(:name => "test")
         assert @issue.save
       end
-
     end
   end
 end
