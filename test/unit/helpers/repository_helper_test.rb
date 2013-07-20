@@ -13,7 +13,7 @@
 #++
 require File.expand_path('../../../test_helper', __FILE__)
 
-class RepositoryHelperTest < HelperTestCase
+class RepositoryHelperTest < ActionView::TestCase
   include RepositoriesHelper
 
   def test_from_latin1_to_utf8_for_repositories
