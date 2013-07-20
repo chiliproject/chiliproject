@@ -15,8 +15,7 @@
 # DECREACATED SINCE 3.0 - TO BE REMOVED IN 4.0
 # The whole macro concept is deprecated. It is to be completely replaced by
 # Liquid tags and variables.
-
-require 'dispatcher'
+#require 'dispatcher'
 
 module Redmine
   module WikiFormatting
