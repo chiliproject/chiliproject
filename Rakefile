@@ -7,4 +7,4 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/task'
 
-Rails::Application.load_tasks
+Redmine::Application.load_tasks
