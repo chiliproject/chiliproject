@@ -14,7 +14,7 @@
 
 require File.expand_path('../../../../../test_helper', __FILE__)
 
-class Redmine::WikiFormatting::NullFormatterTest < HelperTestCase
+class Redmine::WikiFormatting::NullFormatterTest < ActionView::TestCase
 
   def setup
     @formatter = Redmine::WikiFormatting::NullFormatter::Formatter
