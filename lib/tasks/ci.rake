@@ -46,7 +46,7 @@ namespace :ci do
         YAML.dump({"test" => database_yml}, f)
       end
 
-      # Rake::Task["generate_session_store"].invoke
+      Rake::Task["generate_session_store"].invoke
 
       # Create and migrate the database
       Rake::Task["db:create"].invoke
