@@ -13,7 +13,7 @@
 #++
 require File.expand_path('../../../test_helper', __FILE__)
 
-class TimelogHelperTest < HelperTestCase
+class TimelogHelperTest < ActionView::TestCase
   include TimelogHelper
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::DateHelper

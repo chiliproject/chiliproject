@@ -13,9 +13,7 @@
 #++
 require File.expand_path('../../../../../test_helper', __FILE__)
 
-
-
-class Redmine::MenuManager::MenuHelperTest < HelperTestCase
+class Redmine::MenuManager::MenuHelperTest < ActionView::TestCase
   include Redmine::MenuManager::MenuHelper
   include ActionController::Assertions::SelectorAssertions
   fixtures :users, :members, :projects, :enabled_modules
