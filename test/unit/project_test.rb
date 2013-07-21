@@ -25,7 +25,7 @@ class ProjectTest < ActiveSupport::TestCase
   should validate_presence_of :name
   should validate_presence_of :identifier
 
-  should_validate_uniqueness_of :identifier
+  should validate_uniqueness_of :identifier
 
   context "associations" do
     should have_many :members
