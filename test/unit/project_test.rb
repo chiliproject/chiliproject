@@ -44,8 +44,8 @@ class ProjectTest < ActiveSupport::TestCase
     should have_many :boards
     should have_many(:changesets).through(:repository)
 
-    should_have_one :repository
-    should_have_one :wiki
+    should have_one :repository
+    should have_one :wiki
 
     should_have_and_belong_to_many :trackers
     should_have_and_belong_to_many :issue_custom_fields
