@@ -33,7 +33,7 @@ class ReportsControllerTest < ActionController::TestCase
       get :issue_report, :id => 1
     end
 
-    should_respond_with :success
+    should respond_with :success
     should render_template :issue_report
 
     [:issues_by_tracker, :issues_by_version, :issues_by_category, :issues_by_assigned_to,
@@ -52,7 +52,7 @@ class ReportsControllerTest < ActionController::TestCase
           get :issue_report_details, :id => 1, :detail => detail
         end
 
-        should_respond_with :success
+        should respond_with :success
         should render_template :issue_report_details
         should assign_to :field
         should assign_to :rows
@@ -66,7 +66,7 @@ class ReportsControllerTest < ActionController::TestCase
         get :issue_report_details, :id => 1, :detail => 'invalid'
       end
 
-      should_respond_with :redirect
+      should respond_with :redirect
       should redirect_to('the issue report'){
                 {:controller => 'reports',
                  :action => 'issue_report', :id => 'ecookbook'}
