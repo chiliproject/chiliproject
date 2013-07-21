@@ -34,7 +34,7 @@ class ReportsControllerTest < ActionController::TestCase
     end
 
     should_respond_with :success
-    should_render_template :issue_report
+    should render_template :issue_report
 
     [:issues_by_tracker, :issues_by_version, :issues_by_category, :issues_by_assigned_to,
      :issues_by_author, :issues_by_subproject].each do |ivar|
@@ -53,7 +53,7 @@ class ReportsControllerTest < ActionController::TestCase
         end
 
         should_respond_with :success
-        should_render_template :issue_report_details
+        should render_template :issue_report_details
         should assign_to :field
         should assign_to :rows
         should assign_to :data
