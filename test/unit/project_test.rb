@@ -22,8 +22,8 @@ class ProjectTest < ActiveSupport::TestCase
     User.current = nil
   end
 
-  should_validate_presence_of :name
-  should_validate_presence_of :identifier
+  should validate_presence_of :name
+  should validate_presence_of :identifier
 
   should_validate_uniqueness_of :identifier
 
