@@ -67,7 +67,10 @@ class ReportsControllerTest < ActionController::TestCase
       end
 
       should_respond_with :redirect
-      should_redirect_to('the issue report') {{:controller => 'reports', :action => 'issue_report', :id => 'ecookbook'}}
+      should redirect_to('the issue report'){
+                {:controller => 'reports',
+                 :action => 'issue_report', :id => 'ecookbook'}
+                 }
     end
 
   end
