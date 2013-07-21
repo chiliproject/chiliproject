@@ -424,7 +424,7 @@ class WikiControllerTest < ActionController::TestCase
     should_respond_with :success
     should assign_to :pages
     should assign_to :pages_by_date
-    should_render_template 'wiki/date_index'
+    should render_template 'wiki/date_index'
 
     should "include atom link" do
       assert_tag 'a', :attributes => { :href => '/projects/ecookbook/activity.atom?show_wiki_edits=1'}
