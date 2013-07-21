@@ -38,7 +38,7 @@ class ReportsControllerTest < ActionController::TestCase
 
     [:issues_by_tracker, :issues_by_version, :issues_by_category, :issues_by_assigned_to,
      :issues_by_author, :issues_by_subproject].each do |ivar|
-      should_assign_to ivar
+      should assign_to ivar
       should "set a value for #{ivar}" do
         assert assigns[ivar.to_s].present?
       end
@@ -54,10 +54,10 @@ class ReportsControllerTest < ActionController::TestCase
 
         should_respond_with :success
         should_render_template :issue_report_details
-        should_assign_to :field
-        should_assign_to :rows
-        should_assign_to :data
-        should_assign_to :report_title
+        should assign_to :field
+        should assign_to :rows
+        should assign_to :data
+        should assign_to :report_title
       end
     end
 
