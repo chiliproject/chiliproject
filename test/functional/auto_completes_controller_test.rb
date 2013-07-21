@@ -195,8 +195,8 @@ class AutoCompletesControllerTest < ActionController::TestCase
 
       end
 
-      should_assign_to(:principal) { @user }
-      should_assign_to(:projects) { @projects }
+      should assign_to(:principal).with(@user)
+      should assign_to(:projects).with(@projects)
       should_render_template :projects
     end
 
@@ -212,8 +212,8 @@ class AutoCompletesControllerTest < ActionController::TestCase
         }
 
       end
-      should_assign_to(:principal) { @user }
-      should_assign_to(:projects) { [] }
+      should assign_to(:principal).with(@user)
+      should assign_to(:projects).with([])
       should_render_template :projects
 
     end
