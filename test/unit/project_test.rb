@@ -47,8 +47,8 @@ class ProjectTest < ActiveSupport::TestCase
     should have_one :repository
     should have_one :wiki
 
-    should_have_and_belong_to_many :trackers
-    should_have_and_belong_to_many :issue_custom_fields
+    should have_and_belong_to_many :trackers
+    should have_and_belong_to_many :issue_custom_fields
   end
 
   def test_truth
