@@ -35,7 +35,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
     should assign_to :auth_sources
     should assign_to :auth_source_pages
     should respond_with :success
-    should_render_template :index
+    should render_template :index
   end
 
   context "get :new" do
@@ -45,7 +45,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
 
     should assign_to :auth_source
     should respond_with :success
-    should_render_template :new
+    should render_template :new
 
     should "initilize a new AuthSource" do
       assert_equal AuthSource, assigns(:auth_source).class
@@ -71,7 +71,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
 
     should assign_to(:auth_source).with(@auth_source)
     should respond_with :success
-    should_render_template :edit
+    should render_template :edit
   end
 
   context "post :update" do
