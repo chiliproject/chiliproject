@@ -32,8 +32,8 @@ class AuthSourcesControllerTest < ActionController::TestCase
       get :index
     end
 
-    should_assign_to :auth_sources
-    should_assign_to :auth_source_pages
+    should assign_to :auth_sources
+    should assign_to :auth_source_pages
     should_respond_with :success
     should_render_template :index
   end
@@ -43,7 +43,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
       get :new
     end
 
-    should_assign_to :auth_source
+    should assign_to :auth_source
     should_respond_with :success
     should_render_template :new
 
@@ -69,7 +69,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
       get :edit, :id => @auth_source.id
     end
 
-    should_assign_to(:auth_source) {@auth_source}
+    should assign_to(:auth_source).with(@auth_source)
     should_respond_with :success
     should_render_template :edit
   end
