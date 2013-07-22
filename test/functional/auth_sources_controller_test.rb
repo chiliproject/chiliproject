@@ -60,7 +60,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
 
     should_respond_with :redirect
     should_redirect_to("index") {{:action => 'index'}}
-    should_set_the_flash_to /success/i
+    should set_the_flash.to /success/i
   end
 
   context "get :edit" do
@@ -82,7 +82,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
 
     should_respond_with :redirect
     should_redirect_to("index") {{:action => 'index'}}
-    should_set_the_flash_to /update/i
+    should set_the_flash.to /update/i
   end
 
   context "post :destroy" do
@@ -97,7 +97,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
 
       should_respond_with :redirect
       should_redirect_to("index") {{:action => 'index'}}
-      should_set_the_flash_to /deletion/i
+      should set_the_flash.to /deletion/i
     end
 
     context "with users" do
