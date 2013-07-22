@@ -58,7 +58,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
       post :create, :auth_source => {:name => 'Test'}
     end
 
-    should_respond_with :redirect
+    should respond_with :redirect
     should redirect_to("index") {{:action => 'index'}}
     should set_the_flash.to /success/i
   end
@@ -80,7 +80,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
       post :update, :id => @auth_source.id, :auth_source => {:name => 'TestUpdate'}
     end
 
-    should_respond_with :redirect
+    should respond_with :redirect
     should redirect_to("index") {{:action => 'index'}}
     should set_the_flash.to /update/i
   end
@@ -95,7 +95,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
         post :destroy, :id => @auth_source.id
       end
 
-      should_respond_with :redirect
+      should respond_with :redirect
       should redirect_to("index") {{:action => 'index'}}
       should set_the_flash.to /deletion/i
     end
@@ -106,7 +106,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
         post :destroy, :id => @auth_source.id
       end
 
-      should_respond_with :redirect
+      should respond_with :redirect
       should "not destroy the AuthSource" do
         assert AuthSource.find(@auth_source.id)
       end
