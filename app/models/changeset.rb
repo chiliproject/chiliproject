@@ -40,6 +40,8 @@ class Changeset < ActiveRecord::Base
   named_scope :visible, lambda {|*args| { :include => {:repository => :project},
                                           :conditions => Project.allowed_to_condition(args.first || User.current, :view_changesets) } }
 
+  after_create :scan_for_issues
+
   def revision=(r)
     write_attribute :revision, (r.nil? ? nil : r.to_s)
   end
@@ -98,7 +100,7 @@ class Changeset < ActiveRecord::Base
     self.user = repository.find_committer_user(self.committer)
   end
 
-  def after_create
+  def scan_for_issues
     scan_comment_for_issue_ids
   end
 
