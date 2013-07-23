@@ -38,11 +38,11 @@ class Changeset < ActiveRecord::Base
   validates_uniqueness_of :scmid, :scope => :repository_id, :allow_nil => true
 
   before_create :before_create_cs
+  after_create :scan_for_issues
 
-  named_scope :visible, lambda {|*args| { :include => {:repository => :project},
+  scope :visible, lambda {|*args| { :include => {:repository => :project},
                                           :conditions => Project.allowed_to_condition(args.first || User.current, :view_changesets) } }
 
-  after_create :scan_for_issues
 
   def revision=(r)
     write_attribute :revision, (r.nil? ? nil : r.to_s)
