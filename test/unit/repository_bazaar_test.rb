@@ -31,7 +31,7 @@ class RepositoryBazaarTest < ActiveSupport::TestCase
   if File.directory?(REPOSITORY_PATH)
     def test_fetch_changesets_from_scratch
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       assert_equal 4, @repository.changesets.count
       assert_equal 9, @repository.changes.count
@@ -42,7 +42,7 @@ class RepositoryBazaarTest < ActiveSupport::TestCase
       @repository.fetch_changesets
       # Remove changesets with revision > 5
       @repository.changesets.find(:all).each {|c| c.destroy if c.revision.to_i > 2}
-      @repository.reload
+      @project.reload
       assert_equal 2, @repository.changesets.count
 
       @repository.fetch_changesets
@@ -70,28 +70,28 @@ class RepositoryBazaarTest < ActiveSupport::TestCase
 
     def test_previous
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       changeset = @repository.find_changeset_by_name('3')
       assert_equal @repository.find_changeset_by_name('2'), changeset.previous
     end
 
     def test_previous_nil
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       changeset = @repository.find_changeset_by_name('1')
       assert_nil changeset.previous
     end
 
     def test_next
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       changeset = @repository.find_changeset_by_name('2')
       assert_equal @repository.find_changeset_by_name('3'), changeset.next
     end
 
     def test_next_nil
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       changeset = @repository.find_changeset_by_name('4')
       assert_nil changeset.next
     end
