@@ -15,11 +15,13 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class ProjectDropTest < ActiveSupport::TestCase
+  fixtures :all
+
   def setup
     @project = Project.generate!
     User.current = @user = User.generate!
     @role = Role.generate!
-    Member.generate!(:principal => @user, :project => @project, :roles => [@role])
+    Member.create!(:principal => @user, :project => @project, :roles => [@role])
     @drop = @project.to_liquid
   end
 
