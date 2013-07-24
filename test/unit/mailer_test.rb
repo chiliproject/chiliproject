@@ -14,9 +14,15 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class MailerTest < ActiveSupport::TestCase
-  include Redmine::I18n
-  include ActionController::Assertions::SelectorAssertions
-  fixtures :all
+  include ActionDispatch::Assertions::SelectorAssertions
+  
+  fixtures :projects, :enabled_modules, :issues, :users, :members,
+           :member_roles, :roles, :documents, :attachments, :news,
+           :tokens, :journals, :journal_details, :changesets, :trackers,
+           :issue_statuses, :enumerations, :messages, :boards, :repositories,
+           :wikis, :wiki_pages, :wiki_contents, :wiki_content_versions,
+           :versions,
+           :comments
 
   def setup
     User.current = nil # Clear current user in case of tests setting it and leaking data
