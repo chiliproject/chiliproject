@@ -78,11 +78,11 @@ class Project < ActiveRecord::Base
 
   before_destroy :delete_all_members
 
-  named_scope :has_module, lambda { |mod| { :conditions => ["#{Project.table_name}.id IN (SELECT em.project_id FROM #{EnabledModule.table_name} em WHERE em.name=?)", mod.to_s] } }
-  named_scope :active, { :conditions => "#{Project.table_name}.status = #{STATUS_ACTIVE}"}
-  named_scope :all_public, { :conditions => { :is_public => true } }
-  named_scope :visible, lambda { { :conditions => Project.visible_by(User.current) } }
-  named_scope :like, lambda {|q|
+  scope :has_module, lambda { |mod| { :conditions => ["#{Project.table_name}.id IN (SELECT em.project_id FROM #{EnabledModule.table_name} em WHERE em.name=?)", mod.to_s] } }
+  scope :active, { :conditions => "#{Project.table_name}.status = #{STATUS_ACTIVE}"}
+  scope :all_public, { :conditions => { :is_public => true } }
+  scope :visible, lambda { { :conditions => Project.visible_by(User.current) } }
+  scope :like, lambda {|q|
     s = "%#{q.to_s.strip.downcase}%"
     {
       :conditions => ["LOWER(name) LIKE ?", s]
