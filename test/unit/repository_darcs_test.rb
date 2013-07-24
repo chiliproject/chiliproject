@@ -30,7 +30,7 @@ class RepositoryDarcsTest < ActiveSupport::TestCase
   if File.directory?(REPOSITORY_PATH)
     def test_fetch_changesets_from_scratch
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       assert_equal 6, @repository.changesets.count
       assert_equal 13, @repository.changes.count
@@ -41,7 +41,7 @@ class RepositoryDarcsTest < ActiveSupport::TestCase
       @repository.fetch_changesets
       # Remove changesets with revision > 3
       @repository.changesets.find(:all).each {|c| c.destroy if c.revision.to_i > 3}
-      @repository.reload
+      @project.reload
       assert_equal 3, @repository.changesets.count
 
       @repository.fetch_changesets
@@ -50,7 +50,7 @@ class RepositoryDarcsTest < ActiveSupport::TestCase
 
     def test_deleted_files_should_not_be_listed
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       entries = @repository.entries('sources')
       assert entries.detect {|e| e.name == 'watchers_controller.rb'}
       assert_nil entries.detect {|e| e.name == 'welcome_controller.rb'}
