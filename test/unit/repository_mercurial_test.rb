@@ -44,7 +44,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
   if File.directory?(REPOSITORY_PATH)
     def test_fetch_changesets_from_scratch
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       assert_equal 29, @repository.changesets.count
       assert_equal 37, @repository.changes.count
       assert_equal "Initial import.\nThe repository contains 3 files.",
@@ -55,7 +55,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
       @repository.fetch_changesets
       # Remove changesets with revision > 2
       @repository.changesets.find(:all).each {|c| c.destroy if c.revision.to_i > 2}
-      @repository.reload
+      @project.reload
       assert_equal 3, @repository.changesets.count
 
       @repository.fetch_changesets
@@ -66,7 +66,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
       # Template keyword 'isodatesec' supported in Mercurial 1.0 and higher
       if @repository.scm.class.client_version_above?([1, 0])
         @repository.fetch_changesets
-        @repository.reload
+        @project.reload
         rev0_committed_on = Time.gm(2007, 12, 14, 9, 22, 52)
         assert_equal @repository.changesets.find_by_revision('0').committed_on, rev0_committed_on
       end
@@ -74,7 +74,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_changeset_order_by_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       c0 = @repository.latest_changeset
       c1 = @repository.changesets.find_by_revision('0')
@@ -85,7 +85,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_latest_changesets
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       # with_limit
       changesets = @repository.latest_changesets('', nil, 2)
@@ -156,7 +156,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_copied_files
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       cs1 = @repository.changesets.find_by_revision('13')
       assert_not_nil cs1
@@ -189,7 +189,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_find_changeset_by_name
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       %w|2 400bb8672109 400|.each do |r|
         assert_equal '2', @repository.find_changeset_by_name(r).revision
       end
@@ -197,27 +197,27 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_find_changeset_by_invalid_name
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       assert_nil @repository.find_changeset_by_name('100000')
     end
 
     def test_identifier
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       c = @repository.changesets.find_by_revision('2')
       assert_equal c.scmid, c.identifier
     end
 
     def test_format_identifier
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       c = @repository.changesets.find_by_revision('2')
       assert_equal '2:400bb8672109', c.format_identifier
     end
 
     def test_find_changeset_by_empty_name
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       ['', ' ', nil].each do |r|
         assert_nil @repository.find_changeset_by_name(r)
       end
@@ -235,7 +235,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_previous
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       %w|28 3ae45e2d177d 3ae45|.each do |r1|
         changeset = @repository.find_changeset_by_name(r1)
         %w|27 7bbf4c738e71 7bbf|.each do |r2|
@@ -246,7 +246,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_previous_nil
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       %w|0 0885933ad4f6 0885|.each do |r1|
         changeset = @repository.find_changeset_by_name(r1)
         assert_nil changeset.previous
@@ -255,7 +255,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_next
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       %w|27 7bbf4c738e71 7bbf|.each do |r2|
         changeset = @repository.find_changeset_by_name(r2)
         %w|28 3ae45e2d177d 3ae45|.each do |r1|
@@ -266,7 +266,7 @@ class RepositoryMercurialTest < ActiveSupport::TestCase
 
     def test_next_nil
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       %w|28 3ae45e2d177d 3ae45|.each do |r1|
         changeset = @repository.find_changeset_by_name(r1)
         assert_nil changeset.next
