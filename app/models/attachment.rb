@@ -40,6 +40,9 @@ class Attachment < ActiveRecord::Base
   acts_as_activity :type => 'documents', :permission => :view_documents,
         :find_options => { :include => { :document => :project } }
 
+  after_destroy :delete_from_disk
+  before_save :files_to_final_location
+
   # This method is called on save by the AttachmentJournal in order to
   # decide which kind of activity we are dealing with. When that activity
   # is retrieved later, we don't need to check the container_type in
@@ -56,7 +59,7 @@ class Attachment < ActiveRecord::Base
   end
 
   cattr_accessor :storage_path
-  @@storage_path = Redmine::Configuration['attachments_storage_path'] || "#{RAILS_ROOT}/files"
+  @@storage_path = Redmine::Configuration['attachments_storage_path'] || Rails.root.join("files")
 
   def validate
     if self.filesize > Setting.attachment_max_size.to_i.kilobytes
@@ -85,7 +88,7 @@ class Attachment < ActiveRecord::Base
 
   # Copies the temporary file to its final location
   # and computes its MD5 hash
-  def before_save
+  def files_to_final_location
     if @temp_file && (@temp_file.size > 0)
       logger.debug("saving '#{self.diskfile}'")
       md5 = Digest::MD5.new
@@ -105,7 +108,7 @@ class Attachment < ActiveRecord::Base
   end
 
   # Deletes file on the disk
-  def after_destroy
+  def delete_from_disk
     File.delete(diskfile) if !filename.blank? && File.exist?(diskfile)
   end
 
