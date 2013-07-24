@@ -42,6 +42,7 @@ class Attachment < ActiveRecord::Base
         :find_options => { :include => { :document => :project } }
 
   after_destroy :delete_from_disk
+  before_save :files_to_final_location
 
   # This method is called on save by the AttachmentJournal in order to
   # decide which kind of activity we are dealing with. When that activity
@@ -88,7 +89,7 @@ class Attachment < ActiveRecord::Base
 
   # Copies the temporary file to its final location
   # and computes its MD5 hash
-  def before_save
+  def files_to_final_location
     if @temp_file && (@temp_file.size > 0)
       logger.debug("saving '#{self.diskfile}'")
       md5 = Digest::MD5.new
