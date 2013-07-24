@@ -46,7 +46,7 @@ class Message < ActiveRecord::Base
 
   after_create :add_author_as_watcher
 
-  named_scope :visible, lambda {|*args| { :include => {:board => :project},
+  scope :visible, lambda {|*args| { :include => {:board => :project},
                                           :conditions => Project.allowed_to_condition(args.first || User.current, :view_messages) } }
 
   safe_attributes 'subject', 'content'
