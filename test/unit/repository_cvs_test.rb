@@ -35,7 +35,7 @@ class RepositoryCvsTest < ActiveSupport::TestCase
     def test_fetch_changesets_from_scratch
       assert_equal 0, @repository.changesets.count
       @repository.fetch_changesets
-      @project.reload
+      @repository.reload
 
       assert_equal 5, @repository.changesets.count
       assert_equal 14, @repository.changes.count
@@ -50,7 +50,7 @@ class RepositoryCvsTest < ActiveSupport::TestCase
       @repository.fetch_changesets
       # Remove changesets with revision > 3
       @repository.changesets.find(:all).each {|c| c.destroy if c.revision.to_i > 3}
-      @project.reload
+      @repository.reload
       assert_equal 3, @repository.changesets.count
       assert_equal %w|3 2 1|, @repository.changesets.collect(&:revision)
 
@@ -64,7 +64,7 @@ class RepositoryCvsTest < ActiveSupport::TestCase
       assert_equal rev3_committed_on, latest_rev.committed_on
 
       @repository.fetch_changesets
-      @project.reload
+      @repository.reload
       assert_equal 5, @repository.changesets.count
 
       assert_equal %w|5 4 3 2 1|, @repository.changesets.collect(&:revision)
@@ -78,7 +78,7 @@ class RepositoryCvsTest < ActiveSupport::TestCase
     def test_deleted_files_should_not_be_listed
       assert_equal 0, @repository.changesets.count
       @repository.fetch_changesets
-      @project.reload
+      @repository.reload
       assert_equal 5, @repository.changesets.count
 
       entries = @repository.entries('sources')
@@ -88,7 +88,7 @@ class RepositoryCvsTest < ActiveSupport::TestCase
 
     def test_entries_rev3
       @repository.fetch_changesets
-      @project.reload
+      @repository.reload
       entries = @repository.entries('', '3')
       assert_equal 3, entries.size
       assert_equal entries[2].name, "README"
