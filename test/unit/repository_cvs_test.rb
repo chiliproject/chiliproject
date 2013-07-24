@@ -34,7 +34,7 @@ class RepositoryCvsTest < ActiveSupport::TestCase
     def test_fetch_changesets_from_scratch
       assert_equal 0, @repository.changesets.count
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       assert_equal 5, @repository.changesets.count
       assert_equal 14, @repository.changes.count
@@ -77,7 +77,7 @@ class RepositoryCvsTest < ActiveSupport::TestCase
     def test_deleted_files_should_not_be_listed
       assert_equal 0, @repository.changesets.count
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       assert_equal 5, @repository.changesets.count
 
       entries = @repository.entries('sources')
@@ -87,7 +87,7 @@ class RepositoryCvsTest < ActiveSupport::TestCase
 
     def test_entries_rev3
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       entries = @repository.entries('', '3')
       assert_equal 3, entries.size
       assert_equal entries[2].name, "README"
