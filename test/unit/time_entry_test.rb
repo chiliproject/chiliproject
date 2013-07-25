@@ -86,9 +86,10 @@ class TimeEntryTest < ActiveSupport::TestCase
       User.current = nil
       @public_project = Project.generate!(:is_public => true)
       @issue = Issue.generate_for_project!(@public_project)
-      TimeEntry.generate!(:spent_on => '2010-01-01',
+      TimeEntry.create!(:spent_on => '2010-01-01',
                           :issue => @issue,
-                          :project => @public_project)
+                          :project => @public_project,
+                          :hours => 1, :user => User.generate!)
     end
 
     context "without a project" do
@@ -110,9 +111,10 @@ class TimeEntryTest < ActiveSupport::TestCase
       User.current = nil
       @public_project = Project.generate!(:is_public => true)
       @issue = Issue.generate_for_project!(@public_project)
-      TimeEntry.generate!(:spent_on => '2010-01-01',
+      TimeEntry.create!(:spent_on => '2010-01-01',
                           :issue => @issue,
-                          :project => @public_project)
+                          :project => @public_project,
+                          :hours => 1, :user => User.generate!)
     end
 
     context "without a project" do
