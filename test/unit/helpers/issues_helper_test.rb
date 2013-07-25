@@ -119,56 +119,56 @@ class IssuesHelperTest < ActionView::TestCase
     end
 
     should "show old and new values with a project attribute" do
-      journal = IssueJournal.new(:changes => {"project_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"project_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'eCookbook', detail
       assert_match 'OnlineStore', detail
     end
 
     should "show old and new values with a issue status attribute" do
-      journal = IssueJournal.new(:changes => {"status_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"status_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'New', detail
       assert_match 'Assigned', detail
     end
 
     should "show old and new values with a tracker attribute" do
-      journal = IssueJournal.new(:changes => {"tracker_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"tracker_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'Bug', detail
       assert_match 'Feature request', detail
     end
 
     should "show old and new values with a assigned to attribute" do
-      journal = IssueJournal.new(:changes => {"assigned_to_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"assigned_to_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'redMine Admin', detail
       assert_match 'John Smith', detail
     end
 
     should "show old and new values with a priority attribute" do
-      journal = IssueJournal.new(:changes => {"priority_id" => [4, 5]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"priority_id" => [4, 5]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'Low', detail
       assert_match 'Normal', detail
     end
 
     should "show old and new values with a category attribute" do
-      journal = IssueJournal.new(:changes => {"category_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"category_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match 'Printing', detail
       assert_match 'Recipes', detail
     end
 
     should "show old and new values with a fixed version attribute" do
-      journal = IssueJournal.new(:changes => {"fixed_version_id" => [1, 2]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"fixed_version_id" => [1, 2]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match '0.1', detail
       assert_match '1.0', detail
     end
 
     should "show old and new values with a estimated hours attribute" do
-      journal = IssueJournal.new(:changes => {"estimated_hours" => [5, 6.3]}, :journaled => Issue.last)
+      journal = IssueJournal.new(:changed_data => {"estimated_hours" => [5, 6.3]}, :journaled => Issue.last)
       detail = journal.render_detail(journal.details.to_a.first, true)
       assert_match '5.00', detail
       assert_match '6.30', detail
