@@ -31,21 +31,39 @@ class AutoCompletesControllerTest < ActionController::TestCase
     assert assigns(:issues).include?(Issue.find(13))
   end
 
-  test 'should return issues matching a given id' do
-    @project = Project.find('subproject1')
-    @issue_21 = Issue.generate_for_project!(@project, :id => 21)
-    @issue_2101 = Issue.generate_for_project!(@project, :id => 2101)
-    @issue_2102 = Issue.generate_for_project!(@project, :id => 2102)
-    @issue_with_subject = Issue.generate_for_project!(@project, :subject => 'This has 21 in the subject')
+  def test_should_return_issues_matching_a_given_id
+    project = Project.find('subproject1')
+    issue_21 = Issue.new(:project_id => project.id, :tracker_id => project.trackers.first.id,
+                         :author_id => User.find(2).id,
+                         :priority => IssuePriority.all.first,
+                         :subject => 'test_create')
+    issue_21.id = 21
+    issue_21.save!
+    assert_equal 21, issue_21.id
+    issue_2101 = Issue.new(:project_id => project.id, :tracker_id => project.trackers.first.id,
+                         :author_id => User.find(2).id,
+                         :priority => IssuePriority.all.first,
+                         :subject => 'test_create')
+    issue_2101.id = 2101
+    issue_2101.save!
+    assert_equal 2101, issue_2101.id
+    issue_2102 = Issue.new(:project_id => project.id, :tracker_id => project.trackers.first.id,
+                         :author_id => User.find(2).id,
+                         :priority => IssuePriority.all.first,
+                         :subject => 'test_create')
+    issue_2102.id = 2102
+    issue_2102.save!
+    assert_equal 2102, issue_2102.id
+    issue_with_subject = Issue.generate_for_project!(project, :subject => 'This has 21 in the subject')
+    project.reload
 
-    get :issues, :project_id => @project.id, :q => '21'
-
+    get :issues, :project_id => project.id, :q => '21'
     assert_response :success
     assert_not_nil assigns(:issues)
-    assert assigns(:issues).include?(@issue_21)
-    assert assigns(:issues).include?(@issue_2101)
-    assert assigns(:issues).include?(@issue_2102)
-    assert assigns(:issues).include?(@issue_with_subject)
+    assert assigns(:issues).include?(issue_21)
+    assert assigns(:issues).include?(issue_2101)
+    assert assigns(:issues).include?(issue_2102)
+    assert assigns(:issues).include?(issue_with_subject)
     assert_equal assigns(:issues).size, assigns(:issues).uniq.size, "Issues list includes duplicates"
   end
 
@@ -66,11 +84,17 @@ class AutoCompletesControllerTest < ActionController::TestCase
 
   context "GET :users" do
     setup do
-      @login = User.generate!(:login => 'Acomplete')
-      @firstname = User.generate!(:firstname => 'Complete')
-      @lastname = User.generate!(:lastname => 'Complete')
-      @none = User.generate!(:login => 'hello', :firstname => 'ABC', :lastname => 'DEF')
-      @inactive = User.generate!(:firstname => 'Complete', :status => User::STATUS_LOCKED)
+      if @login.nil?
+        @login = User.new(:firstname => "new", :lastname => "user", :mail => "newuser@somenet.foo")
+        @login.login = "Acomplete"
+        @login.password, @login.password_confirmation = "password", "password"
+        assert @login.save
+      end
+      assert_equal @login.login, 'Acomplete'
+      @firstname ||= User.generate!(:firstname => 'Complete').reload
+      @lastname ||= User.generate!(:lastname => 'Complete').reload
+      @none ||= User.generate!(:login => 'hello', :firstname => 'ABC', :lastname => 'DEF').reload
+      @inactive ||= User.generate!(:firstname => 'Complete', :status => User::STATUS_LOCKED).reload
     end
 
     context "with no restrictions" do
@@ -94,16 +118,13 @@ class AutoCompletesControllerTest < ActionController::TestCase
 
     context "including groups" do
       setup do
-        @group = Group.generate(:lastname => 'Complete Group').reload
+        @group = Group.create!(:lastname => 'Complete Group').reload
         get :users, :q => 'complete', :include_groups => true
       end
-
       should_respond_with :success
-
       should "include matching groups" do
         assert_select "input[type=checkbox][value=?]", @group.id
       end
-
     end
 
     context "restrict by removing group members" do
@@ -174,9 +195,9 @@ class AutoCompletesControllerTest < ActionController::TestCase
 
       end
 
-      should_assign_to(:principal) { @user }
-      should_assign_to(:projects) { @projects }
-      should_render_template :projects
+      should assign_to(:principal).with(@user)
+      should assign_to(:projects).with(@projects)
+      should render_template :projects
     end
 
     context 'with an invalid search' do
@@ -191,9 +212,9 @@ class AutoCompletesControllerTest < ActionController::TestCase
         }
 
       end
-      should_assign_to(:principal) { @user }
-      should_assign_to(:projects) { [] }
-      should_render_template :projects
+      should assign_to(:principal).with(@user)
+      should assign_to(:projects).with([])
+      should render_template :projects
 
     end
   end

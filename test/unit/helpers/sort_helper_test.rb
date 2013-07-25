@@ -13,7 +13,7 @@
 #++
 require File.expand_path('../../../test_helper', __FILE__)
 
-class SortHelperTest < HelperTestCase
+class SortHelperTest < ActionView::TestCase
   include SortHelper
 
   def setup
