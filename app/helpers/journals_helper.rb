@@ -81,8 +81,9 @@ module JournalsHelper
     unless journal.notes.blank?
       links = [].tap do |l|
         if reply_links
-          l << link_to_remote(image_tag('comment.png'), :title => l(:button_quote),
-            :url => {:controller => controller, :action => action, :id => model, :journal_id => journal})
+          l << link_to(image_tag('comment.png'), {:title => l(:button_quote),
+            :url => {:controller => controller, :action => action, :id => model, :journal_id => journal}},
+            :remote => true)
         end
         if editable
           l << link_to_in_place_notes_editor(image_tag('edit.png'), "journal-#{journal.id}-notes",
