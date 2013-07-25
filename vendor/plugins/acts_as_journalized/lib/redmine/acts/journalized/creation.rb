@@ -92,7 +92,7 @@ module Redmine::Acts::Journalized
         new_journal.changes = creation_changes
         new_journal.version = 1
         new_journal.activity_type = self.class.send(:journalized_activity_hash, {})[:type]
-          
+
         if respond_to?(:author)
           new_journal.user = author
         elsif respond_to?(:user)
@@ -101,7 +101,7 @@ module Redmine::Acts::Journalized
 
         new_journal.save!
         new_journal.reload
-          
+
         # Backdate journal
         if respond_to?(:created_at)
           new_journal.update_attribute(:created_at, created_at)
@@ -110,7 +110,7 @@ module Redmine::Acts::Journalized
         end
         new_journal
       end
-      
+
       private
         # Returns whether a new journal should be created upon updating the parent record.
         # A new journal will be created if
@@ -161,7 +161,7 @@ module Redmine::Acts::Journalized
         # Specifies the attributes used during journal creation. This is separated into its own
         # method so that it can be overridden by the VestalVersions::Users feature.
         def journal_attributes
-          attributes = { :journaled_id => self.id, :activity_type => activity_type, 
+          attributes = { :journaled_id => self.id, :activity_type => activity_type,
             :changes => journal_changes, :version => last_version + 1,
             :notes => journal_notes, :user_id => (journal_user.try(:id) || User.current.try(:id))
           }.merge(extra_journal_attributes || {})
