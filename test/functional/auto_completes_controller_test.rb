@@ -197,7 +197,7 @@ class AutoCompletesControllerTest < ActionController::TestCase
 
       should assign_to(:principal).with(@user)
       should assign_to(:projects).with(@projects)
-      should_render_template :projects
+      should render_template :projects
     end
 
     context 'with an invalid search' do
@@ -214,7 +214,7 @@ class AutoCompletesControllerTest < ActionController::TestCase
       end
       should assign_to(:principal).with(@user)
       should assign_to(:projects).with([])
-      should_render_template :projects
+      should render_template :projects
 
     end
   end
