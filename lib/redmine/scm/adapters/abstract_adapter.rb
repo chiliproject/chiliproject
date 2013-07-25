@@ -53,9 +53,9 @@ module Redmine
 
           def shell_quote(str)
             if Redmine::Platform.mswin?
-              '"' + str.gsub(/"/, '\\"') + '"'
+              '"' + str.to_s.gsub(/"/, '\\"') + '"'
             else
-              "'" + str.gsub(/'/, "'\"'\"'") + "'"
+              "'" + str.to_s.gsub(/'/, "'\"'\"'") + "'"
             end
           end
         end
@@ -188,14 +188,14 @@ module Redmine
         end
 
         def self.logger
-          RAILS_DEFAULT_LOGGER
+          Rails.logger
         end
 
         def self.shellout(cmd, &block)
           logger.debug "Shelling out: #{strip_credential(cmd)}" if logger && logger.debug?
           if Rails.env == 'development'
             # Capture stderr when running in dev environment
-            cmd = "#{cmd} 2>>#{RAILS_ROOT}/log/scm.stderr.log"
+            cmd = "#{cmd} 2>>#{shell_quote Rails.root.join('log', 'scm.stderr.log')}"
           end
           begin
             if RUBY_VERSION < '1.9'
