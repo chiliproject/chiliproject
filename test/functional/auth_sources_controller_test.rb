@@ -21,7 +21,45 @@ require File.expand_path('../../test_helper', __FILE__)
 Tree::TreeNode.class_eval {remove_method :to_s}
 
 class AuthSourcesControllerTest < ActionController::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     @request.session[:user_id] = 1
@@ -32,10 +70,10 @@ class AuthSourcesControllerTest < ActionController::TestCase
       get :index
     end
 
-    should_assign_to :auth_sources
-    should_assign_to :auth_source_pages
-    should_respond_with :success
-    should_render_template :index
+    should assign_to :auth_sources
+    should assign_to :auth_source_pages
+    should respond_with :success
+    should render_template :index
   end
 
   context "get :new" do
@@ -43,9 +81,9 @@ class AuthSourcesControllerTest < ActionController::TestCase
       get :new
     end
 
-    should_assign_to :auth_source
-    should_respond_with :success
-    should_render_template :new
+    should assign_to :auth_source
+    should respond_with :success
+    should render_template :new
 
     should "initilize a new AuthSource" do
       assert_equal AuthSource, assigns(:auth_source).class
@@ -58,9 +96,9 @@ class AuthSourcesControllerTest < ActionController::TestCase
       post :create, :auth_source => {:name => 'Test'}
     end
 
-    should_respond_with :redirect
-    should_redirect_to("index") {{:action => 'index'}}
-    should_set_the_flash_to /success/i
+    should respond_with :redirect
+    should redirect_to("index") {{:action => 'index'}}
+    should set_the_flash.to /success/i
   end
 
   context "get :edit" do
@@ -69,9 +107,9 @@ class AuthSourcesControllerTest < ActionController::TestCase
       get :edit, :id => @auth_source.id
     end
 
-    should_assign_to(:auth_source) {@auth_source}
-    should_respond_with :success
-    should_render_template :edit
+    should assign_to(:auth_source).with(@auth_source)
+    should respond_with :success
+    should render_template :edit
   end
 
   context "post :update" do
@@ -80,9 +118,9 @@ class AuthSourcesControllerTest < ActionController::TestCase
       post :update, :id => @auth_source.id, :auth_source => {:name => 'TestUpdate'}
     end
 
-    should_respond_with :redirect
-    should_redirect_to("index") {{:action => 'index'}}
-    should_set_the_flash_to /update/i
+    should respond_with :redirect
+    should redirect_to("index") {{:action => 'index'}}
+    should set_the_flash.to /update/i
   end
 
   context "post :destroy" do
@@ -95,9 +133,9 @@ class AuthSourcesControllerTest < ActionController::TestCase
         post :destroy, :id => @auth_source.id
       end
 
-      should_respond_with :redirect
-      should_redirect_to("index") {{:action => 'index'}}
-      should_set_the_flash_to /deletion/i
+      should respond_with :redirect
+      should redirect_to("index") {{:action => 'index'}}
+      should set_the_flash.to /deletion/i
     end
 
     context "with users" do
@@ -106,7 +144,7 @@ class AuthSourcesControllerTest < ActionController::TestCase
         post :destroy, :id => @auth_source.id
       end
 
-      should_respond_with :redirect
+      should respond_with :redirect
       should "not destroy the AuthSource" do
         assert AuthSource.find(@auth_source.id)
       end
