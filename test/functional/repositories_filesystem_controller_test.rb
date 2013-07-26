@@ -41,7 +41,7 @@ class RepositoriesFilesystemControllerTest < ActionController::TestCase
   if File.directory?(REPOSITORY_PATH)
     def test_browse_root
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID
       assert_response :success
       assert_template 'show'
