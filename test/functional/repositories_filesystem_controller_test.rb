@@ -29,8 +29,9 @@ class RepositoriesFilesystemControllerTest < ActionController::TestCase
     @response   = ActionController::TestResponse.new
     User.current = nil
     Setting.enabled_scm = Setting.enabled_scm.dup << 'Filesystem' unless Setting.enabled_scm.include?('Filesystem')
+    @project = Project.find(PRJ_ID)
     @repository = Repository::Filesystem.create(
-                      :project => Project.find(PRJ_ID),
+                      :project => @project,
                       :url     => REPOSITORY_PATH,
                       :path_encoding => nil
                       )
