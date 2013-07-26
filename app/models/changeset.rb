@@ -37,8 +37,11 @@ class Changeset < ActiveRecord::Base
   validates_uniqueness_of :revision, :scope => :repository_id
   validates_uniqueness_of :scmid, :scope => :repository_id, :allow_nil => true
 
-  named_scope :visible, lambda {|*args| { :include => {:repository => :project},
-                                          :conditions => Project.allowed_to_condition(args.first || User.current, :view_changesets) } }
+  def self.visible(user=User.current)
+    joins(:repository => :project).where(Project.allowed_to_condition(user, :view_changesets))
+  end
+
+  after_create :scan_for_issues
 
   def revision=(r)
     write_attribute :revision, (r.nil? ? nil : r.to_s)
@@ -98,7 +101,7 @@ class Changeset < ActiveRecord::Base
     self.user = repository.find_committer_user(self.committer)
   end
 
-  def after_create
+  def scan_for_issues
     scan_comment_for_issue_ids
   end
 
