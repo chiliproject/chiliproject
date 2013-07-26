@@ -26,8 +26,6 @@ gem "ruby-prof"
 
 gem 'jquery-rails'
 
-gem 'verification'
-
 group :test do
   gem 'shoulda', '~> 2.11.0'
   # Shoulda doesn't work nice on 1.9.3 and seems to need test-unit explicitely…
