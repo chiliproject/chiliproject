@@ -28,8 +28,9 @@ class RepositoriesGitControllerTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     User.current = nil
+    @project = Project.find(3)
     @repository = Repository::Git.create(
-                      :project => Project.find(3),
+                      :project => @project,
                       :url     => REPOSITORY_PATH,
                       :path_encoding => 'ISO-8859-1'
                       )
