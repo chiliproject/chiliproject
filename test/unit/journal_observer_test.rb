@@ -14,6 +14,46 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class JournalObserverTest < ActiveSupport::TestCase
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
+
   def setup
     super
     @user = User.generate!(:mail_notification => 'all')
@@ -69,20 +109,17 @@ class JournalObserverTest < ActiveSupport::TestCase
       Setting.notified_events = ['issue_status_updated']
       assert_difference('ActionMailer::Base.deliveries.size', 2) do
         @issue.init_journal(@user)
-        @issue.status = IssueStatus.generate!
+        @issue.status = IssueStatus.create!(:name => "test")
         assert @issue.save
-
       end
-
     end
 
     should "not send a notification with not configured" do
       Setting.notified_events = []
       assert_no_difference('ActionMailer::Base.deliveries.size') do
         @issue.init_journal(@user)
-        @issue.status = IssueStatus.generate!
+        @issue.status = IssueStatus.create!(:name => "test")
         assert @issue.save
-
       end
     end
   end
@@ -92,20 +129,18 @@ class JournalObserverTest < ActiveSupport::TestCase
       Setting.notified_events = ['issue_priority_updated']
       assert_difference('ActionMailer::Base.deliveries.size', 2) do
         @issue.init_journal(@user)
-        @issue.priority = IssuePriority.generate!
+        @issue.priority = IssuePriority.create!(:name => "test")
         assert @issue.save
       end
-
     end
 
     should "not send a notification with not configured" do
       Setting.notified_events = []
       assert_no_difference('ActionMailer::Base.deliveries.size') do
         @issue.init_journal(@user)
-        @issue.priority = IssuePriority.generate!
+        @issue.priority = IssuePriority.create!(:name => "test")
         assert @issue.save
       end
-
     end
   end
 end
