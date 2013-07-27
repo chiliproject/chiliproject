@@ -18,13 +18,14 @@ class IssueStatus < ActiveRecord::Base
   acts_as_list
 
   before_destroy :delete_workflows
+  after_save     :update_default
 
   validates_presence_of :name
   validates_uniqueness_of :name
   validates_length_of :name, :maximum => 30
   validates_inclusion_of :default_done_ratio, :in => 0..100, :allow_nil => true
 
-  def after_save
+  def update_default
     IssueStatus.update_all("is_default=#{connection.quoted_false}", ['id <> ?', id]) if self.is_default?
   end
 

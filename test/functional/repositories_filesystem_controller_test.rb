@@ -20,8 +20,7 @@ class RepositoriesController; def rescue_action(e) raise e end; end
 class RepositoriesFilesystemControllerTest < ActionController::TestCase
   fixtures :projects, :users, :roles, :members, :member_roles, :repositories, :enabled_modules
 
-  # No '..' in the repository path
-  REPOSITORY_PATH = RAILS_ROOT.gsub(%r{config\/\.\.}, '') + '/tmp/test/filesystem_repository'
+  REPOSITORY_PATH = Rails.root.join('tmp/test/filesystem_repository')
   PRJ_ID = 3
 
   def setup
@@ -30,8 +29,9 @@ class RepositoriesFilesystemControllerTest < ActionController::TestCase
     @response   = ActionController::TestResponse.new
     User.current = nil
     Setting.enabled_scm = Setting.enabled_scm.dup << 'Filesystem' unless Setting.enabled_scm.include?('Filesystem')
+    @project = Project.find(PRJ_ID)
     @repository = Repository::Filesystem.create(
-                      :project => Project.find(PRJ_ID),
+                      :project => @project,
                       :url     => REPOSITORY_PATH,
                       :path_encoding => nil
                       )
@@ -41,7 +41,7 @@ class RepositoriesFilesystemControllerTest < ActionController::TestCase
   if File.directory?(REPOSITORY_PATH)
     def test_browse_root
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID
       assert_response :success
       assert_template 'show'
