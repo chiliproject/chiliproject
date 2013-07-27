@@ -23,7 +23,7 @@ class Repository::Bazaar < Repository
       "log_encoding" => "Commit messages encoding",
     }
   def self.human_attribute_name(attribute_key_name, *args)
-    ATTRIBUTE_KEY_NAMES[attribute_key_name] || super
+    ATTRIBUTE_KEY_NAMES[attribute_key_name.to_s] || super
   end
 
   def self.scm_adapter_class
