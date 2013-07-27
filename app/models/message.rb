@@ -45,6 +45,7 @@ class Message < ActiveRecord::Base
   validates_length_of :subject, :maximum => 255
 
   after_create :add_author_as_watcher
+  after_destroy :reset_board_counters
 
   named_scope :visible, lambda {|*args| { :include => {:board => :project},
                                           :conditions => Project.allowed_to_condition(args.first || User.current, :view_messages) } }
@@ -79,7 +80,7 @@ class Message < ActiveRecord::Base
     end
   end
 
-  def after_destroy
+  def reset_board_counters
     parent.reset_last_reply_id! if parent
     board.reset_counters!
   end
