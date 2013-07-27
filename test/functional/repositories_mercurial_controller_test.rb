@@ -21,7 +21,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
   fixtures :projects, :users, :roles, :members, :member_roles, :repositories, :enabled_modules
 
   # No '..' in the repository path
-  REPOSITORY_PATH = RAILS_ROOT.gsub(%r{config\/\.\.}, '') + '/tmp/test/mercurial_repository'
+  REPOSITORY_PATH = Rails.root.join('tmp/test/mercurial_repository')
   CHAR_1_HEX = "\xc3\x9c"
   PRJ_ID = 3
 
@@ -32,8 +32,9 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     User.current = nil
+    @project = Project.find(PRJ_ID)
     @repository = Repository::Mercurial.create(
-                      :project => Project.find(PRJ_ID),
+                      :project => @project,
                       :url     => REPOSITORY_PATH,
                       :path_encoding => 'ISO-8859-1'
                       )
@@ -59,7 +60,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
   elsif File.directory?(REPOSITORY_PATH)
     def test_show_root
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID
       assert_response :success
       assert_template 'show'
@@ -74,7 +75,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_show_directory
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID, :path => ['images']
       assert_response :success
       assert_template 'show'
@@ -90,7 +91,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_show_at_given_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       [0, '0', '0885933ad4f6'].each do |r1|
         get :show, :id => PRJ_ID, :path => ['images'], :rev => r1
         assert_response :success
@@ -104,7 +105,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_show_directory_sql_escape_percent
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       [13, '13', '3a330eb32958'].each do |r1|
         get :show, :id => PRJ_ID, :path => ['sql_escape', 'percent%dir'], :rev => r1
         assert_response :success
@@ -121,7 +122,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_show_directory_latin_1
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       [21, '21', 'adf805632193'].each do |r1|
         get :show, :id => PRJ_ID, :path => ['latin-1-dir'], :rev => r1
         assert_response :success
@@ -140,7 +141,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_show_branch
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
        [
           'default',
           @branch_char_1,
@@ -161,7 +162,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_show_tag
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
        [
         @tag_char_1,
         'tag_test.00',
@@ -231,7 +232,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_diff
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       [4, '4', 'def6d2f1254a'].each do |r1|
         # Full diff of changeset 4
         get :diff, :id => PRJ_ID, :rev => r1
@@ -251,7 +252,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_diff_two_revs
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       [2, '400bb8672109', '400', 400].each do |r1|
         [4, 'def6d2f1254a'].each do |r2|
           get :diff, :id => PRJ_ID, :rev    => r1,
@@ -310,7 +311,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_annotate_at_given_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       [2, '400bb8672109', '400', 400].each do |r1|
         get :annotate, :id => PRJ_ID, :rev => r1, :path => ['sources', 'watchers_controller.rb']
         assert_response :success
@@ -354,7 +355,7 @@ class RepositoriesMercurialControllerTest < ActionController::TestCase
 
     def test_empty_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       ['', ' ', nil].each do |r|
         get :revision, :id => PRJ_ID, :rev => r
         assert_response 404
