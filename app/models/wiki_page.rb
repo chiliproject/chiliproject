@@ -38,8 +38,10 @@ class WikiPage < ActiveRecord::Base
   validates_uniqueness_of :title, :scope => :wiki_id, :case_sensitive => false
   validates_associated :content
 
+  before_destroy :remove_redirects
+
   # eager load information about last updates, without loading text
-  named_scope :with_updated_on, {
+  scope :with_updated_on, {
     :select => "#{WikiPage.table_name}.*, #{WikiContent.table_name}.updated_on",
     :joins => "LEFT JOIN #{WikiContent.table_name} ON #{WikiContent.table_name}.page_id = #{WikiPage.table_name}.id"
   }
@@ -47,7 +49,8 @@ class WikiPage < ActiveRecord::Base
   # Wiki pages that are protected by default
   DEFAULT_PROTECTED_PAGES = %w(sidebar)
 
-  def after_initialize
+  def initialize(attributes=nil, *args)
+    super
     if new_record? && DEFAULT_PROTECTED_PAGES.include?(title.to_s.downcase)
       self.protected = true
     end
@@ -84,7 +87,7 @@ class WikiPage < ActiveRecord::Base
     end
   end
 
-  def before_destroy
+  def remove_redirects
     # Remove redirects to this page
     wiki.redirects.find_all_by_redirects_to(title).each(&:destroy)
   end
