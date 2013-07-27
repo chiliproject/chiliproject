@@ -34,7 +34,13 @@ class MailHandler < ActionMailer::Base
     @@handler_options[:allow_override] << 'status' unless @@handler_options[:issue].has_key?(:status)
 
     @@handler_options[:no_permission_check] = (@@handler_options[:no_permission_check].to_s == '1' ? true : false)
-    super email
+
+    email.force_encoding('ASCII-8BIT') if email.respond_to?(:force_encoding)
+    super(email)
+  end
+
+  def logger
+    Rails.logger
   end
 
   # Processes incoming emails
@@ -79,7 +85,7 @@ class MailHandler < ActionMailer::Base
 
   private
 
-  MESSAGE_ID_RE = %r{^<chiliproject\.([a-z0-9_]+)\-(\d+)\.\d+@}
+  MESSAGE_ID_RE = %r{^<?chiliproject\.([a-z0-9_]+)\-(\d+)\.\d+@}
   ISSUE_REPLY_SUBJECT_RE = %r{\[[^\]]*#(\d+)\]}
   MESSAGE_REPLY_SUBJECT_RE = %r{\[[^\]]*msg(\d+)\]}
 
@@ -208,9 +214,10 @@ class MailHandler < ActionMailer::Base
     if email.has_attachments?
       email.attachments.each do |attachment|
         Attachment.create(:container => obj,
-                          :file => attachment,
+                          :file => attachment.decoded,
+                          :filename => attachment.filename,
                           :author => user,
-                          :content_type => attachment.content_type)
+                          :content_type => attachment.mime_type)
       end
     end
   end
@@ -253,8 +260,13 @@ class MailHandler < ActionMailer::Base
     keys.reject! {|k| k.blank?}
     keys.collect! {|k| Regexp.escape(k)}
     format ||= '.+'
-    text.gsub!(/^(#{keys.join('|')})[ \t]*:[ \t]*(#{format})\s*$/i, '')
-    $2 && $2.strip
+    keyword = nil
+    regexp = /^(#{keys.join('|')})[ \t]*:[ \t]*(#{format})\s*$/i
+    if m = text.match(regexp)
+      keyword = m[2].strip
+      text.gsub!(regexp, '')
+    end
+    keyword
   end
 
   def target_project
@@ -305,20 +317,17 @@ class MailHandler < ActionMailer::Base
   # If not found (eg. HTML-only email), returns the body with tags removed
   def plain_text_body
     return @plain_text_body unless @plain_text_body.nil?
-    parts = @email.parts.collect {|c| (c.respond_to?(:parts) && !c.parts.empty?) ? c.parts : c}.flatten
-    if parts.empty?
-      parts << @email
+
+    part = email.text_part || email.html_part || email
+    @plain_text_body = Redmine::CodesetUtil.to_utf8(part.body.decoded, part.charset)
+
+    if @plain_text_body.respond_to?(:force_encoding)
+     # @plain_text_body = @plain_text_body.force_encoding(@email.charset).encode("UTF-8")
     end
-    plain_text_part = parts.detect {|p| p.content_type == 'text/plain'}
-    if plain_text_part.nil?
-      # no text/plain part found, assuming html-only email
-      # strip html tags and remove doctype directive
-      @plain_text_body = strip_tags(@email.body.to_s)
-      @plain_text_body.gsub! %r{^<!DOCTYPE .*$}, ''
-    else
-      @plain_text_body = plain_text_part.body.to_s
-    end
-    @plain_text_body.strip!
+
+    # strip html tags and remove doctype directive
+    @plain_text_body = strip_tags(@plain_text_body.strip)
+    @plain_text_body.sub! %r{^<!DOCTYPE .*$}, ''
     @plain_text_body
   end
 
@@ -330,8 +339,8 @@ class MailHandler < ActionMailer::Base
     @full_sanitizer ||= HTML::FullSanitizer.new
   end
 
-  def self.assign_string_attribute_with_limit(object, attribute, value)
-    limit = object.class.columns_hash[attribute.to_s].limit || 255
+  def self.assign_string_attribute_with_limit(object, attribute, value, limit=nil)
+    limit ||= object.class.columns_hash[attribute.to_s].limit || 255
     value = value.to_s.slice(0, limit)
     object.send("#{attribute}=", value)
   end
@@ -354,20 +363,23 @@ class MailHandler < ActionMailer::Base
     user.language = Setting.default_language
 
     unless user.valid?
-      user.login = "user#{Redmine::Utils.random_hex(6)}" if user.errors.on(:login)
-      user.firstname = "-" if user.errors.on(:firstname)
-      user.lastname = "-" if user.errors.on(:lastname)
+      user.login = "user#{Redmine::Utils.random_hex(6)}" unless user.errors[:login].blank?
+      user.firstname = "-" unless user.errors[:firstname].blank?
+      user.lastname  = "-" unless user.errors[:lastname].blank?
     end
 
     user
   end
 
-  # Creates a User for the +email+ sender
-  # Returns the user or nil if it could not be created
+  # Creates a user account for the +email+ sender
   def create_user_from_email
-    addr = email.from_addrs.to_a.first
-    if addr && !addr.spec.blank?
-      user = self.class.new_user_from_attributes(addr.spec, addr.name)
+    from = email.header['from'].to_s
+    addr, name = from, nil
+    if m = from.match(/^"?(.+?)"?\s+<(.+@.+)>$/)
+      addr, name = m[2], m[1]
+    end
+    if addr.present?
+      user = self.class.new_user_from_attributes(addr, name)
       if user.save
         user
       else
