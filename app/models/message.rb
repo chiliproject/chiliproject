@@ -44,7 +44,7 @@ class Message < ActiveRecord::Base
   validates_presence_of :board, :subject, :content
   validates_length_of :subject, :maximum => 255
 
-  after_create :add_author_as_watcher
+  after_create :add_author_as_watcher, :update_parent_last_reply
 
   named_scope :visible, lambda {|*args| { :include => {:board => :project},
                                           :conditions => Project.allowed_to_condition(args.first || User.current, :view_messages) } }
@@ -64,7 +64,7 @@ class Message < ActiveRecord::Base
     errors.add_to_base 'Topic is locked' if root.locked? && self != root
   end
 
-  def after_create
+  def update_parent_last_reply
     if parent
       parent.reload.update_attribute(:last_reply_id, self.id)
     end
