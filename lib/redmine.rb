@@ -26,12 +26,6 @@ require 'redmine/notifiable'
 require 'redmine/wiki_formatting'
 require 'redmine/scm/base'
 
-begin
-  require_library_or_gem 'RMagick' unless Object.const_defined?(:Magick)
-rescue LoadError
-  # RMagick is not available
-end
-
 if RUBY_VERSION < '1.9'
   require 'faster_csv'
 else
@@ -236,7 +230,9 @@ Redmine::MenuManager.map :project_menu do |menu|
   }
 
   menu.push(:overview, { :controller => 'projects', :action => 'show' })
-  menu.push(:activity, { :controller => 'activities', :action => 'index' })
+  menu.push(:activity, { :controller => 'activities', :action => 'index'}, {
+              :param => :project_id
+            })
   menu.push(:roadmap, { :controller => 'versions', :action => 'index' }, {
               :param => :project_id,
               :if => Proc.new { |p| p.shared_versions.any? },
@@ -246,7 +242,7 @@ Redmine::MenuManager.map :project_menu do |menu|
 
                 versions.collect do |version|
                   Redmine::MenuManager::MenuItem.new("version-#{version.id}".to_sym,
-                                                     { :controller => 'versions', :action => 'show', :id => version },
+                                                     { :controller => 'versions', :action => 'show', :project_id => p, :id => version.id},
                                                      {
                                                        :caption => version.name,
                                                        :parent => :roadmap
@@ -276,6 +272,7 @@ Redmine::MenuManager.map :project_menu do |menu|
               :parent => :issues
             })
   menu.push(:issue_summary, { :controller => 'reports', :action => 'issue_report' }, {
+              :param => :project_id,
               :caption => :field_issue_summary,
               :parent => :issues
             })
@@ -369,15 +366,17 @@ Redmine::MenuManager.map :project_menu do |menu|
               :if => Proc.new {|p| User.current.allowed_to?(:manage_files, p) }
             })
   menu.push(:repository, { :controller => 'repositories', :action => 'show' }, {
+              :param => :project_id,
               :if => Proc.new { |p| p.repository && !p.repository.new_record? }
             })
   menu.push(:settings, { :controller => 'projects', :action => 'settings' }, {
               :last => true,
+              :param => :project_id,
               :children => Proc.new { |p|
                 @project = p # @project used in the helper
                 project_settings_tabs.collect do |tab|
                   Redmine::MenuManager::MenuItem.new("settings-#{tab[:name]}".to_sym,
-                                                     { :controller => 'projects', :action => 'settings', :id => p, :tab => tab[:name] },
+                                                     { :controller => 'projects', :action => 'settings', :project_id => p, :tab => tab[:name] },
                                                      {
                                                        :caption => tab[:label]
                                                      })

@@ -14,7 +14,7 @@
 
 require File.expand_path('../../../test_helper', __FILE__)
 
-class WatchersHelperTest < HelperTestCase
+class WatchersHelperTest < ActionView::TestCase
   include WatchersHelper
 
   # tested for backwards compatibility
