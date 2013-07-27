@@ -38,12 +38,13 @@ class Issue < ActiveRecord::Base
   acts_as_journalized :event_title => Proc.new {|o| "#{o.tracker.name} ##{o.journaled_id} (#{o.status}): #{o.subject}"},
                       :event_type => Proc.new {|o|
                                                 t = 'issue'
-                                                if o.changes.empty?
+                                                if o.changed_data.empty?
                                                   t << '-note' unless o.initial?
                                                 else
                                                   t << (IssueStatus.find_by_id(o.new_value_for(:status_id)).try(:is_closed?) ? '-closed' : '-edit')
                                                 end
-                                                t }
+                                                t },
+                      :except => ["root_id"]
 
   register_on_journal_formatter(:id, 'parent_id')
   register_on_journal_formatter(:named_association, 'project_id', 'status_id', 'tracker_id', 'assigned_to_id',
@@ -107,7 +108,8 @@ class Issue < ActiveRecord::Base
     IssueDrop.new(self)
   end
 
-  def after_initialize
+  def initialize(attributes=nil, *args)
+    super
     if new_record?
       # set default values for new records only
       self.status ||= IssueStatus.default
@@ -368,7 +370,7 @@ class Issue < ActiveRecord::Base
   def attachment_removed(obj)
     init_journal(User.current)
     create_journal
-    last_journal.update_attribute(:changes, {"attachments_" + obj.id.to_s => [obj.filename, nil]})
+    last_journal.update_attribute(:changed_data, {"attachments_" + obj.id.to_s => [obj.filename, nil]})
   end
 
   # Return true if the issue is closed, otherwise false
