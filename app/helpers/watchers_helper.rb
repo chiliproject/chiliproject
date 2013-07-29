@@ -45,10 +45,10 @@ module WatchersHelper
 
     url_options = {:url => url}
 
-    html_options = options.merge(:href => url_for(url))
+    html_options = options.merge({:href => url_for(url), :remote => true})
     html_options[:class] = html_options[:class].to_s + (watched ? ' icon icon-fav' : ' icon icon-fav-off')
 
-    link_to_remote((watched ? l(:button_unwatch) : l(:button_watch)), url_options, html_options)
+    link_to((watched ? l(:button_unwatch) : l(:button_watch)), url_options, html_options)
   end
 
   # Returns a comma separated list of users watching the given object
@@ -62,8 +62,9 @@ module WatchersHelper
                :object_type => object.class.to_s.underscore,
                :object_id => object.id,
                :user_id => user}
-        s += ' ' + link_to_remote(image_tag('delete.png'),
+        s += ' ' + link_to(image_tag('delete.png'),
                                   {:url => url},
+                                  :remote => true,
                                   :href => url_for(url),
                                   :style => "vertical-align: middle",
                                   :class => "delete")
