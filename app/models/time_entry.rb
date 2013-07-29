@@ -32,15 +32,18 @@ class TimeEntry < ActiveRecord::Base
   validates_presence_of :user_id, :activity_id, :project_id, :hours, :spent_on
   validates_numericality_of :hours, :allow_nil => true, :message => :invalid
   validates_length_of :comments, :maximum => 255, :allow_nil => true
+  validate :validate_time_entry
+  before_validation :set_project_if_nil
 
-  named_scope :visible, lambda {|*args| {
+  scope :visible, lambda {|*args| {
     :include => :project,
     :conditions => Project.allowed_to_condition(args.first || User.current, :view_time_entries)
   }}
 
   safe_attributes 'hours', 'comments', 'issue_id', 'activity_id', 'spent_on', 'custom_field_values'
 
-  def after_initialize
+  def initialize(attributes=nil, *args)
+    super
     if new_record? && self.activity.nil?
       if default_activity = TimeEntryActivity.default
         self.activity_id = default_activity.id
@@ -49,11 +52,11 @@ class TimeEntry < ActiveRecord::Base
     end
   end
 
-  def before_validation
+  def set_project_if_nil
     self.project = issue.project if issue && project.nil?
   end
 
-  def validate
+  def validate_time_entry
     errors.add :hours, :invalid if hours && (hours < 0 || hours >= 1000)
     errors.add :project_id, :invalid if project.nil?
     errors.add :issue_id, :invalid if (issue_id && !issue) || (issue && project!=issue.project)
