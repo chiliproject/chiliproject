@@ -49,8 +49,11 @@ class Group < Principal
     end
   end
 
-  def self.human_attribute_name(attribute_name)
-    attribute_name = "name" if attribute_name == "lastname"
-    super(attribute_name)
+  def self.human_attribute_name(attribute_key_name, *args)
+    attr_name = attribute_key_name.to_s
+    if attr_name == 'lastname'
+      attr_name = "name"
+    end
+    super(attr_name, *args)
   end
 end

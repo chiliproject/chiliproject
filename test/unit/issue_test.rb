@@ -221,13 +221,13 @@ class IssueTest < ActiveSupport::TestCase
     tracker = Tracker.find(1)
     user = User.find(2)
 
-    issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1)
+    issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :author_id => 1)
     assert_equal [1, 2], issue.new_statuses_allowed_to(user).map(&:id)
 
     issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :author => user)
     assert_equal [1, 2, 3], issue.new_statuses_allowed_to(user).map(&:id)
 
-    issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :assigned_to => user)
+    issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :author_id => 1, :assigned_to => user)
     assert_equal [1, 2, 4], issue.new_statuses_allowed_to(user).map(&:id)
 
     issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :author => user, :assigned_to => user)
@@ -637,7 +637,7 @@ class IssueTest < ActiveSupport::TestCase
 
     journal = IssueJournal.first(:order => 'id DESC')
     assert_equal i, journal.journaled
-    assert journal.changes.has_key? "description"
+    assert journal.changed_data.has_key? "description"
     assert_equal old_description, journal.old_value("description")
     assert_equal new_description, journal.value("description")
   end
