@@ -14,7 +14,45 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class MailHandlerTest < ActiveSupport::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures/mail_handler'
 
@@ -484,7 +522,10 @@ class MailHandlerTest < ActiveSupport::TestCase
     should "deliver an email error confirmation to the sender for a missing other attributes" do
       # Add a required custom field to simulate the error
       project = Project.find('onlinestore')
-      project.issue_custom_fields << IssueCustomField.generate(:name => 'Required Custom Field0', :is_required => true, :trackers => project.trackers)
+      project.issue_custom_fields << IssueCustomField.create(
+                                       :name => 'Required Custom Field0', :is_required => true, :trackers => project.trackers,
+                                       :field_format => 'string'
+                                     )
       project.save
 
       ActionMailer::Base.deliveries.clear

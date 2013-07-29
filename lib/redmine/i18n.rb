@@ -72,7 +72,7 @@ module Redmine
     end
 
     def valid_languages
-      @@valid_languages ||= Dir.glob(File.join(RAILS_ROOT, 'config', 'locales', '*.yml')).collect {|f| File.basename(f).split('.').first}.collect(&:to_sym)
+      @@valid_languages ||= Dir.glob(Rails.root.join('config', 'locales', '*.yml')).collect {|f| File.basename(f).split('.').first}.collect(&:to_sym)
     end
 
     def find_language(lang)
