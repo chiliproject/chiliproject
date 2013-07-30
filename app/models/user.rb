@@ -72,6 +72,8 @@ class User < Principal
   validates_inclusion_of :status, :in => [STATUS_ANONYMOUS, STATUS_ACTIVE, STATUS_REGISTERED, STATUS_LOCKED]
   validate :validate_password_length
 
+  before_create :set_mail_notification
+
   named_scope :in_group, lambda {|group|
     group_id = group.is_a?(Group) ? group.id : group.to_i
     { :conditions => ["#{User.table_name}.id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id] }
@@ -81,7 +83,7 @@ class User < Principal
     { :conditions => ["#{User.table_name}.id NOT IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id] }
   }
 
-  def before_create
+  def set_mail_notification
     self.mail_notification = Setting.default_notification_option if self.mail_notification.blank?
     true
   end
