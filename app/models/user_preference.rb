@@ -18,7 +18,7 @@ class UserPreference < ActiveRecord::Base
 
   attr_protected :others, :user_id
 
-  def initialize(attributes = nil)
+  def initialize(attributes=nil, *args)
     super
     self.others ||= {}
   end
