@@ -14,10 +14,9 @@ gem 'gravatarify', '~> 3.0.0'
 gem "tzinfo", "~> 0.3.31" # Fixes #903. Not required for Rails >= 3.2
 
 group :test do
-  gem 'shoulda', '~> 2.10.3'
+  gem 'shoulda', '~> 2.11.0'
   # Shoulda doesn't work nice on 1.9.3 and seems to need test-unit explicitely…
   gem 'test-unit', :platforms => [:mri_19]
-  gem 'edavis10-object_daddy', :require => 'object_daddy'
   gem 'mocha', '0.12.1'
   gem 'capybara'
   gem 'nokogiri'
