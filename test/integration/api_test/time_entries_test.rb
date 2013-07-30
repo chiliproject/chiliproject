@@ -14,7 +14,45 @@
 require File.expand_path('../../../test_helper', __FILE__)
 
 class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     Setting.rest_api_enabled = '1'
@@ -22,7 +60,7 @@ class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
 
   context "GET /time_entries.xml" do
     should "return time entries" do
-      get '/time_entries.xml', {}, :authorization => credentials('jsmith')
+      get '/time_entries.xml', {}, credentials('jsmith')
       assert_response :success
       assert_equal 'application/xml', @response.content_type
       assert_tag :tag => 'time_entries',
@@ -32,7 +70,7 @@ class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
 
   context "GET /time_entries/2.xml" do
     should "return requested time entry" do
-      get '/time_entries/2.xml', {}, :authorization => credentials('jsmith')
+      get '/time_entries/2.xml', {}, credentials('jsmith')
       assert_response :success
       assert_equal 'application/xml', @response.content_type
       assert_tag :tag => 'time_entry',
@@ -44,7 +82,7 @@ class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
     context "with issue_id" do
       should "return create time entry" do
         assert_difference 'TimeEntry.count' do
-          post '/time_entries.xml', {:time_entry => {:issue_id => '1', :spent_on => '2010-12-02', :hours => '3.5', :activity_id => '11'}}, :authorization => credentials('jsmith')
+          post '/time_entries.xml', {:time_entry => {:issue_id => '1', :spent_on => '2010-12-02', :hours => '3.5', :activity_id => '11'}}, credentials('jsmith')
         end
         assert_response :created
         assert_equal 'application/xml', @response.content_type
@@ -62,7 +100,7 @@ class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
     context "with project_id" do
       should "return create time entry" do
         assert_difference 'TimeEntry.count' do
-          post '/time_entries.xml', {:time_entry => {:project_id => '1', :spent_on => '2010-12-02', :hours => '3.5', :activity_id => '11'}}, :authorization => credentials('jsmith')
+          post '/time_entries.xml', {:time_entry => {:project_id => '1', :spent_on => '2010-12-02', :hours => '3.5', :activity_id => '11'}}, credentials('jsmith')
         end
         assert_response :created
         assert_equal 'application/xml', @response.content_type
@@ -80,7 +118,7 @@ class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
     context "with invalid parameters" do
       should "return errors" do
         assert_no_difference 'TimeEntry.count' do
-          post '/time_entries.xml', {:time_entry => {:project_id => '1', :spent_on => '2010-12-02', :activity_id => '11'}}, :authorization => credentials('jsmith')
+          post '/time_entries.xml', {:time_entry => {:project_id => '1', :spent_on => '2010-12-02', :activity_id => '11'}}, credentials('jsmith')
         end
         assert_response :unprocessable_entity
         assert_equal 'application/xml', @response.content_type
@@ -94,7 +132,7 @@ class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
     context "with valid parameters" do
       should "update time entry" do
         assert_no_difference 'TimeEntry.count' do
-          put '/time_entries/2.xml', {:time_entry => {:comments => 'API Update'}}, :authorization => credentials('jsmith')
+          put '/time_entries/2.xml', {:time_entry => {:comments => 'API Update'}}, credentials('jsmith')
         end
         assert_response :ok
         assert_equal 'API Update', TimeEntry.find(2).comments
@@ -104,7 +142,7 @@ class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
     context "with invalid parameters" do
       should "return errors" do
         assert_no_difference 'TimeEntry.count' do
-          put '/time_entries/2.xml', {:time_entry => {:hours => '', :comments => 'API Update'}}, :authorization => credentials('jsmith')
+          put '/time_entries/2.xml', {:time_entry => {:hours => '', :comments => 'API Update'}}, credentials('jsmith')
         end
         assert_response :unprocessable_entity
         assert_equal 'application/xml', @response.content_type
@@ -117,14 +155,10 @@ class ApiTest::TimeEntriesTest < ActionController::IntegrationTest
   context "DELETE /time_entries/2.xml" do
     should "destroy time entry" do
       assert_difference 'TimeEntry.count', -1 do
-        delete '/time_entries/2.xml', {}, :authorization => credentials('jsmith')
+        delete '/time_entries/2.xml', {}, credentials('jsmith')
       end
       assert_response :ok
       assert_nil TimeEntry.find_by_id(2)
     end
-  end
-
-  def credentials(user, password=nil)
-    ActionController::HttpAuthentication::Basic.encode_credentials(user, password || user)
   end
 end
