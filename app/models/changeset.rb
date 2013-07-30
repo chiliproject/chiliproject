@@ -37,6 +37,8 @@ class Changeset < ActiveRecord::Base
   validates_uniqueness_of :revision, :scope => :repository_id
   validates_uniqueness_of :scmid, :scope => :repository_id, :allow_nil => true
 
+  before_create :before_create_cs
+
   named_scope :visible, lambda {|*args| { :include => {:repository => :project},
                                           :conditions => Project.allowed_to_condition(args.first || User.current, :view_changesets) } }
 
@@ -94,7 +96,7 @@ class Changeset < ActiveRecord::Base
     self.class.to_utf8(read_attribute(:committer), repository_encoding)
   end
 
-  def before_create
+  def before_create_cs
     self.committer = self.class.to_utf8(self.committer, repository_encoding)
     self.comments  = self.class.normalize_comments(self.comments, repository_encoding)
     self.user = repository.find_committer_user(self.committer)
