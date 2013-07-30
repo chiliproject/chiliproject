@@ -24,6 +24,7 @@ class Query < ActiveRecord::Base
 
   validates_presence_of :name, :on => :save
   validates_length_of :name, :maximum => 255
+  validate :validate_query_filters
 
   @@operators = { "="   => :label_equals,
                   "!"   => :label_not_equals,
@@ -87,7 +88,7 @@ class Query < ActiveRecord::Base
     @is_for_all = project.nil?
   end
 
-  def validate
+  def validate_query_filters
     filters.each_key do |field|
       errors.add label_for(field), :blank unless
           # filter requires one or more values
