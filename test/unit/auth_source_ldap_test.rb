@@ -40,7 +40,7 @@ class AuthSourceLdapTest < ActiveSupport::TestCase
 
       @auth.custom_filter = "(& (homeDirectory=*) (sn=O*))"
       assert @auth.valid?
-      assert_equal nil, @auth.errors.on(:custom_filter)
+      assert @auth.errors[:custom_filter].blank?
 
     end
   end
