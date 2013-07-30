@@ -503,8 +503,9 @@ class User < Principal
 end
 
 class AnonymousUser < User
+  validate :validate_anonymous_uniqueness, :on => :create
 
-  def validate_on_create
+  def validate_anonymous_uniqueness
     # There should be only one AnonymousUser in the database
     errors.add_to_base 'An anonymous user already exists.' if AnonymousUser.find(:first)
   end
