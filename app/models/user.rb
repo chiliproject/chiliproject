@@ -73,6 +73,7 @@ class User < Principal
   validate :validate_password_length
 
   before_create :set_mail_notification
+  before_save :update_hashed_password
 
   scope :in_group, lambda {|group|
     group_id = group.is_a?(Group) ? group.id : group.to_i
@@ -88,7 +89,7 @@ class User < Principal
     true
   end
 
-  def before_save
+  def update_hashed_password
     # update hashed_password if password was set
     if self.password && self.auth_source_id.blank?
       salt_password(password)
