@@ -14,7 +14,45 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class DocumentTest < ActiveSupport::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def test_create
     doc = Document.new(:project => Project.find(1), :title => 'New document', :category => Enumeration.find_by_name('User documentation'))
@@ -70,14 +108,11 @@ class DocumentTest < ActiveSupport::TestCase
 
   context "#recipients" do
     should "include watchers" do
-      document = Document.generate!(:project => Project.find(1))
+      document = Document.create!(:project => Project.find(1), :title => "test")
       user = User.find(1)
       assert document.add_watcher(user)
-
       assert document.save
-
       assert document.recipients.include?(user.mail), "Watcher not included in recipients"
     end
   end
-
 end
