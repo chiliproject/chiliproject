@@ -22,6 +22,7 @@ class Enumeration < ActiveRecord::Base
   acts_as_tree :order => 'position ASC'
 
   before_destroy :check_integrity
+  before_save    :check_default
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => [:type, :project_id]
@@ -47,7 +48,7 @@ class Enumeration < ActiveRecord::Base
     nil
   end
 
-  def before_save
+  def check_default
     if is_default? && is_default_changed?
       Enumeration.update_all("is_default = #{connection.quoted_false}", {:type => type})
     end
