@@ -12,7 +12,7 @@
 # See doc/COPYRIGHT.rdoc for more details.
 #++
 
-ActionController::Routing::Routes.draw do |map|
+Redmine::Application.routes.draw do |map|
   # Add your own custom routes here.
   # The priority is based upon order of creation: first created -> highest priority.
 
@@ -224,8 +224,9 @@ ActionController::Routing::Routes.draw do |map|
 
     repositories.connect 'projects/:id/repository/:action', :conditions => {:method => :post}
   end
-
-  map.connect 'attachments/:id', :controller => 'attachments', :action => 'show', :id => /\d+/
+  
+  map.resources :attachments, :only => [:show, :destroy]
+  # additional routes for having the file name at the end of url
   map.connect 'attachments/:id/:filename', :controller => 'attachments', :action => 'show', :id => /\d+/, :filename => /.*/
   map.connect 'attachments/download/:id/:filename', :controller => 'attachments', :action => 'download', :id => /\d+/, :filename => /.*/
 
