@@ -38,12 +38,13 @@ class Issue < ActiveRecord::Base
   acts_as_journalized :event_title => Proc.new {|o| "#{o.tracker.name} ##{o.journaled_id} (#{o.status}): #{o.subject}"},
                       :event_type => Proc.new {|o|
                                                 t = 'issue'
-                                                if o.changes.empty?
+                                                if o.changed_data.empty?
                                                   t << '-note' unless o.initial?
                                                 else
                                                   t << (IssueStatus.find_by_id(o.new_value_for(:status_id)).try(:is_closed?) ? '-closed' : '-edit')
                                                 end
-                                                t }
+                                                t },
+                      :except => ["root_id"]
 
   register_on_journal_formatter(:id, 'parent_id')
   register_on_journal_formatter(:named_association, 'project_id', 'status_id', 'tracker_id', 'assigned_to_id',
@@ -65,24 +66,25 @@ class Issue < ActiveRecord::Base
   validates_length_of :subject, :maximum => 255
   validates_inclusion_of :done_ratio, :in => 0..100
   validates_numericality_of :estimated_hours, :allow_nil => true
+  validate :validate_issue
 
-  named_scope :visible, lambda {|*args| { :include => :project,
+  scope :visible, lambda {|*args| { :include => :project,
                                           :conditions => Issue.visible_condition(args.first || User.current) } }
 
-  named_scope :open, :conditions => ["#{IssueStatus.table_name}.is_closed = ?", false], :include => :status
+  scope :open, :conditions => ["#{IssueStatus.table_name}.is_closed = ?", false], :include => :status
 
-  named_scope :recently_updated, :order => "#{Issue.table_name}.updated_on DESC"
-  named_scope :with_limit, lambda { |limit| { :limit => limit} }
-  named_scope :on_active_project, :include => [:status, :project, :tracker],
+  scope :recently_updated, :order => "#{Issue.table_name}.updated_on DESC"
+  scope :with_limit, lambda { |limit| { :limit => limit} }
+  scope :on_active_project, :include => [:status, :project, :tracker],
                                   :conditions => ["#{Project.table_name}.status=#{Project::STATUS_ACTIVE}"]
 
-  named_scope :without_version, lambda {
+  scope :without_version, lambda {
     {
       :conditions => { :fixed_version_id => nil}
     }
   }
 
-  named_scope :with_query, lambda {|query|
+  scope :with_query, lambda {|query|
     {
       :conditions => Query.merge_conditions(query.statement)
     }
@@ -107,7 +109,8 @@ class Issue < ActiveRecord::Base
     IssueDrop.new(self)
   end
 
-  def after_initialize
+  def initialize(attributes=nil, *args)
+    super
     if new_record?
       # set default values for new records only
       self.status ||= IssueStatus.default
@@ -311,7 +314,7 @@ class Issue < ActiveRecord::Base
     Setting.issue_done_ratio == 'issue_field'
   end
 
-  def validate
+  def validate_issue
     if self.due_date.nil? && @attributes['due_date'] && !@attributes['due_date'].empty?
       errors.add :due_date, :not_a_date
     end
@@ -368,7 +371,7 @@ class Issue < ActiveRecord::Base
   def attachment_removed(obj)
     init_journal(User.current)
     create_journal
-    last_journal.update_attribute(:changes, {"attachments_" + obj.id.to_s => [obj.filename, nil]})
+    last_journal.update_attribute(:changed_data, {"attachments_" + obj.id.to_s => [obj.filename, nil]})
   end
 
   # Return true if the issue is closed, otherwise false
@@ -802,7 +805,7 @@ class Issue < ActiveRecord::Base
       p.estimated_hours = nil if p.estimated_hours == 0.0
 
       # ancestors will be recursively updated
-      p.save(false)
+      p.save(:validate => false)
     end
   end
 
