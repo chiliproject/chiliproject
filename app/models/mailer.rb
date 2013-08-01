@@ -326,7 +326,7 @@ class Mailer < ActionMailer::Base
   def mail_handler_missing_information(user, email_subject, error_message)
     recipients = user.mail
     subject = l(:label_mail_handler_failure, :subject => email_subject)
-    @errors => error_message.to_s
+    @errors = error_message.to_s
     mail :to => recipients, :subject => subject
   end
 
