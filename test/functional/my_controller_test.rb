@@ -148,7 +148,7 @@ class MyControllerTest < ActionController::TestCase
         assert User.find(2).rss_token
       end
 
-      should_set_the_flash_to /reset/
+      should set_the_flash.to /reset/
       should redirect_to('my account') {'/my/account' }
     end
 
@@ -162,7 +162,7 @@ class MyControllerTest < ActionController::TestCase
         assert User.find(2).rss_token
       end
 
-      should_set_the_flash_to /reset/
+      should set_the_flash.to /reset/
       should redirect_to('my account') {'/my/account' }
     end
   end
@@ -182,7 +182,7 @@ class MyControllerTest < ActionController::TestCase
         assert User.find(2).api_token
       end
 
-      should_set_the_flash_to /reset/
+      should set_the_flash.to /reset/
       should redirect_to('my account') {'/my/account' }
     end
 
@@ -196,7 +196,7 @@ class MyControllerTest < ActionController::TestCase
         assert User.find(2).api_token
       end
 
-      should_set_the_flash_to /reset/
+      should set_the_flash.to /reset/
       should redirect_to('my account') {'/my/account' }
     end
   end
