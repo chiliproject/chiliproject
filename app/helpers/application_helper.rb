@@ -59,7 +59,7 @@ module ApplicationHelper
 
   # Show a sorted linkified (if active) comma-joined list of users
   def list_users(users, options={})
-    users.sort.collect{|u| link_to_user(u, options)}.join(", ")
+    users.sort.collect{|u| link_to_user(u, options)}.join(", ".html_safe)
   end
 
   # Displays a link to +issue+ with its subject.
@@ -318,7 +318,7 @@ module ApplicationHelper
   end
 
   def authoring(created, author, options={})
-    l(options[:label] || :label_added_time_by, :author => link_to_user(author), :age => time_tag(created))
+    l(options[:label] || :label_added_time_by, :author => link_to_user(author), :age => time_tag(created)).html_safe
   end
 
   def time_tag(time)
@@ -375,11 +375,19 @@ module ApplicationHelper
     links.size > 1 ? l(:label_display_per_page, links.join(', ')) : nil
   end
 
-  def reorder_links(name, url)
-    link_to(image_tag('2uparrow.png',   :alt => l(:label_sort_highest)), url.merge({"#{name}[move_to]" => 'highest'}), :method => :post, :title => l(:label_sort_highest)) +
-    link_to(image_tag('1uparrow.png',   :alt => l(:label_sort_higher)),  url.merge({"#{name}[move_to]" => 'higher'}),  :method => :post, :title => l(:label_sort_higher)) +
-    link_to(image_tag('1downarrow.png', :alt => l(:label_sort_lower)),   url.merge({"#{name}[move_to]" => 'lower'}),   :method => :post, :title => l(:label_sort_lower)) +
-    link_to(image_tag('2downarrow.png', :alt => l(:label_sort_lowest)),  url.merge({"#{name}[move_to]" => 'lowest'}),  :method => :post, :title => l(:label_sort_lowest))
+  def reorder_links(name, url, method = :post)
+    link_to(image_tag('2uparrow.png', :alt => l(:label_sort_highest)),
+            url.merge({"#{name}[move_to]" => 'highest'}),
+            :method => method, :title => l(:label_sort_highest)) +
+    link_to(image_tag('1uparrow.png',   :alt => l(:label_sort_higher)),
+            url.merge({"#{name}[move_to]" => 'higher'}),
+           :method => method, :title => l(:label_sort_higher)) +
+    link_to(image_tag('1downarrow.png', :alt => l(:label_sort_lower)),
+            url.merge({"#{name}[move_to]" => 'lower'}),
+            :method => method, :title => l(:label_sort_lower)) +
+    link_to(image_tag('2downarrow.png', :alt => l(:label_sort_lowest)),
+            url.merge({"#{name}[move_to]" => 'lowest'}),
+           :method => method, :title => l(:label_sort_lowest))
   end
 
   def breadcrumb(*args)
@@ -849,6 +857,42 @@ module ApplicationHelper
     form_for(name, object, options.merge({ :builder => TabularFormBuilder, :lang => current_language}), &proc)
   end
 
+  def labelled_form_for(*args, &proc)
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
+    form_for(*args, &proc)
+  end
+
+  def labelled_fields_for(*args, &proc)
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
+    fields_for(*args, &proc)
+  end
+
+  def labelled_remote_form_for(*args, &proc)
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    options.merge!({:remote => true})
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
+    form_for(*args, &proc)
+  end
+
+  def error_messages_for(*objects)
+    html = ""
+    objects = objects.map {|o| o.is_a?(String) ? instance_variable_get("@#{o}") : o}.compact
+    errors = objects.map {|o| o.errors.full_messages}.flatten
+    if errors.any?
+      html << "<div id='errorExplanation'><ul>\n"
+      errors.each do |error|
+        html << "<li>#{h error}</li>\n"
+      end
+      html << "</ul></div>\n"
+    end
+    html.html_safe
+  end  
+
   def back_url_hidden_field_tag
     back_url = params[:back_url] || request.env['HTTP_REFERER']
     back_url = CGI.unescape(back_url.to_s)
@@ -985,14 +1029,14 @@ module ApplicationHelper
   def javascript_heads
     tags = javascript_include_tag(:defaults)
     unless User.current.pref.warn_on_leaving_unsaved == '0'
-      tags << "\n" + javascript_tag("Event.observe(window, 'load', function(){ new WarnLeavingUnsaved('#{escape_javascript( l(:text_warn_on_leaving_unsaved) )}'); });")
+      tags << javascript_tag("Event.observe(window, 'load', function(){ new WarnLeavingUnsaved('#{escape_javascript( l(:text_warn_on_leaving_unsaved) )}'); });")
     end
     tags << jquery_datepicker_settings
     tags
   end
 
   def favicon
-    "<link rel='shortcut icon' href='#{image_path('/favicon.ico')}' />"
+    favicon_link_tag('/favicon.ico')
   end
 
   # Add a HTML meta tag to control robots (web spiders)
