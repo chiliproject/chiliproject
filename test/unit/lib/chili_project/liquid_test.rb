@@ -55,6 +55,7 @@ class ChiliProject::LiquidTest < ActionView::TestCase
            :workflows
 
   include ApplicationHelper
+  include ERB::Util
 
   context "hello_world tag" do
     should "render 'Hello world!'" do
