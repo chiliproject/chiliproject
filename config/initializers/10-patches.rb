@@ -125,29 +125,27 @@ end
 
 ActionView::Base.field_error_proc = Proc.new{ |html_tag, instance| "#{html_tag}" }
 
-# Adds :async_smtp and :async_sendmail delivery methods
-# to perform email deliveries asynchronously
-module AsynchronousMailer
-  %w(smtp sendmail).each do |type|
-    define_method("perform_delivery_async_#{type}") do |mail|
+require 'mail'
+module DeliveryMethods
+  class AsyncSMTP < ::Mail::SMTP
+    def deliver!(*args)
       Thread.start do
-        send "perform_delivery_#{type}", mail
+        super *args
+      end
+    end
+  end
+
+  class AsyncSendmail < ::Mail::Sendmail
+    def deliver!(*args)
+      Thread.start do
+        super *args
       end
     end
   end
 end
 
-ActionMailer::Base.send :include, AsynchronousMailer
-
-# TMail::Unquoter.convert_to_with_fallback_on_iso_8859_1 introduced in TMail 1.2.7
-# triggers a test failure in test_add_issue_with_japanese_keywords(MailHandlerTest)
-module TMail
-  class Unquoter
-    class << self
-      alias_method :convert_to, :convert_to_without_fallback_on_iso_8859_1
-    end
-  end
-end
+ActionMailer::Base.add_delivery_method :async_smtp, DeliveryMethods::AsyncSMTP
+ActionMailer::Base.add_delivery_method :async_sendmail, DeliveryMethods::AsyncSendmail
 
 module ActionController
   module MimeResponds
@@ -159,13 +157,6 @@ module ActionController
   end
 end
 
-require 'action_view/helpers/tag_helper'
-module ActionView::Helpers::TagHelper
-  def escape_once(html)
-    ActiveSupport::Multibyte.clean(html.to_s).gsub(/[\"\'><]|&(?!([a-zA-Z]+|(#\d+));)/) { |special| ERB::Util::HTML_ESCAPE[special] }
-  end
-end
-
 # Workaround for CVE-2013-0333
 # https://groups.google.com/forum/?fromgroups=#!msg/rubyonrails-security/1h2DR63ViGo/GOUVafeaF1IJ
-ActiveSupport::JSON.backend = "JSONGem"
+ActiveSupport::JSON.backend = "json_gem"
