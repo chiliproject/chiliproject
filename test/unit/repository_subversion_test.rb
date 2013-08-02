@@ -26,7 +26,7 @@ class RepositorySubversionTest < ActiveSupport::TestCase
   if repository_configured?('subversion')
     def test_fetch_changesets_from_scratch
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       assert_equal 11, @repository.changesets.count
       assert_equal 20, @repository.changes.count
@@ -37,7 +37,7 @@ class RepositorySubversionTest < ActiveSupport::TestCase
       @repository.fetch_changesets
       # Remove changesets with revision > 5
       @repository.changesets.find(:all).each {|c| c.destroy if c.revision.to_i > 5}
-      @repository.reload
+      @project.reload
       assert_equal 5, @repository.changesets.count
 
       @repository.fetch_changesets
@@ -63,7 +63,7 @@ class RepositorySubversionTest < ActiveSupport::TestCase
 
     def test_directory_listing_with_square_brackets_in_path
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       entries = @repository.entries('subversion_test/[folder_with_brackets]')
       assert_not_nil entries, 'Expect to find entries in folder_with_brackets'
@@ -78,7 +78,7 @@ class RepositorySubversionTest < ActiveSupport::TestCase
                           :url => "file:///#{self.class.repository_path('subversion')}/subversion_test/[folder_with_brackets]")
 
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       assert_equal 1, @repository.changesets.count, 'Expected to see 1 revision'
       assert_equal 2, @repository.changes.count, 'Expected to see 2 changes, dir add and file add'
@@ -91,14 +91,14 @@ class RepositorySubversionTest < ActiveSupport::TestCase
 
     def test_identifier
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       c = @repository.changesets.find_by_revision('1')
       assert_equal c.revision, c.identifier
     end
 
     def test_find_changeset_by_empty_name
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       ['', ' ', nil].each do |r|
         assert_nil @repository.find_changeset_by_name(r)
       end
@@ -112,7 +112,7 @@ class RepositorySubversionTest < ActiveSupport::TestCase
 
     def test_format_identifier
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       c = @repository.changesets.find_by_revision('1')
       assert_equal c.format_identifier, c.revision
     end
@@ -157,28 +157,28 @@ class RepositorySubversionTest < ActiveSupport::TestCase
 
     def test_previous
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       changeset = @repository.find_changeset_by_name('3')
       assert_equal @repository.find_changeset_by_name('2'), changeset.previous
     end
 
     def test_previous_nil
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       changeset = @repository.find_changeset_by_name('1')
       assert_nil changeset.previous
     end
 
     def test_next
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       changeset = @repository.find_changeset_by_name('2')
       assert_equal @repository.find_changeset_by_name('3'), changeset.next
     end
 
     def test_next_nil
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       changeset = @repository.find_changeset_by_name('11')
       assert_nil changeset.next
     end
