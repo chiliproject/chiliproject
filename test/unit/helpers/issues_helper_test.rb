@@ -16,6 +16,7 @@ require File.expand_path('../../../test_helper', __FILE__)
 class IssuesHelperTest < ActionView::TestCase
   include ApplicationHelper
   include IssuesHelper
+  include ERB::Util
   fixtures :attachments,
            :auth_sources,
            :boards,
