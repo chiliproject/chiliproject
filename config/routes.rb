@@ -12,7 +12,7 @@
 # See doc/COPYRIGHT.rdoc for more details.
 #++
 
-ActionController::Routing::Routes.draw do |map|
+Redmine::Application.routes.draw do |map|
   # Add your own custom routes here.
   # The priority is based upon order of creation: first created -> highest priority.
 
@@ -162,6 +162,8 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :versions, :collection => {:close_completed => :put}, :member => {:status_by => :post}
     project.resources :news, :shallow => true
     project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id'
+    project.resources :queries, :only => [:new, :create]
+    project.resources :issue_categories, :shallow => true
 
     project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
     project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
@@ -199,11 +201,6 @@ ActionController::Routing::Routes.draw do |map|
     activity.connect 'activity.:format', :id => nil
   end
 
-
-  map.with_options :controller => 'issue_categories' do |categories|
-    categories.connect 'projects/:project_id/issue_categories/new', :action => 'new'
-  end
-
   map.with_options :controller => 'repositories' do |repositories|
     repositories.with_options :conditions => {:method => :get} do |repository_views|
       repository_views.connect 'projects/:id/repository', :action => 'show'
@@ -224,12 +221,14 @@ ActionController::Routing::Routes.draw do |map|
 
     repositories.connect 'projects/:id/repository/:action', :conditions => {:method => :post}
   end
-
-  map.connect 'attachments/:id', :controller => 'attachments', :action => 'show', :id => /\d+/
+  
+  map.resources :attachments, :only => [:show, :destroy]
+  # additional routes for having the file name at the end of url
   map.connect 'attachments/:id/:filename', :controller => 'attachments', :action => 'show', :id => /\d+/, :filename => /.*/
   map.connect 'attachments/download/:id/:filename', :controller => 'attachments', :action => 'download', :id => /\d+/, :filename => /.*/
 
   map.resources :groups
+  map.resources :trackers, :except => :show
 
   #left old routes at the bottom for backwards compat
   map.connect 'projects/:project_id/issues/:action', :controller => 'issues'
