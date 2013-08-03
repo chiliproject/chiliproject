@@ -29,10 +29,14 @@ class News < ActiveRecord::Base
 
   after_create :add_author_as_watcher
 
-  named_scope :visible, lambda {|*args| {
-    :include => :project,
-    :conditions => Project.allowed_to_condition(args.first || User.current, :view_news)
-  }}
+  def self.visible(user=User.current)
+    joins(:project).where(Project.allowed_to_condition(user, :view_news))
+  end
+
+  # returns latest news for projects visible by user
+  def self.latest(user=User.current, count=5)
+    visible.joins(:author).limit(count).order('created_on DESC')
+  end
 
   safe_attributes 'title', 'summary', 'description'
 
@@ -45,10 +49,6 @@ class News < ActiveRecord::Base
     user.allowed_to?(:comment_news, project)
   end
 
-  # returns latest news for projects visible by user
-  def self.latest(user = User.current, count = 5)
-    find(:all, :limit => count, :conditions => Project.allowed_to_condition(user, :view_news), :include => [ :author, :project ], :order => "#{News.table_name}.created_on DESC")
-  end
 
   private
 
