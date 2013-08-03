@@ -100,8 +100,7 @@ LOREM
     should "allow adding watchers" do
       @request.session[:user_id] = 2
       set_tmp_attachments_directory
-
-      post(:new,
+      post(:create,
            :project_id => 'ecookbook',
            :document => {
              :title => 'DocumentsControllerTest#test_post_new',
@@ -110,9 +109,7 @@ LOREM
              :watcher_user_ids => ['2','3']
            },
            :attachments => {'1' => {'file' => uploaded_test_file('testfile.txt', 'text/plain')}})
-
       assert_redirected_to '/projects/ecookbook/documents'
-
       document = Document.find_by_title('DocumentsControllerTest#test_post_new')
       assert_not_nil document
       assert document.watched_by?(User.find(2))
