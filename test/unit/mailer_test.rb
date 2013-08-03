@@ -16,7 +16,45 @@ require File.expand_path('../../test_helper', __FILE__)
 class MailerTest < ActiveSupport::TestCase
   include Redmine::I18n
   include ActionController::Assertions::SelectorAssertions
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     User.current = nil # Clear current user in case of tests setting it and leaking data
@@ -35,7 +73,7 @@ class MailerTest < ActiveSupport::TestCase
     assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
 
     assert_select_email do
       # link to the main ticket
@@ -57,7 +95,7 @@ class MailerTest < ActiveSupport::TestCase
     assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
 
     assert_select_email do
       # link to the main ticket
@@ -82,7 +120,7 @@ class MailerTest < ActiveSupport::TestCase
     assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
 
     assert_select_email do
       # link to the main ticket
@@ -127,7 +165,7 @@ class MailerTest < ActiveSupport::TestCase
 
   def test_mail_from_with_phrase
     with_settings :mail_from => 'Redmine app <redmine@example.net>' do
-      Mailer.deliver_test(User.find(1))
+      Mailer.deliver_test_email(User.find(1))
     end
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
@@ -292,12 +330,16 @@ class MailerTest < ActiveSupport::TestCase
     ActionMailer::Base.deliveries.clear
     assert Mailer.deliver_register(token)
     mail = ActionMailer::Base.deliveries.last
-    assert mail.body.include?("https://redmine.foo/account/activate?token=#{token.value}")
+    assert_select_email do
+      assert_select "a[href=?]",
+                      "https://redmine.foo/account/activate?token=#{token.value}",
+                      :text => "https://redmine.foo/account/activate?token=#{token.value}"
+    end
   end
 
   def test_test
     user = User.find(1)
-    assert Mailer.deliver_test(user)
+    assert Mailer.deliver_test_email(user)
   end
 
   def test_reminders
@@ -305,7 +347,7 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal 1, ActionMailer::Base.deliveries.size
     mail = ActionMailer::Base.deliveries.last
     assert mail.to.include?('dlopper@somenet.foo')
-    assert mail.body.include?('Bug #3: Error 281 when updating a recipe')
+    assert_mail_body_match 'Bug #3: Error 281 when updating a recipe', mail
     assert_equal '1 issue(s) due in the next 42 days', mail.subject
   end
 
@@ -316,7 +358,7 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal 1, ActionMailer::Base.deliveries.size
     mail = ActionMailer::Base.deliveries.last
     assert mail.to.include?('dlopper@somenet.foo')
-    assert mail.body.include?('Bug #3: Error 281 when updating a recipe')
+    assert_mail_body_match 'Bug #3: Error 281 when updating a recipe', mail
   end
 
   def last_email
@@ -334,14 +376,14 @@ class MailerTest < ActiveSupport::TestCase
     user.language = 'fr'
     Mailer.deliver_account_activated(user)
     mail = ActionMailer::Base.deliveries.last
-    assert mail.body.include?('Votre compte')
+    assert_mail_body_match 'Votre compte', mail
 
     assert_equal :it, current_language
   end
 
   def test_with_deliveries_off
     Mailer.with_deliveries false do
-      Mailer.deliver_test(User.find(1))
+      Mailer.deliver_test_email(User.find(1))
     end
     assert ActionMailer::Base.deliveries.empty?
     # should restore perform_deliveries
@@ -351,17 +393,13 @@ class MailerTest < ActiveSupport::TestCase
   context "layout" do
     should "include the emails_header" do
       with_settings(:emails_header => "*Header content*") do
-        assert Mailer.deliver_test(User.find(1))
-
+        assert Mailer.deliver_test_email(User.find(1))
         assert_select_email do
           assert_select ".header" do
             assert_select "strong", :text => "Header content"
           end
         end
       end
-
     end
-
   end
-
 end
