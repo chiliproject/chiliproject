@@ -20,7 +20,7 @@ class Message < ActiveRecord::Base
   acts_as_attachable
   belongs_to :last_reply, :class_name => 'Message', :foreign_key => 'last_reply_id'
 
-   acts_as_journalized :event_title => Proc.new {|o| "#{o.board.name}: #{o.subject}"},
+  acts_as_journalized :event_title => Proc.new {|o| "#{o.board.name}: #{o.subject}"},
                 :event_description => :content,
                 :event_type => Proc.new {|o| o.parent_id.nil? ? 'message' : 'reply'},
                 :event_url => (Proc.new do |o|
@@ -43,10 +43,13 @@ class Message < ActiveRecord::Base
 
   validates_presence_of :board, :subject, :content
   validates_length_of :subject, :maximum => 255
+  validate :cannot_reply_to_locked_topic, :on => :create
 
-  after_create :add_author_as_watcher
+  after_create :add_author_as_watcher, :update_parent_last_reply
+  after_update :update_messages_board
+  after_destroy :reset_board_counters
 
-  named_scope :visible, lambda {|*args| { :include => {:board => :project},
+  scope :visible, lambda {|*args| { :include => {:board => :project},
                                           :conditions => Project.allowed_to_condition(args.first || User.current, :view_messages) } }
 
   safe_attributes 'subject', 'content'
@@ -59,19 +62,19 @@ class Message < ActiveRecord::Base
     !user.nil? && user.allowed_to?(:view_messages, project)
   end
 
-  def validate_on_create
+  def cannot_reply_to_locked_topic
     # Can not reply to a locked topic
     errors.add_to_base 'Topic is locked' if root.locked? && self != root
   end
 
-  def after_create
+  def update_parent_last_reply
     if parent
       parent.reload.update_attribute(:last_reply_id, self.id)
     end
     board.reset_counters!
   end
 
-  def after_update
+  def update_messages_board
     if board_id_changed?
       Message.update_all("board_id = #{board_id}", ["id = ? OR parent_id = ?", root.id, root.id])
       Board.reset_counters!(board_id_was)
@@ -79,7 +82,7 @@ class Message < ActiveRecord::Base
     end
   end
 
-  def after_destroy
+  def reset_board_counters
     parent.reset_last_reply_id! if parent
     board.reset_counters!
   end
