@@ -61,7 +61,7 @@ class RepositoryTest < ActiveSupport::TestCase
     Setting.enabled_scm = ['Darcs', 'Git']
     repository = Repository::Subversion.new(:project => Project.find(3), :url => "svn://localhost")
     assert !repository.save
-    assert_equal I18n.translate('activerecord.errors.messages.invalid'), repository.errors.on(:type)
+    assert_include I18n.translate('activerecord.errors.messages.invalid'), repository.errors[:type]
     # re-enable Subversion for following tests
     Setting.delete_all
   end
@@ -100,9 +100,9 @@ class RepositoryTest < ActiveSupport::TestCase
     # 2 email notifications to 5 users
     assert_equal 5, ActionMailer::Base.deliveries.size
     mail = ActionMailer::Base.deliveries.first
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
     assert mail.subject.starts_with?("[#{fixed_issue.project.name} - #{fixed_issue.tracker.name} ##{fixed_issue.id}]")
-    assert mail.body.include?("Status changed from #{old_status} to #{fixed_issue.status}")
+    assert_mail_body_match("Status changed from #{old_status} to #{fixed_issue.status}", mail)
 
     # ignoring commits referencing an issue of another project
     assert_equal [], Issue.find(4).changesets
