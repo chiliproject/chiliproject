@@ -1,0 +1,15 @@
+<%= f.error_messages %>
+
+<div class="box tabular">
+<p><%= f.select :category_id, DocumentCategory.active.collect {|c| [c.name, c.id]} %></p>
+<p><%= f.text_field :title, :required => true, :size => 60 %></p>
+<p><%= f.text_area :description, :cols => 60, :rows => 15, :class => 'wiki-edit' %></p>
+</div>
+
+<%= wikitoolbar_for 'document_description' %>
+
+<% if @document.new_record? %>
+<div class="box tabular">
+<p><label><%=l(:label_attachment_plural)%></label><%= render :partial => 'attachments/form' %></p>
+</div>
+<% end %>
