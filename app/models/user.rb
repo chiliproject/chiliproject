@@ -70,6 +70,11 @@ class User < Principal
   validates_confirmation_of :password, :allow_nil => true
   validates_inclusion_of :mail_notification, :in => MAIL_NOTIFICATION_OPTIONS.collect(&:first), :allow_blank => true
   validates_inclusion_of :status, :in => [STATUS_ANONYMOUS, STATUS_ACTIVE, STATUS_REGISTERED, STATUS_LOCKED]
+  validate :validate_password_length
+
+  before_create :set_mail_notification
+
+  before_save :update_hashed_password
 
   named_scope :in_group, lambda {|group|
     group_id = group.is_a?(Group) ? group.id : group.to_i
@@ -80,12 +85,12 @@ class User < Principal
     { :conditions => ["#{User.table_name}.id NOT IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id] }
   }
 
-  def before_create
+  def set_mail_notification
     self.mail_notification = Setting.default_notification_option if self.mail_notification.blank?
     true
   end
 
-  def before_save
+  def update_hashed_password
     # update hashed_password if password was set
     if self.password && self.auth_source_id.blank?
       salt_password(password)
@@ -460,7 +465,7 @@ class User < Principal
 
   protected
 
-  def validate
+  def validate_password_length
     # Password length validation based on setting
     if !password.nil? && password.size < Setting.password_min_length.to_i
       errors.add(:password, :too_short, :count => Setting.password_min_length.to_i)
@@ -494,14 +499,15 @@ class User < Principal
 
   # Returns a 128bits random salt as a hex string (32 chars long)
   def self.generate_salt
-    ActiveSupport::SecureRandom.hex(16)
+    Redmine::Utils.random_hex(16)
   end
 
 end
 
 class AnonymousUser < User
+  validate :validate_anonymous_uniqueness, :on => :create
 
-  def validate_on_create
+  def validate_anonymous_uniqueness
     # There should be only one AnonymousUser in the database
     errors.add_to_base 'An anonymous user already exists.' if AnonymousUser.find(:first)
   end
