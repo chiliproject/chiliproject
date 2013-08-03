@@ -46,12 +46,17 @@ class DocumentsController < ApplicationController
   end
 
   def create
-    @document = @project.documents.build(params[:document])
-    if request.post? and @document.save
-      attachments = Attachment.attach_files(@document, params[:attachments])
-      render_attachment_warning_if_needed(@document)
-      flash[:notice] = l(:notice_successful_create)
-      redirect_to :action => 'index', :project_id => @project
+    @document = @project.documents.build(params[:document])    
+    if request.post?
+      if User.current.allowed_to?(:add_document_watchers, @project) && params[:document]['watcher_user_ids'].present?
+        @document.watcher_user_ids = params[:document]['watcher_user_ids']
+      end
+      if @document.save
+        attachments = Attachment.attach_files(@document, params[:attachments])
+        render_attachment_warning_if_needed(@document)
+        flash[:notice] = l(:notice_successful_create)
+        redirect_to :action => 'index', :project_id => @project
+      end
     else
       render :action => 'new'
     end
@@ -62,8 +67,15 @@ class DocumentsController < ApplicationController
 
   def update
     if request.put? and @document.update_attributes(params[:document])
-      flash[:notice] = l(:notice_successful_update)
-      redirect_to :action => 'show', :id => @document
+      @categories = DocumentCategory.all
+      if User.current.allowed_to?(:add_document_watchers, @project) && params[:document]['watcher_user_ids'].present?
+        @document.watcher_user_ids = params[:document]['watcher_user_ids']
+      end
+
+      if @document.update_attributes(params[:document])
+        flash[:notice] = l(:notice_successful_update)
+        redirect_to :action => 'show', :id => @document
+      end
     else
       render :action => 'edit'
     end
