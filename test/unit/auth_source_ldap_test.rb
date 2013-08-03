@@ -36,7 +36,7 @@ class AuthSourceLdapTest < ActiveSupport::TestCase
       @auth = AuthSourceLdap.new(:name => 'Validation', :host => 'localhost', :port => 389, :attr_login => 'login')
       @auth.custom_filter = "(& (homeDirectory=*) (sn=O*" # Missing ((
       assert @auth.invalid?
-      assert_equal "is invalid", @auth.errors.on(:custom_filter)
+      assert_include "is invalid", @auth.errors[:custom_filter]
 
       @auth.custom_filter = "(& (homeDirectory=*) (sn=O*))"
       assert @auth.valid?
