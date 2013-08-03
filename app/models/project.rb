@@ -93,7 +93,7 @@ class Project < ActiveRecord::Base
     ProjectDrop.new(self)
   end
 
-  def initialize(attributes = nil)
+  def initialize(attributes=nil, *args)
     super
 
     initialized = (attributes || {}).stringify_keys
@@ -774,7 +774,7 @@ class Project < ActiveRecord::Base
   # Copies queries from +project+
   def copy_queries(project)
     project.queries.each do |query|
-      new_query = Query.new
+      new_query = ::Query.new
       new_query.attributes = query.attributes.dup.except("id", "project_id", "sort_criteria")
       new_query.sort_criteria = query.sort_criteria if query.sort_criteria
       new_query.project = self
