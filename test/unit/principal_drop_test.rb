@@ -16,10 +16,9 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class PrincipalDropTest < ActiveSupport::TestCase
   def setup
-    @principal = Principal.generate!
+    @principal = Principal.create!(:lastname => "test")
     @drop = @principal.to_liquid
   end
-
 
   context "#name" do
     should "return the name" do
