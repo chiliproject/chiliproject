@@ -126,6 +126,7 @@ end
 ActionView::Base.field_error_proc = Proc.new{ |html_tag, instance| html_tag || ''.html_safe }
 
 require 'mail'
+
 module DeliveryMethods
   class AsyncSMTP < ::Mail::SMTP
     def deliver!(*args)
@@ -140,6 +141,16 @@ module DeliveryMethods
       Thread.start do
         super *args
       end
+    end
+  end
+
+  class TmpFile
+    def initialize(*args); end
+
+    def deliver!(mail)
+      dest_dir = File.join(Rails.root, 'tmp', 'emails')
+      Dir.mkdir(dest_dir) unless File.directory?(dest_dir)
+      File.open(File.join(dest_dir, mail.message_id.gsub(/[<>]/, '') + '.eml'), 'wb') {|f| f.write(mail.encoded) }
     end
   end
 end
