@@ -16,8 +16,7 @@ require File.expand_path('../../test_helper', __FILE__)
 class RepositoryFilesystemTest < ActiveSupport::TestCase
   fixtures :projects
 
-  # No '..' in the repository path
-  REPOSITORY_PATH = RAILS_ROOT.gsub(%r{config\/\.\.}, '') + '/tmp/test/filesystem_repository'
+  REPOSITORY_PATH = Rails.root.join('tmp/test/filesystem_repository')
 
   def setup
     @project = Project.find(3)
@@ -29,7 +28,7 @@ class RepositoryFilesystemTest < ActiveSupport::TestCase
   if File.directory?(REPOSITORY_PATH)
     def test_fetch_changesets
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       assert_equal 0, @repository.changesets.count
       assert_equal 0, @repository.changes.count
