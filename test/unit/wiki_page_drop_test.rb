@@ -17,11 +17,11 @@ require File.expand_path('../../test_helper', __FILE__)
 class WikiPageDropTest < ActiveSupport::TestCase
   def setup
     @project = Project.generate!
-    @wiki = Wiki.generate(:project => @project)
-    @wiki_page = WikiPage.generate!(:wiki => @wiki)
+    @wiki = Wiki.create!(:project => @project, :start_page => 'Start')
+    @wiki_page = WikiPage.create!(:wiki => @wiki, :title => 'title')
     User.current = @user = User.generate!
     @role = Role.generate!(:permissions => [:view_wiki_pages])
-    Member.generate!(:principal => @user, :project => @project, :roles => [@role])
+    Member.create!(:principal => @user, :project => @project, :roles => [@role])
     @drop = @wiki_page.to_liquid
   end
 
@@ -30,7 +30,6 @@ class WikiPageDropTest < ActiveSupport::TestCase
       assert @drop.is_a?(WikiPageDrop), "drop is not a WikiPageDrop"
     end
   end
-
 
   context "#title" do
     should "return the title of the wiki page" do
@@ -43,8 +42,8 @@ class WikiPageDropTest < ActiveSupport::TestCase
     assert @wiki_page.visible?
 
     @private_project = Project.generate!(:is_public => false)
-    @private_wiki = Wiki.generate!(:project => @private_project)
-    @private_wiki_page = WikiPage.generate!(:wiki => @private_wiki)
+    @private_wiki = Wiki.create!(:project => @private_project, :start_page => 'Start')
+    @private_wiki_page = WikiPage.create!(:wiki => @private_wiki, :title => 'title')
 
     assert !@private_wiki_page.visible?, "WikiPage is visible"
     @private_drop = WikiPageDrop.new(@private_wiki_page)
