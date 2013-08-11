@@ -34,7 +34,6 @@ module Redmine
                                                :order => "#{Attachment.table_name}.created_on",
                                                :dependent => :destroy)
           attr_accessor :unsaved_attachments
-          after_initialize :initialize_unsaved_attachments
           send :include, Redmine::Acts::Attachable::InstanceMethods
         end
       end
@@ -50,10 +49,6 @@ module Redmine
         
         def attachments_deletable?(user=User.current)
           user.allowed_to?(self.class.attachable_options[:delete_permission], self.project)
-        end
-
-        def initialize_unsaved_attachments
-          @unsaved_attachments ||= []
         end
 
         module ClassMethods
