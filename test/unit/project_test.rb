@@ -14,41 +14,50 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class ProjectTest < ActiveSupport::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     @ecookbook = Project.find(1)
     @ecookbook_sub1 = Project.find(3)
     User.current = nil
-  end
-
-  should_validate_presence_of :name
-  should_validate_presence_of :identifier
-
-  should_validate_uniqueness_of :identifier
-
-  context "associations" do
-    should_have_many :members
-    should_have_many :users, :through => :members
-    should_have_many :member_principals
-    should_have_many :principals, :through => :member_principals
-    should_have_many :enabled_modules
-    should_have_many :issues
-    should_have_many :issue_changes, :through => :issues
-    should_have_many :versions
-    should_have_many :time_entries
-    should_have_many :queries
-    should_have_many :documents
-    should_have_many :news
-    should_have_many :issue_categories
-    should_have_many :boards
-    should_have_many :changesets, :through => :repository
-
-    should_have_one :repository
-    should_have_one :wiki
-
-    should_have_and_belong_to_many :trackers
-    should_have_and_belong_to_many :issue_custom_fields
   end
 
   def test_truth
@@ -105,7 +114,11 @@ class ProjectTest < ActiveSupport::TestCase
       p = Project.new
       p.identifier = identifier
       p.valid?
-      assert_equal valid, p.errors.on('identifier').nil?
+      if valid
+        assert p.errors['identifier'].blank?, "identifier #{identifier} was not valid"
+      else
+        assert p.errors['identifier'].present?, "identifier #{identifier} was valid"
+      end
     end
   end
 
@@ -691,7 +704,7 @@ class ProjectTest < ActiveSupport::TestCase
     project = Project.find(1)
     system_activity = TimeEntryActivity.find_by_name('Design')
     assert system_activity.active?
-    overridden_activity = TimeEntryActivity.generate!(:project => project, :parent => system_activity, :active => false)
+    overridden_activity = TimeEntryActivity.create!(:name => "Project", :project => project, :parent => system_activity, :active => false)
     assert overridden_activity.save!
 
     assert !project.activities.include?(overridden_activity), "Inactive Project specific Activity not found"
@@ -771,10 +784,10 @@ class ProjectTest < ActiveSupport::TestCase
                                      :tracker_id => 1,
                                      :assigned_to_id => 2,
                                      :project_id => @source_project.id)
-      source_relation = IssueRelation.generate!(:issue_from => Issue.find(4),
+      source_relation = IssueRelation.create!(:issue_from => Issue.find(4),
                                                 :issue_to => second_issue,
                                                 :relation_type => "relates")
-      source_relation_cross_project = IssueRelation.generate!(:issue_from => Issue.find(1),
+      source_relation_cross_project = IssueRelation.create!(:issue_from => Issue.find(1),
                                                               :issue_to => second_issue,
                                                               :relation_type => "duplicates")
 
@@ -1040,22 +1053,22 @@ class ProjectTest < ActiveSupport::TestCase
       @role = Role.generate!
 
       @user_with_membership_notification = User.generate!(:mail_notification => 'selected')
-      Member.generate!(:project => @project, :roles => [@role], :principal => @user_with_membership_notification, :mail_notification => true)
+      Member.create!(:project => @project, :roles => [@role], :principal => @user_with_membership_notification, :mail_notification => true)
 
       @all_events_user = User.generate!(:mail_notification => 'all')
-      Member.generate!(:project => @project, :roles => [@role], :principal => @all_events_user)
+      Member.create!(:project => @project, :roles => [@role], :principal => @all_events_user)
 
       @no_events_user = User.generate!(:mail_notification => 'none')
-      Member.generate!(:project => @project, :roles => [@role], :principal => @no_events_user)
+      Member.create!(:project => @project, :roles => [@role], :principal => @no_events_user)
 
       @only_my_events_user = User.generate!(:mail_notification => 'only_my_events')
-      Member.generate!(:project => @project, :roles => [@role], :principal => @only_my_events_user)
+      Member.create!(:project => @project, :roles => [@role], :principal => @only_my_events_user)
 
       @only_assigned_user = User.generate!(:mail_notification => 'only_assigned')
-      Member.generate!(:project => @project, :roles => [@role], :principal => @only_assigned_user)
+      Member.create!(:project => @project, :roles => [@role], :principal => @only_assigned_user)
 
       @only_owned_user = User.generate!(:mail_notification => 'only_owner')
-      Member.generate!(:project => @project, :roles => [@role], :principal => @only_owned_user)
+      Member.create!(:project => @project, :roles => [@role], :principal => @only_owned_user)
     end
 
     should "include members with a mail notification" do
