@@ -1,0 +1,2205 @@
+# This file lists the whole directory tree as of d2a4977, files reviewed with
+# regard to ActiveRecord 3 (arel), unobstrusive JavaScript (ujs) and HTML
+# escaping (html) can be checked off.
+# %  marks not-yet reviewed files
+# X  marks reviewed files
+# Files added after d2a4977 should be developped against Rails 3 and should be
+# reviewed before merging them in, thus they are considered safe.
+
+# Things to consider while reviewing:
+# * arel: queries must be converted to ActiveRecord 3 style, see
+#         http://guides.rubyonrails.org/active_record_querying.html for more
+#         info
+# * ujs: JavaScript must be converted to jQuery and ujs, see
+#        https://github.com/rails/jquery-ujs/wiki/External-articles and
+#        http://railscasts.com/episodes/205-unobtrusive-javascript?view=asciicast
+#        for more info
+# * html: all strings rendered to html at one point or another will be
+#         html-escaped if not explicitely marked as html_safe, see
+#         http://yehudakatz.com/2010/02/01/safebuffers-and-rails-3-0/ for more
+#         info about SafeBuffers
+
+# Command used to generate this file:
+# tree --noreport -I '*~' | awk '{print " %    %    %      " $0}' > TODO.filelist
+
+arel ujs html
+ %    %    %      .
+ %    %    %      ├── CONTRIBUTING.md
+ %    %    %      ├── Gemfile
+ %    %    %      ├── README.rdoc
+ %    %    %      ├── Rakefile
+ %    %    %      ├── TODO.filelist
+ %    %    %      ├── TODO.md
+ %    %    %      ├── app
+ %    %    %      │   ├── controllers
+ %    %    %      │   │   ├── account_controller.rb
+ %    %    %      │   │   ├── activities_controller.rb
+ %    %    %      │   │   ├── admin_controller.rb
+ %    %    %      │   │   ├── application_controller.rb
+ %    %    %      │   │   ├── attachments_controller.rb
+ %    %    %      │   │   ├── auth_sources_controller.rb
+ %    %    %      │   │   ├── auto_completes_controller.rb
+ %    %    %      │   │   ├── boards_controller.rb
+ %    %    %      │   │   ├── calendars_controller.rb
+ %    %    %      │   │   ├── comments_controller.rb
+ %    %    %      │   │   ├── context_menus_controller.rb
+ %    %    %      │   │   ├── custom_fields_controller.rb
+ %    %    %      │   │   ├── documents_controller.rb
+ %    %    %      │   │   ├── enumerations_controller.rb
+ %    %    %      │   │   ├── files_controller.rb
+ %    %    %      │   │   ├── gantts_controller.rb
+ %    %    %      │   │   ├── groups_controller.rb
+ %    %    %      │   │   ├── help_controller.rb
+ %    %    %      │   │   ├── issue_categories_controller.rb
+ %    %    %      │   │   ├── issue_moves_controller.rb
+ %    %    %      │   │   ├── issue_relations_controller.rb
+ %    %    %      │   │   ├── issue_statuses_controller.rb
+ %    %    %      │   │   ├── issues_controller.rb
+ %    %    %      │   │   ├── journals_controller.rb
+ %    %    %      │   │   ├── ldap_auth_sources_controller.rb
+ %    %    %      │   │   ├── mail_handler_controller.rb
+ %    %    %      │   │   ├── members_controller.rb
+ %    %    %      │   │   ├── messages_controller.rb
+ %    %    %      │   │   ├── my_controller.rb
+ %    %    %      │   │   ├── news_controller.rb
+ %    %    %      │   │   ├── previews_controller.rb
+ %    %    %      │   │   ├── project_enumerations_controller.rb
+ %    %    %      │   │   ├── projects_controller.rb
+ %    %    %      │   │   ├── queries_controller.rb
+ %    %    %      │   │   ├── reports_controller.rb
+ %    %    %      │   │   ├── repositories_controller.rb
+ %    %    %      │   │   ├── roles_controller.rb
+ %    %    %      │   │   ├── search_controller.rb
+ %    %    %      │   │   ├── settings_controller.rb
+ %    %    %      │   │   ├── sys_controller.rb
+ %    %    %      │   │   ├── time_entry_reports_controller.rb
+ %    %    %      │   │   ├── timelog_controller.rb
+ %    %    %      │   │   ├── trackers_controller.rb
+ %    %    %      │   │   ├── users_controller.rb
+ %    %    %      │   │   ├── versions_controller.rb
+ %    %    %      │   │   ├── watchers_controller.rb
+ %    %    %      │   │   ├── welcome_controller.rb
+ %    %    %      │   │   ├── wiki_controller.rb
+ %    %    %      │   │   ├── wikis_controller.rb
+ %    %    %      │   │   └── workflows_controller.rb
+ %    %    %      │   ├── drops
+ %    %    %      │   │   ├── base_drop.rb
+ %    %    %      │   │   ├── issue_drop.rb
+ %    %    %      │   │   ├── issue_status_drop.rb
+ %    %    %      │   │   ├── principal_drop.rb
+ %    %    %      │   │   ├── project_drop.rb
+ %    %    %      │   │   ├── tracker_drop.rb
+ %    %    %      │   │   └── wiki_page_drop.rb
+ %    %    %      │   ├── helpers
+ %    %    %      │   │   ├── account_helper.rb
+ %    %    %      │   │   ├── admin_helper.rb
+ %    %    %      │   │   ├── application_helper.rb
+ %    %    %      │   │   ├── attachments_helper.rb
+ %    %    %      │   │   ├── auth_sources_helper.rb
+ %    %    %      │   │   ├── boards_helper.rb
+ %    %    %      │   │   ├── calendars_helper.rb
+ %    %    %      │   │   ├── custom_fields_helper.rb
+ %    %    %      │   │   ├── documents_helper.rb
+ %    %    %      │   │   ├── enumerations_helper.rb
+ %    %    %      │   │   ├── gantt_helper.rb
+ %    %    %      │   │   ├── groups_helper.rb
+ %    %    %      │   │   ├── issue_categories_helper.rb
+ %    %    %      │   │   ├── issue_moves_helper.rb
+ %    %    %      │   │   ├── issue_relations_helper.rb
+ %    %    %      │   │   ├── issue_statuses_helper.rb
+ %    %    %      │   │   ├── issues_helper.rb
+ %    %    %      │   │   ├── journals_helper.rb
+ %    %    %      │   │   ├── mail_handler_helper.rb
+ %    %    %      │   │   ├── members_helper.rb
+ %    %    %      │   │   ├── messages_helper.rb
+ %    %    %      │   │   ├── my_helper.rb
+ %    %    %      │   │   ├── news_helper.rb
+ %    %    %      │   │   ├── projects_helper.rb
+ %    %    %      │   │   ├── queries_helper.rb
+ %    %    %      │   │   ├── reports_helper.rb
+ %    %    %      │   │   ├── repositories_helper.rb
+ %    %    %      │   │   ├── roles_helper.rb
+ %    %    %      │   │   ├── search_helper.rb
+ %    %    %      │   │   ├── settings_helper.rb
+ %    %    %      │   │   ├── sort_helper.rb
+ %    %    %      │   │   ├── timelog_helper.rb
+ %    %    %      │   │   ├── trackers_helper.rb
+ %    %    %      │   │   ├── users_helper.rb
+ %    %    %      │   │   ├── versions_helper.rb
+ %    %    %      │   │   ├── watchers_helper.rb
+ %    %    %      │   │   ├── welcome_helper.rb
+ %    %    %      │   │   ├── wiki_helper.rb
+ %    %    %      │   │   └── workflows_helper.rb
+ %    %    %      │   ├── models
+ %    %    %      │   │   ├── attachment.rb
+ %    %    %      │   │   ├── auth_source.rb
+ %    %    %      │   │   ├── auth_source_ldap.rb
+ %    %    %      │   │   ├── board.rb
+ %    %    %      │   │   ├── change.rb
+ %    %    %      │   │   ├── changeset.rb
+ %    %    %      │   │   ├── comment.rb
+ %    %    %      │   │   ├── comment_observer.rb
+ %    %    %      │   │   ├── custom_field.rb
+ %    %    %      │   │   ├── custom_value.rb
+ %    %    %      │   │   ├── document.rb
+ %    %    %      │   │   ├── document_category.rb
+ %    %    %      │   │   ├── document_category_custom_field.rb
+ %    %    %      │   │   ├── document_observer.rb
+ %    %    %      │   │   ├── enabled_module.rb
+ %    %    %      │   │   ├── enumeration.rb
+ %    %    %      │   │   ├── group.rb
+ %    %    %      │   │   ├── group_custom_field.rb
+ %    %    %      │   │   ├── issue.rb
+ %    %    %      │   │   ├── issue_category.rb
+ %    %    %      │   │   ├── issue_custom_field.rb
+ %    %    %      │   │   ├── issue_observer.rb
+ %    %    %      │   │   ├── issue_priority.rb
+ %    %    %      │   │   ├── issue_priority_custom_field.rb
+ %    %    %      │   │   ├── issue_relation.rb
+ %    %    %      │   │   ├── issue_status.rb
+ %    %    %      │   │   ├── journal.rb
+ %    %    %      │   │   ├── journal_observer.rb
+ %    %    %      │   │   ├── mail_handler.rb
+ %    %    %      │   │   ├── mailer.rb
+ %    %    %      │   │   ├── member.rb
+ %    %    %      │   │   ├── member_role.rb
+ %    %    %      │   │   ├── message.rb
+ %    %    %      │   │   ├── message_observer.rb
+ %    %    %      │   │   ├── news.rb
+ %    %    %      │   │   ├── news_observer.rb
+ %    %    %      │   │   ├── principal.rb
+ %    %    %      │   │   ├── project.rb
+ %    %    %      │   │   ├── project_custom_field.rb
+ %    %    %      │   │   ├── query
+ %    %    %      │   │   │   └── statement_invalid.rb
+ %    %    %      │   │   ├── query.rb
+ %    %    %      │   │   ├── query_column.rb
+ %    %    %      │   │   ├── query_custom_field_column.rb
+ %    %    %      │   │   ├── repository
+ %    %    %      │   │   │   ├── bazaar.rb
+ %    %    %      │   │   │   ├── cvs.rb
+ %    %    %      │   │   │   ├── darcs.rb
+ %    %    %      │   │   │   ├── filesystem.rb
+ %    %    %      │   │   │   ├── git.rb
+ %    %    %      │   │   │   ├── mercurial.rb
+ %    %    %      │   │   │   └── subversion.rb
+ %    %    %      │   │   ├── repository.rb
+ %    %    %      │   │   ├── role.rb
+ %    %    %      │   │   ├── setting.rb
+ %    %    %      │   │   ├── time_entry.rb
+ %    %    %      │   │   ├── time_entry_activity.rb
+ %    %    %      │   │   ├── time_entry_activity_custom_field.rb
+ %    %    %      │   │   ├── time_entry_custom_field.rb
+ %    %    %      │   │   ├── token.rb
+ %    %    %      │   │   ├── tracker.rb
+ %    %    %      │   │   ├── user.rb
+ %    %    %      │   │   ├── user_custom_field.rb
+ %    %    %      │   │   ├── user_preference.rb
+ %    %    %      │   │   ├── version.rb
+ %    %    %      │   │   ├── version_custom_field.rb
+ %    %    %      │   │   ├── watcher.rb
+ %    %    %      │   │   ├── wiki.rb
+ %    %    %      │   │   ├── wiki_content.rb
+ %    %    %      │   │   ├── wiki_page.rb
+ %    %    %      │   │   ├── wiki_redirect.rb
+ %    %    %      │   │   └── workflow.rb
+ %    %    %      │   └── views
+ %    %    %      │       ├── account
+ %    %    %      │       │   ├── _login.erb
+ %    %    %      │       │   ├── login.html.erb
+ %    %    %      │       │   ├── lost_password.html.erb
+ %    %    %      │       │   ├── password_recovery.html.erb
+ %    %    %      │       │   └── register.html.erb
+ %    %    %      │       ├── activities
+ %    %    %      │       │   └── index.html.erb
+ %    %    %      │       ├── admin
+ %    %    %      │       │   ├── _menu.erb
+ %    %    %      │       │   ├── _no_data.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── info.html.erb
+ %    %    %      │       │   ├── plugins.html.erb
+ %    %    %      │       │   └── projects.html.erb
+ %    %    %      │       ├── attachments
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── _links.erb
+ %    %    %      │       │   ├── diff.html.erb
+ %    %    %      │       │   └── file.html.erb
+ %    %    %      │       ├── auth_sources
+ %    %    %      │       │   ├── _form.html.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── auto_completes
+ %    %    %      │       │   ├── issues.html.erb
+ %    %    %      │       │   ├── projects.html.erb
+ %    %    %      │       │   └── users.html.erb
+ %    %    %      │       ├── boards
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── calendars
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── common
+ %    %    %      │       │   ├── _calendar.erb
+ %    %    %      │       │   ├── _diff.erb
+ %    %    %      │       │   ├── _file.erb
+ %    %    %      │       │   ├── _preview.erb
+ %    %    %      │       │   ├── _tabs.erb
+ %    %    %      │       │   ├── error.html.erb
+ %    %    %      │       │   └── feed.atom.rxml
+ %    %    %      │       ├── context_menus
+ %    %    %      │       │   └── issues.html.erb
+ %    %    %      │       ├── custom_fields
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── _index.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── documents
+ %    %    %      │       │   ├── _document.erb
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── enumerations
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── destroy.html.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── list.html.erb
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── files
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── gantts
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── groups
+ %    %    %      │       │   ├── _form.html.erb
+ %    %    %      │       │   ├── _general.html.erb
+ %    %    %      │       │   ├── _memberships.html.erb
+ %    %    %      │       │   ├── _users.html.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── help
+ %    %    %      │       │   ├── wiki_syntax.html.erb
+ %    %    %      │       │   └── wiki_syntax_detailed.html.erb
+ %    %    %      │       ├── issue_categories
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── destroy.html.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── issue_moves
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── issue_relations
+ %    %    %      │       │   └── _form.erb
+ %    %    %      │       ├── issue_statuses
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── issues
+ %    %    %      │       │   ├── _action_menu.erb
+ %    %    %      │       │   ├── _attributes.erb
+ %    %    %      │       │   ├── _changesets.erb
+ %    %    %      │       │   ├── _edit.erb
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── _form_custom_fields.erb
+ %    %    %      │       │   ├── _form_update.erb
+ %    %    %      │       │   ├── _history.erb
+ %    %    %      │       │   ├── _list.erb
+ %    %    %      │       │   ├── _list_simple.erb
+ %    %    %      │       │   ├── _relations.erb
+ %    %    %      │       │   ├── _sidebar.erb
+ %    %    %      │       │   ├── _tree_simple.html.erb
+ %    %    %      │       │   ├── bulk_edit.html.erb
+ %    %    %      │       │   ├── destroy.html.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.api.rsb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   ├── show.api.rsb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── journals
+ %    %    %      │       │   ├── _notes_form.erb
+ %    %    %      │       │   ├── diff.html.erb
+ %    %    %      │       │   ├── edit.rjs
+ %    %    %      │       │   ├── index.rxml
+ %    %    %      │       │   └── update.rjs
+ %    %    %      │       ├── layouts
+ %    %    %      │       │   ├── admin.html.erb
+ %    %    %      │       │   ├── base.html.erb
+ %    %    %      │       │   ├── help.html.erb
+ %    %    %      │       │   ├── mailer.text.html.erb
+ %    %    %      │       │   └── mailer.text.plain.erb
+ %    %    %      │       ├── ldap_auth_sources
+ %    %    %      │       │   └── _form.erb
+ %    %    %      │       ├── mailer
+ %    %    %      │       │   ├── _issue_text_html.erb
+ %    %    %      │       │   ├── _issue_text_plain.erb
+ %    %    %      │       │   ├── account_activated.text.html.html.erb
+ %    %    %      │       │   ├── account_activated.text.plain.html.erb
+ %    %    %      │       │   ├── account_activation_request.text.html.html.erb
+ %    %    %      │       │   ├── account_activation_request.text.plain.html.erb
+ %    %    %      │       │   ├── account_information.text.html.html.erb
+ %    %    %      │       │   ├── account_information.text.plain.html.erb
+ %    %    %      │       │   ├── attachments_added.text.html.html.erb
+ %    %    %      │       │   ├── attachments_added.text.plain.html.erb
+ %    %    %      │       │   ├── document_added.text.html.html.erb
+ %    %    %      │       │   ├── document_added.text.plain.html.erb
+ %    %    %      │       │   ├── issue_add.text.html.html.erb
+ %    %    %      │       │   ├── issue_add.text.plain.html.erb
+ %    %    %      │       │   ├── issue_edit.text.html.html.erb
+ %    %    %      │       │   ├── issue_edit.text.plain.html.erb
+ %    %    %      │       │   ├── lost_password.text.html.html.erb
+ %    %    %      │       │   ├── lost_password.text.plain.html.erb
+ %    %    %      │       │   ├── mail_handler_confirmation.text.html.html.erb
+ %    %    %      │       │   ├── mail_handler_confirmation.text.plain.html.erb
+ %    %    %      │       │   ├── mail_handler_missing_information.text.html.html.erb
+ %    %    %      │       │   ├── mail_handler_missing_information.text.plain.html.erb
+ %    %    %      │       │   ├── mail_handler_unauthorized_action.text.html.html.erb
+ %    %    %      │       │   ├── mail_handler_unauthorized_action.text.plain.html.erb
+ %    %    %      │       │   ├── message_posted.text.html.html.erb
+ %    %    %      │       │   ├── message_posted.text.plain.html.erb
+ %    %    %      │       │   ├── news_added.text.html.html.erb
+ %    %    %      │       │   ├── news_added.text.plain.html.erb
+ %    %    %      │       │   ├── news_comment_added.text.html.html.erb
+ %    %    %      │       │   ├── news_comment_added.text.plain.html.erb
+ %    %    %      │       │   ├── register.text.html.html.erb
+ %    %    %      │       │   ├── register.text.plain.html.erb
+ %    %    %      │       │   ├── reminder.text.html.html.erb
+ %    %    %      │       │   ├── reminder.text.plain.html.erb
+ %    %    %      │       │   ├── test.text.html.html.erb
+ %    %    %      │       │   ├── test.text.plain.html.erb
+ %    %    %      │       │   ├── wiki_content_added.text.html.html.erb
+ %    %    %      │       │   ├── wiki_content_added.text.plain.html.erb
+ %    %    %      │       │   ├── wiki_content_updated.text.html.html.erb
+ %    %    %      │       │   └── wiki_content_updated.text.plain.html.erb
+ %    %    %      │       ├── members
+ %    %    %      │       │   ├── _membership_assignment.html.erb
+ %    %    %      │       │   └── autocomplete_for_member.html.erb
+ %    %    %      │       ├── messages
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── my
+ %    %    %      │       │   ├── _block.erb
+ %    %    %      │       │   ├── _sidebar.erb
+ %    %    %      │       │   ├── account.html.erb
+ %    %    %      │       │   ├── blocks
+ %    %    %      │       │   │   ├── _calendar.html.erb
+ %    %    %      │       │   │   ├── _documents.html.erb
+ %    %    %      │       │   │   ├── _issuesassignedtome.html.erb
+ %    %    %      │       │   │   ├── _issuesreportedbyme.html.erb
+ %    %    %      │       │   │   ├── _issueswatched.html.erb
+ %    %    %      │       │   │   ├── _news.html.erb
+ %    %    %      │       │   │   └── _timelog.html.erb
+ %    %    %      │       │   ├── page.html.erb
+ %    %    %      │       │   ├── page_layout.html.erb
+ %    %    %      │       │   └── password.html.erb
+ %    %    %      │       ├── news
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── _news.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.api.rsb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── previews
+ %    %    %      │       │   └── issue.html.erb
+ %    %    %      │       ├── projects
+ %    %    %      │       │   ├── _edit.erb
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── _members_box.html.erb
+ %    %    %      │       │   ├── copy.html.erb
+ %    %    %      │       │   ├── destroy.html.erb
+ %    %    %      │       │   ├── index.api.rsb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── list_members.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   ├── settings
+ %    %    %      │       │   │   ├── _activities.html.erb
+ %    %    %      │       │   │   ├── _boards.html.erb
+ %    %    %      │       │   │   ├── _issue_categories.html.erb
+ %    %    %      │       │   │   ├── _members.html.erb
+ %    %    %      │       │   │   ├── _modules.html.erb
+ %    %    %      │       │   │   ├── _repository.html.erb
+ %    %    %      │       │   │   ├── _versions.html.erb
+ %    %    %      │       │   │   └── _wiki.html.erb
+ %    %    %      │       │   ├── settings.html.erb
+ %    %    %      │       │   ├── show.api.rsb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── queries
+ %    %    %      │       │   ├── _columns.erb
+ %    %    %      │       │   ├── _filters.erb
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── _new_issue_button.html.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── reports
+ %    %    %      │       │   ├── _details.erb
+ %    %    %      │       │   ├── _simple.erb
+ %    %    %      │       │   ├── issue_report.html.erb
+ %    %    %      │       │   └── issue_report_details.html.erb
+ %    %    %      │       ├── repositories
+ %    %    %      │       │   ├── _breadcrumbs.erb
+ %    %    %      │       │   ├── _dir_list.erb
+ %    %    %      │       │   ├── _dir_list_content.erb
+ %    %    %      │       │   ├── _link_to_functions.erb
+ %    %    %      │       │   ├── _navigation.erb
+ %    %    %      │       │   ├── _revisions.erb
+ %    %    %      │       │   ├── annotate.html.erb
+ %    %    %      │       │   ├── changes.html.erb
+ %    %    %      │       │   ├── committers.html.erb
+ %    %    %      │       │   ├── diff.html.erb
+ %    %    %      │       │   ├── entry.html.erb
+ %    %    %      │       │   ├── revision.html.erb
+ %    %    %      │       │   ├── revisions.html.erb
+ %    %    %      │       │   ├── show.html.erb
+ %    %    %      │       │   └── stats.html.erb
+ %    %    %      │       ├── roles
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   └── report.html.erb
+ %    %    %      │       ├── search
+ %    %    %      │       │   ├── _pagination.html.erb
+ %    %    %      │       │   ├── _quick_search.html.erb
+ %    %    %      │       │   └── index.html.erb
+ %    %    %      │       ├── settings
+ %    %    %      │       │   ├── _authentication.erb
+ %    %    %      │       │   ├── _display.erb
+ %    %    %      │       │   ├── _general.erb
+ %    %    %      │       │   ├── _issues.erb
+ %    %    %      │       │   ├── _mail_handler.erb
+ %    %    %      │       │   ├── _notifications.erb
+ %    %    %      │       │   ├── _projects.erb
+ %    %    %      │       │   ├── _repositories.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   └── plugin.html.erb
+ %    %    %      │       ├── time_entry_reports
+ %    %    %      │       │   ├── _report_criteria.erb
+ %    %    %      │       │   └── report.html.erb
+ %    %    %      │       ├── timelog
+ %    %    %      │       │   ├── _date_range.erb
+ %    %    %      │       │   ├── _list.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.api.rsb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   └── show.api.rsb
+ %    %    %      │       ├── trackers
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   └── new.html.erb
+ %    %    %      │       ├── users
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── _general.erb
+ %    %    %      │       │   ├── _groups.erb
+ %    %    %      │       │   ├── _mail_notifications.html.erb
+ %    %    %      │       │   ├── _memberships.erb
+ %    %    %      │       │   ├── _preferences.html.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.api.rsb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   ├── show.api.rsb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── versions
+ %    %    %      │       │   ├── _form.erb
+ %    %    %      │       │   ├── _issue_counts.erb
+ %    %    %      │       │   ├── _overview.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── new.html.erb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── watchers
+ %    %    %      │       │   ├── _watchers.erb
+ %    %    %      │       │   └── replace_selectors.rjs
+ %    %    %      │       ├── welcome
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   └── robots.html.erb
+ %    %    %      │       ├── wiki
+ %    %    %      │       │   ├── _content.erb
+ %    %    %      │       │   ├── _sidebar.erb
+ %    %    %      │       │   ├── annotate.html.erb
+ %    %    %      │       │   ├── date_index.html.erb
+ %    %    %      │       │   ├── destroy.html.erb
+ %    %    %      │       │   ├── diff.html.erb
+ %    %    %      │       │   ├── edit.html.erb
+ %    %    %      │       │   ├── export.html.erb
+ %    %    %      │       │   ├── export_multiple.html.erb
+ %    %    %      │       │   ├── history.html.erb
+ %    %    %      │       │   ├── index.html.erb
+ %    %    %      │       │   ├── rename.html.erb
+ %    %    %      │       │   └── show.html.erb
+ %    %    %      │       ├── wikis
+ %    %    %      │       │   └── destroy.html.erb
+ %    %    %      │       └── workflows
+ %    %    %      │           ├── _action_menu.erb
+ %    %    %      │           ├── _form.html.erb
+ %    %    %      │           ├── copy.html.erb
+ %    %    %      │           ├── edit.html.erb
+ %    %    %      │           └── index.html.erb
+ %    %    %      ├── config
+ %    %    %      │   ├── additional_environment.rb.example
+ %    %    %      │   ├── application.rb
+ %    %    %      │   ├── boot.rb
+ %    %    %      │   ├── configuration.yml.example
+ %    %    %      │   ├── database.yml.example
+ %    %    %      │   ├── environment.rb
+ %    %    %      │   ├── environments
+ %    %    %      │   │   ├── demo.rb
+ %    %    %      │   │   ├── development.rb
+ %    %    %      │   │   ├── production.rb
+ %    %    %      │   │   ├── test.rb
+ %    %    %      │   │   ├── test_pgsql.rb
+ %    %    %      │   │   └── test_sqlite3.rb
+ %    %    %      │   ├── initializers
+ %    %    %      │   │   ├── 10-patches.rb
+ %    %    %      │   │   ├── 20-mime_types.rb
+ %    %    %      │   │   └── 30-redmine.rb
+ %    %    %      │   ├── locales
+ %    %    %      │   │   ├── bg.yml
+ %    %    %      │   │   ├── bs.yml
+ %    %    %      │   │   ├── ca.yml
+ %    %    %      │   │   ├── cs.yml
+ %    %    %      │   │   ├── da.yml
+ %    %    %      │   │   ├── de.yml
+ %    %    %      │   │   ├── el.yml
+ %    %    %      │   │   ├── en-GB.yml
+ %    %    %      │   │   ├── en.yml
+ %    %    %      │   │   ├── es.yml
+ %    %    %      │   │   ├── eu.yml
+ %    %    %      │   │   ├── fa.yml
+ %    %    %      │   │   ├── fi.yml
+ %    %    %      │   │   ├── fr.yml
+ %    %    %      │   │   ├── gl.yml
+ %    %    %      │   │   ├── he.yml
+ %    %    %      │   │   ├── hr.yml
+ %    %    %      │   │   ├── hu.yml
+ %    %    %      │   │   ├── id.yml
+ %    %    %      │   │   ├── it.yml
+ %    %    %      │   │   ├── ja.yml
+ %    %    %      │   │   ├── ko.yml
+ %    %    %      │   │   ├── lt.yml
+ %    %    %      │   │   ├── lv.yml
+ %    %    %      │   │   ├── mk.yml
+ %    %    %      │   │   ├── mn.yml
+ %    %    %      │   │   ├── nl.yml
+ %    %    %      │   │   ├── no.yml
+ %    %    %      │   │   ├── pl.yml
+ %    %    %      │   │   ├── pt-BR.yml
+ %    %    %      │   │   ├── pt.yml
+ %    %    %      │   │   ├── ro.yml
+ %    %    %      │   │   ├── ru.yml
+ %    %    %      │   │   ├── sk.yml
+ %    %    %      │   │   ├── sl.yml
+ %    %    %      │   │   ├── sr-YU.yml
+ %    %    %      │   │   ├── sr.yml
+ %    %    %      │   │   ├── sv.yml
+ %    %    %      │   │   ├── th.yml
+ %    %    %      │   │   ├── tr.yml
+ %    %    %      │   │   ├── uk.yml
+ %    %    %      │   │   ├── vi.yml
+ %    %    %      │   │   ├── zh-TW.yml
+ %    %    %      │   │   └── zh.yml
+ %    %    %      │   ├── preinitializer.rb
+ %    %    %      │   ├── routes.rb
+ %    %    %      │   └── settings.yml
+ %    %    %      ├── config.ru
+ %    %    %      ├── db
+ %    %    %      │   ├── migrate
+ %    %    %      │   │   ├── 001_setup.rb
+ %    %    %      │   │   ├── 002_issue_move.rb
+ %    %    %      │   │   ├── 003_issue_add_note.rb
+ %    %    %      │   │   ├── 004_export_pdf.rb
+ %    %    %      │   │   ├── 005_issue_start_date.rb
+ %    %    %      │   │   ├── 006_calendar_and_activity.rb
+ %    %    %      │   │   ├── 007_create_journals.rb
+ %    %    %      │   │   ├── 008_create_user_preferences.rb
+ %    %    %      │   │   ├── 009_add_hide_mail_pref.rb
+ %    %    %      │   │   ├── 010_create_comments.rb
+ %    %    %      │   │   ├── 011_add_news_comments_count.rb
+ %    %    %      │   │   ├── 012_add_comments_permissions.rb
+ %    %    %      │   │   ├── 013_create_queries.rb
+ %    %    %      │   │   ├── 014_add_queries_permissions.rb
+ %    %    %      │   │   ├── 015_create_repositories.rb
+ %    %    %      │   │   ├── 016_add_repositories_permissions.rb
+ %    %    %      │   │   ├── 017_create_settings.rb
+ %    %    %      │   │   ├── 018_set_doc_and_files_notifications.rb
+ %    %    %      │   │   ├── 019_add_issue_status_position.rb
+ %    %    %      │   │   ├── 020_add_role_position.rb
+ %    %    %      │   │   ├── 021_add_tracker_position.rb
+ %    %    %      │   │   ├── 022_serialize_possibles_values.rb
+ %    %    %      │   │   ├── 023_add_tracker_is_in_roadmap.rb
+ %    %    %      │   │   ├── 024_add_roadmap_permission.rb
+ %    %    %      │   │   ├── 025_add_search_permission.rb
+ %    %    %      │   │   ├── 026_add_repository_login_and_password.rb
+ %    %    %      │   │   ├── 027_create_wikis.rb
+ %    %    %      │   │   ├── 028_create_wiki_pages.rb
+ %    %    %      │   │   ├── 029_create_wiki_contents.rb
+ %    %    %      │   │   ├── 030_add_projects_feeds_permissions.rb
+ %    %    %      │   │   ├── 031_add_repository_root_url.rb
+ %    %    %      │   │   ├── 032_create_time_entries.rb
+ %    %    %      │   │   ├── 033_add_timelog_permissions.rb
+ %    %    %      │   │   ├── 034_create_changesets.rb
+ %    %    %      │   │   ├── 035_create_changes.rb
+ %    %    %      │   │   ├── 036_add_changeset_commit_date.rb
+ %    %    %      │   │   ├── 037_add_project_identifier.rb
+ %    %    %      │   │   ├── 038_add_custom_field_is_filter.rb
+ %    %    %      │   │   ├── 039_create_watchers.rb
+ %    %    %      │   │   ├── 040_create_changesets_issues.rb
+ %    %    %      │   │   ├── 041_rename_comment_to_comments.rb
+ %    %    %      │   │   ├── 042_create_issue_relations.rb
+ %    %    %      │   │   ├── 043_add_relations_permissions.rb
+ %    %    %      │   │   ├── 044_set_language_length_to_five.rb
+ %    %    %      │   │   ├── 045_create_boards.rb
+ %    %    %      │   │   ├── 046_create_messages.rb
+ %    %    %      │   │   ├── 047_add_boards_permissions.rb
+ %    %    %      │   │   ├── 048_allow_null_version_effective_date.rb
+ %    %    %      │   │   ├── 049_add_wiki_destroy_page_permission.rb
+ %    %    %      │   │   ├── 050_add_wiki_attachments_permissions.rb
+ %    %    %      │   │   ├── 051_add_project_status.rb
+ %    %    %      │   │   ├── 052_add_changes_revision.rb
+ %    %    %      │   │   ├── 053_add_changes_branch.rb
+ %    %    %      │   │   ├── 054_add_changesets_scmid.rb
+ %    %    %      │   │   ├── 055_add_repositories_type.rb
+ %    %    %      │   │   ├── 056_add_repositories_changes_permission.rb
+ %    %    %      │   │   ├── 057_add_versions_wiki_page_title.rb
+ %    %    %      │   │   ├── 058_add_issue_categories_assigned_to_id.rb
+ %    %    %      │   │   ├── 059_add_roles_assignable.rb
+ %    %    %      │   │   ├── 060_change_changesets_committer_limit.rb
+ %    %    %      │   │   ├── 061_add_roles_builtin.rb
+ %    %    %      │   │   ├── 062_insert_builtin_roles.rb
+ %    %    %      │   │   ├── 063_add_roles_permissions.rb
+ %    %    %      │   │   ├── 064_drop_permissions.rb
+ %    %    %      │   │   ├── 065_add_settings_updated_on.rb
+ %    %    %      │   │   ├── 066_add_custom_value_customized_index.rb
+ %    %    %      │   │   ├── 067_create_wiki_redirects.rb
+ %    %    %      │   │   ├── 068_create_enabled_modules.rb
+ %    %    %      │   │   ├── 069_add_issues_estimated_hours.rb
+ %    %    %      │   │   ├── 070_change_attachments_content_type_limit.rb
+ %    %    %      │   │   ├── 071_add_queries_column_names.rb
+ %    %    %      │   │   ├── 072_add_enumerations_position.rb
+ %    %    %      │   │   ├── 073_add_enumerations_is_default.rb
+ %    %    %      │   │   ├── 074_add_auth_sources_tls.rb
+ %    %    %      │   │   ├── 075_add_members_mail_notification.rb
+ %    %    %      │   │   ├── 076_allow_null_position.rb
+ %    %    %      │   │   ├── 077_remove_issue_statuses_html_color.rb
+ %    %    %      │   │   ├── 078_add_custom_fields_position.rb
+ %    %    %      │   │   ├── 079_add_user_preferences_time_zone.rb
+ %    %    %      │   │   ├── 080_add_users_type.rb
+ %    %    %      │   │   ├── 081_create_projects_trackers.rb
+ %    %    %      │   │   ├── 082_add_messages_locked.rb
+ %    %    %      │   │   ├── 083_add_messages_sticky.rb
+ %    %    %      │   │   ├── 084_change_auth_sources_account_limit.rb
+ %    %    %      │   │   ├── 085_add_role_tracker_old_status_index_to_workflows.rb
+ %    %    %      │   │   ├── 086_add_custom_fields_searchable.rb
+ %    %    %      │   │   ├── 087_change_projects_description_to_text.rb
+ %    %    %      │   │   ├── 088_add_custom_fields_default_value.rb
+ %    %    %      │   │   ├── 089_add_attachments_description.rb
+ %    %    %      │   │   ├── 090_change_versions_name_limit.rb
+ %    %    %      │   │   ├── 091_change_changesets_revision_to_string.rb
+ %    %    %      │   │   ├── 092_change_changes_from_revision_to_string.rb
+ %    %    %      │   │   ├── 093_add_wiki_pages_protected.rb
+ %    %    %      │   │   ├── 094_change_projects_homepage_limit.rb
+ %    %    %      │   │   ├── 095_add_wiki_pages_parent_id.rb
+ %    %    %      │   │   ├── 096_add_commit_access_permission.rb
+ %    %    %      │   │   ├── 097_add_view_wiki_edits_permission.rb
+ %    %    %      │   │   ├── 098_set_topic_authors_as_watchers.rb
+ %    %    %      │   │   ├── 099_add_delete_wiki_pages_attachments_permission.rb
+ %    %    %      │   │   ├── 100_add_changesets_user_id.rb
+ %    %    %      │   │   ├── 101_populate_changesets_user_id.rb
+ %    %    %      │   │   ├── 102_add_custom_fields_editable.rb
+ %    %    %      │   │   ├── 103_set_custom_fields_editable.rb
+ %    %    %      │   │   ├── 104_add_projects_lft_and_rgt.rb
+ %    %    %      │   │   ├── 105_build_projects_tree.rb
+ %    %    %      │   │   ├── 106_remove_projects_projects_count.rb
+ %    %    %      │   │   ├── 107_add_open_id_authentication_tables.rb
+ %    %    %      │   │   ├── 108_add_identity_url_to_users.rb
+ %    %    %      │   │   ├── 20090214190337_add_watchers_user_id_type_index.rb
+ %    %    %      │   │   ├── 20090312172426_add_queries_sort_criteria.rb
+ %    %    %      │   │   ├── 20090312194159_add_projects_trackers_unique_index.rb
+ %    %    %      │   │   ├── 20090318181151_extend_settings_name.rb
+ %    %    %      │   │   ├── 20090323224724_add_type_to_enumerations.rb
+ %    %    %      │   │   ├── 20090401221305_update_enumerations_to_sti.rb
+ %    %    %      │   │   ├── 20090401231134_add_active_field_to_enumerations.rb
+ %    %    %      │   │   ├── 20090403001910_add_project_to_enumerations.rb
+ %    %    %      │   │   ├── 20090406161854_add_parent_id_to_enumerations.rb
+ %    %    %      │   │   ├── 20090425161243_add_queries_group_by.rb
+ %    %    %      │   │   ├── 20090503121501_create_member_roles.rb
+ %    %    %      │   │   ├── 20090503121505_populate_member_roles.rb
+ %    %    %      │   │   ├── 20090503121510_drop_members_role_id.rb
+ %    %    %      │   │   ├── 20090614091200_fix_messages_sticky_null.rb
+ %    %    %      │   │   ├── 20090704172350_populate_users_type.rb
+ %    %    %      │   │   ├── 20090704172355_create_groups_users.rb
+ %    %    %      │   │   ├── 20090704172358_add_member_roles_inherited_from.rb
+ %    %    %      │   │   ├── 20091010093521_fix_users_custom_values.rb
+ %    %    %      │   │   ├── 20091017212227_add_missing_indexes_to_workflows.rb
+ %    %    %      │   │   ├── 20091017212457_add_missing_indexes_to_custom_fields_projects.rb
+ %    %    %      │   │   ├── 20091017212644_add_missing_indexes_to_messages.rb
+ %    %    %      │   │   ├── 20091017212938_add_missing_indexes_to_repositories.rb
+ %    %    %      │   │   ├── 20091017213027_add_missing_indexes_to_comments.rb
+ %    %    %      │   │   ├── 20091017213113_add_missing_indexes_to_enumerations.rb
+ %    %    %      │   │   ├── 20091017213151_add_missing_indexes_to_wiki_pages.rb
+ %    %    %      │   │   ├── 20091017213228_add_missing_indexes_to_watchers.rb
+ %    %    %      │   │   ├── 20091017213257_add_missing_indexes_to_auth_sources.rb
+ %    %    %      │   │   ├── 20091017213332_add_missing_indexes_to_documents.rb
+ %    %    %      │   │   ├── 20091017213444_add_missing_indexes_to_tokens.rb
+ %    %    %      │   │   ├── 20091017213536_add_missing_indexes_to_changesets.rb
+ %    %    %      │   │   ├── 20091017213642_add_missing_indexes_to_issue_categories.rb
+ %    %    %      │   │   ├── 20091017213716_add_missing_indexes_to_member_roles.rb
+ %    %    %      │   │   ├── 20091017213757_add_missing_indexes_to_boards.rb
+ %    %    %      │   │   ├── 20091017213835_add_missing_indexes_to_user_preferences.rb
+ %    %    %      │   │   ├── 20091017213910_add_missing_indexes_to_issues.rb
+ %    %    %      │   │   ├── 20091017214015_add_missing_indexes_to_members.rb
+ %    %    %      │   │   ├── 20091017214107_add_missing_indexes_to_custom_fields.rb
+ %    %    %      │   │   ├── 20091017214136_add_missing_indexes_to_queries.rb
+ %    %    %      │   │   ├── 20091017214236_add_missing_indexes_to_time_entries.rb
+ %    %    %      │   │   ├── 20091017214308_add_missing_indexes_to_news.rb
+ %    %    %      │   │   ├── 20091017214336_add_missing_indexes_to_users.rb
+ %    %    %      │   │   ├── 20091017214406_add_missing_indexes_to_attachments.rb
+ %    %    %      │   │   ├── 20091017214440_add_missing_indexes_to_wiki_contents.rb
+ %    %    %      │   │   ├── 20091017214519_add_missing_indexes_to_custom_values.rb
+ %    %    %      │   │   ├── 20091017214611_add_missing_indexes_to_journals.rb
+ %    %    %      │   │   ├── 20091017214644_add_missing_indexes_to_issue_relations.rb
+ %    %    %      │   │   ├── 20091017214720_add_missing_indexes_to_wiki_redirects.rb
+ %    %    %      │   │   ├── 20091017214750_add_missing_indexes_to_custom_fields_trackers.rb
+ %    %    %      │   │   ├── 20091025163651_add_activity_indexes.rb
+ %    %    %      │   │   ├── 20091108092559_add_versions_status.rb
+ %    %    %      │   │   ├── 20091114105931_add_view_issues_permission.rb
+ %    %    %      │   │   ├── 20091123212029_add_default_done_ratio_to_issue_status.rb
+ %    %    %      │   │   ├── 20091205124427_add_versions_sharing.rb
+ %    %    %      │   │   ├── 20091220183509_add_lft_and_rgt_indexes_to_projects.rb
+ %    %    %      │   │   ├── 20091220183727_add_index_to_settings_name.rb
+ %    %    %      │   │   ├── 20091220184736_add_indexes_to_issue_status.rb
+ %    %    %      │   │   ├── 20091225164732_remove_enumerations_opt.rb
+ %    %    %      │   │   ├── 20091227112908_change_wiki_contents_text_limit.rb
+ %    %    %      │   │   ├── 20100129193402_change_users_mail_notification_to_string.rb
+ %    %    %      │   │   ├── 20100129193813_update_mail_notification_values.rb
+ %    %    %      │   │   ├── 20100217010520_add_custom_filter_to_auth_sources.rb
+ %    %    %      │   │   ├── 20100221100219_add_index_on_changesets_scmid.rb
+ %    %    %      │   │   ├── 20100313132032_add_issues_nested_sets_columns.rb
+ %    %    %      │   │   ├── 20100313171051_add_index_on_issues_nested_set.rb
+ %    %    %      │   │   ├── 20100705164950_change_changes_path_length_limit.rb
+ %    %    %      │   │   ├── 20100714111651_prepare_journals_for_acts_as_journalized.rb
+ %    %    %      │   │   ├── 20100714111652_update_journals_for_acts_as_journalized.rb
+ %    %    %      │   │   ├── 20100714111653_build_initial_journals_for_acts_as_journalized.rb
+ %    %    %      │   │   ├── 20100714111654_add_changes_from_journal_details_for_acts_as_journalized.rb
+ %    %    %      │   │   ├── 20100804112053_merge_wiki_versions_with_journals.rb
+ %    %    %      │   │   ├── 20100819172912_enable_calendar_and_gantt_modules_where_appropriate.rb
+ %    %    %      │   │   ├── 20101104182107_add_unique_index_on_members.rb
+ %    %    %      │   │   ├── 20101107130441_add_custom_fields_visible.rb
+ %    %    %      │   │   ├── 20101114115114_change_projects_name_limit.rb
+ %    %    %      │   │   ├── 20101114115359_change_projects_identifier_limit.rb
+ %    %    %      │   │   ├── 20110220160626_add_workflows_assignee_and_author.rb
+ %    %    %      │   │   ├── 20110223180944_add_users_salt.rb
+ %    %    %      │   │   ├── 20110223180953_salt_user_passwords.rb
+ %    %    %      │   │   ├── 20110224000000_add_repositories_path_encoding.rb
+ %    %    %      │   │   ├── 20110226120112_change_repositories_password_limit.rb
+ %    %    %      │   │   ├── 20110226120132_change_auth_sources_account_password_limit.rb
+ %    %    %      │   │   ├── 20110227125750_change_journal_details_values_to_text.rb
+ %    %    %      │   │   ├── 20110228000000_add_repositories_log_encoding.rb
+ %    %    %      │   │   ├── 20110228000100_copy_repositories_log_encoding.rb
+ %    %    %      │   │   ├── 20110314014400_add_start_date_to_versions.rb
+ %    %    %      │   │   ├── 20110401192910_add_index_to_users_type.rb
+ %    %    %      │   │   ├── 20110519194936_remove_comments_from_wiki_content.rb
+ %    %    %      │   │   ├── 20110729125454_remove_double_initial_wiki_content_journals.rb
+ %    %    %      │   │   ├── 20111025231354_add_display_subprojects_to_query.rb
+ %    %    %      │   │   ├── 20111125191432_acts_as_taggable_on_migration.rb
+ %    %    %      │   │   ├── 20120131142400_remove_noisy_attachment_journals.rb
+ %    %    %      │   │   ├── 20120131142401_remove_noisy_message_journals.rb
+ %    %    %      │   │   └── 20120320220031_up_user_fields_length_limits.rb
+ %    %    %      │   └── seeds.rb
+ %    %    %      ├── doc
+ %    %    %      │   ├── CHANGELOG.rdoc
+ %    %    %      │   ├── COPYING.rdoc
+ %    %    %      │   ├── COPYRIGHT.rdoc
+ %    %    %      │   ├── COPYRIGHT_short.rdoc
+ %    %    %      │   ├── INSTALL.rdoc
+ %    %    %      │   ├── RUNNING_TESTS.rdoc
+ %    %    %      │   └── UPGRADING.rdoc
+ %    %    %      ├── extra
+ %    %    %      │   ├── mail_handler
+ %    %    %      │   │   └── rdm-mailhandler.rb
+ %    %    %      │   ├── sample_plugin
+ %    %    %      │   │   ├── README
+ %    %    %      │   │   ├── app
+ %    %    %      │   │   │   ├── controllers
+ %    %    %      │   │   │   │   └── example_controller.rb
+ %    %    %      │   │   │   ├── models
+ %    %    %      │   │   │   │   └── meeting.rb
+ %    %    %      │   │   │   └── views
+ %    %    %      │   │   │       ├── example
+ %    %    %      │   │   │       │   ├── say_goodbye.html.erb
+ %    %    %      │   │   │       │   └── say_hello.html.erb
+ %    %    %      │   │   │       ├── my
+ %    %    %      │   │   │       │   └── blocks
+ %    %    %      │   │   │       │       └── _sample_block.html.erb
+ %    %    %      │   │   │       └── settings
+ %    %    %      │   │   │           └── _sample_plugin_settings.html.erb
+ %    %    %      │   │   ├── assets
+ %    %    %      │   │   │   ├── images
+ %    %    %      │   │   │   │   └── it_works.png
+ %    %    %      │   │   │   └── stylesheets
+ %    %    %      │   │   │       └── example.css
+ %    %    %      │   │   ├── config
+ %    %    %      │   │   │   └── locales
+ %    %    %      │   │   │       ├── en.yml
+ %    %    %      │   │   │       └── fr.yml
+ %    %    %      │   │   ├── db
+ %    %    %      │   │   │   └── migrate
+ %    %    %      │   │   │       └── 001_create_meetings.rb
+ %    %    %      │   │   └── init.rb
+ %    %    %      │   └── svn
+ %    %    %      │       ├── Redmine.pm
+ %    %    %      │       ├── create_views.sql
+ %    %    %      │       ├── reposman.rb
+ %    %    %      │       └── svnserve.wrapper
+ %    %    %      ├── files
+ %    %    %      │   └── delete.me
+ %    %    %      ├── lib
+ %    %    %      │   ├── SVG
+ %    %    %      │   │   ├── GPL.txt
+ %    %    %      │   │   ├── Graph
+ %    %    %      │   │   │   ├── Bar.rb
+ %    %    %      │   │   │   ├── BarBase.rb
+ %    %    %      │   │   │   ├── BarHorizontal.rb
+ %    %    %      │   │   │   ├── Graph.rb
+ %    %    %      │   │   │   ├── Line.rb
+ %    %    %      │   │   │   ├── Pie.rb
+ %    %    %      │   │   │   ├── Plot.rb
+ %    %    %      │   │   │   ├── Schedule.rb
+ %    %    %      │   │   │   └── TimeSeries.rb
+ %    %    %      │   │   └── LICENSE.txt
+ %    %    %      │   ├── ar_condition.rb
+ %    %    %      │   ├── chili_project
+ %    %    %      │   │   ├── compatibility.rb
+ %    %    %      │   │   ├── database.rb
+ %    %    %      │   │   ├── info.rb
+ %    %    %      │   │   ├── liquid
+ %    %    %      │   │   │   ├── file_system.rb
+ %    %    %      │   │   │   ├── filters.rb
+ %    %    %      │   │   │   ├── legacy.rb
+ %    %    %      │   │   │   ├── liquid_ext
+ %    %    %      │   │   │   │   ├── block.rb
+ %    %    %      │   │   │   │   ├── context.rb
+ %    %    %      │   │   │   │   └── strainer.rb
+ %    %    %      │   │   │   ├── liquid_ext.rb
+ %    %    %      │   │   │   ├── tags
+ %    %    %      │   │   │   │   ├── child_pages.rb
+ %    %    %      │   │   │   │   ├── hello_world.rb
+ %    %    %      │   │   │   │   ├── identity.rb
+ %    %    %      │   │   │   │   ├── include.rb
+ %    %    %      │   │   │   │   └── tag.rb
+ %    %    %      │   │   │   ├── tags.rb
+ %    %    %      │   │   │   ├── template.rb
+ %    %    %      │   │   │   └── variables.rb
+ %    %    %      │   │   ├── liquid.rb
+ %    %    %      │   │   └── version.rb
+ %    %    %      │   ├── chili_project.rb
+ %    %    %      │   ├── diff.rb
+ %    %    %      │   ├── dispatcher.rb
+ %    %    %      │   ├── generators
+ %    %    %      │   │   ├── chiliproject_plugin
+ %    %    %      │   │   │   ├── USAGE
+ %    %    %      │   │   │   ├── chiliproject_plugin_generator.rb
+ %    %    %      │   │   │   └── templates
+ %    %    %      │   │   │       ├── README.rdoc
+ %    %    %      │   │   │       ├── en.yml
+ %    %    %      │   │   │       ├── en_rails_i18n.yml
+ %    %    %      │   │   │       ├── init.rb.erb
+ %    %    %      │   │   │       └── test_helper.rb.erb
+ %    %    %      │   │   ├── chiliproject_plugin_controller
+ %    %    %      │   │   │   ├── USAGE
+ %    %    %      │   │   │   ├── chiliproject_plugin_controller_generator.rb
+ %    %    %      │   │   │   └── templates
+ %    %    %      │   │   │       ├── controller.rb.erb
+ %    %    %      │   │   │       ├── functional_test.rb.erb
+ %    %    %      │   │   │       ├── helper.rb.erb
+ %    %    %      │   │   │       └── view.html.erb
+ %    %    %      │   │   └── chiliproject_plugin_model
+ %    %    %      │   │       ├── USAGE
+ %    %    %      │   │       ├── chiliproject_plugin_model_generator.rb
+ %    %    %      │   │       └── templates
+ %    %    %      │   │           ├── fixtures.yml
+ %    %    %      │   │           ├── migration.rb.erb
+ %    %    %      │   │           ├── model.rb.erb
+ %    %    %      │   │           └── unit_test.rb.erb
+ %    %    %      │   ├── gravatar.rb
+ %    %    %      │   ├── redcloth3.rb
+ %    %    %      │   ├── redmine
+ %    %    %      │   │   ├── about.rb
+ %    %    %      │   │   ├── access_control.rb
+ %    %    %      │   │   ├── access_keys.rb
+ %    %    %      │   │   ├── activity
+ %    %    %      │   │   │   └── fetcher.rb
+ %    %    %      │   │   ├── activity.rb
+ %    %    %      │   │   ├── ciphering.rb
+ %    %    %      │   │   ├── configuration.rb
+ %    %    %      │   │   ├── core_ext
+ %    %    %      │   │   │   ├── string
+ %    %    %      │   │   │   │   ├── conversions.rb
+ %    %    %      │   │   │   │   └── inflections.rb
+ %    %    %      │   │   │   └── string.rb
+ %    %    %      │   │   ├── core_ext.rb
+ %    %    %      │   │   ├── custom_field_format.rb
+ %    %    %      │   │   ├── default_data
+ %    %    %      │   │   │   └── loader.rb
+ %    %    %      │   │   ├── export
+ %    %    %      │   │   │   └── pdf.rb
+ %    %    %      │   │   ├── helpers
+ %    %    %      │   │   │   ├── calendar.rb
+ %    %    %      │   │   │   ├── diff.rb
+ %    %    %      │   │   │   └── gantt.rb
+ %    %    %      │   │   ├── hook.rb
+ %    %    %      │   │   ├── i18n.rb
+ %    %    %      │   │   ├── imap.rb
+ %    %    %      │   │   ├── info.rb
+ %    %    %      │   │   ├── menu_manager
+ %    %    %      │   │   │   ├── mapper.rb
+ %    %    %      │   │   │   ├── menu_controller.rb
+ %    %    %      │   │   │   ├── menu_error.rb
+ %    %    %      │   │   │   ├── menu_helper.rb
+ %    %    %      │   │   │   ├── menu_item.rb
+ %    %    %      │   │   │   └── tree_node.rb
+ %    %    %      │   │   ├── menu_manager.rb
+ %    %    %      │   │   ├── mime_type.rb
+ %    %    %      │   │   ├── notifiable.rb
+ %    %    %      │   │   ├── platform.rb
+ %    %    %      │   │   ├── plugin.rb
+ %    %    %      │   │   ├── pop3.rb
+ %    %    %      │   │   ├── safe_attributes.rb
+ %    %    %      │   │   ├── scm
+ %    %    %      │   │   │   ├── adapters
+ %    %    %      │   │   │   │   ├── abstract_adapter.rb
+ %    %    %      │   │   │   │   ├── bazaar_adapter.rb
+ %    %    %      │   │   │   │   ├── cvs_adapter.rb
+ %    %    %      │   │   │   │   ├── darcs_adapter.rb
+ %    %    %      │   │   │   │   ├── filesystem_adapter.rb
+ %    %    %      │   │   │   │   ├── git_adapter.rb
+ %    %    %      │   │   │   │   ├── mercurial
+ %    %    %      │   │   │   │   │   ├── hg-template-0.9.5.tmpl
+ %    %    %      │   │   │   │   │   ├── hg-template-1.0.tmpl
+ %    %    %      │   │   │   │   │   └── redminehelper.py
+ %    %    %      │   │   │   │   ├── mercurial_adapter.rb
+ %    %    %      │   │   │   │   └── subversion_adapter.rb
+ %    %    %      │   │   │   └── base.rb
+ %    %    %      │   │   ├── search.rb
+ %    %    %      │   │   ├── syntax_highlighting.rb
+ %    %    %      │   │   ├── themes.rb
+ %    %    %      │   │   ├── unified_diff.rb
+ %    %    %      │   │   ├── utils.rb
+ %    %    %      │   │   ├── version.rb
+ %    %    %      │   │   ├── views
+ %    %    %      │   │   │   ├── api_template_handler.rb
+ %    %    %      │   │   │   ├── builders
+ %    %    %      │   │   │   │   ├── json.rb
+ %    %    %      │   │   │   │   ├── structure.rb
+ %    %    %      │   │   │   │   └── xml.rb
+ %    %    %      │   │   │   ├── builders.rb
+ %    %    %      │   │   │   ├── my_page
+ %    %    %      │   │   │   │   └── block.rb
+ %    %    %      │   │   │   └── other_formats_builder.rb
+ %    %    %      │   │   ├── wiki_formatting
+ %    %    %      │   │   │   ├── macros.rb
+ %    %    %      │   │   │   ├── null_formatter
+ %    %    %      │   │   │   │   ├── formatter.rb
+ %    %    %      │   │   │   │   └── helper.rb
+ %    %    %      │   │   │   └── textile
+ %    %    %      │   │   │       ├── formatter.rb
+ %    %    %      │   │   │       └── helper.rb
+ %    %    %      │   │   └── wiki_formatting.rb
+ %    %    %      │   ├── redmine.rb
+ %    %    %      │   ├── redmine_plugin_locator.rb
+ %    %    %      │   ├── tabular_form_builder.rb
+ %    %    %      │   └── tasks
+ %    %    %      │       ├── ci.rake
+ %    %    %      │       ├── ciphering.rake
+ %    %    %      │       ├── code.rake
+ %    %    %      │       ├── copyright.rake
+ %    %    %      │       ├── deprecated.rake
+ %    %    %      │       ├── documentation.rake
+ %    %    %      │       ├── email.rake
+ %    %    %      │       ├── extract_fixtures.rake
+ %    %    %      │       ├── fetch_changesets.rake
+ %    %    %      │       ├── initializers.rake
+ %    %    %      │       ├── jdbc.rake
+ %    %    %      │       ├── load_default_data.rake
+ %    %    %      │       ├── locales.rake
+ %    %    %      │       ├── metrics.rake
+ %    %    %      │       ├── migrate_from_mantis.rake
+ %    %    %      │       ├── migrate_from_trac.rake
+ %    %    %      │       ├── minitest.rake
+ %    %    %      │       ├── permissions.rake
+ %    %    %      │       ├── plugins.rake
+ %    %    %      │       ├── release.rake
+ %    %    %      │       ├── reminder.rake
+ %    %    %      │       ├── testing.rake
+ %    %    %      │       ├── watchers.rake
+ %    %    %      │       └── yardoc.rake
+ %    %    %      ├── log
+ %    %    %      │   └── delete.me
+ %    %    %      ├── minitest
+ %    %    %      │   ├── minitest_helper.rb
+ %    %    %      │   ├── models
+ %    %    %      │   │   └── project_test.rb
+ %    %    %      │   └── support
+ %    %    %      │       ├── helper_spec.rb
+ %    %    %      │       ├── helpers
+ %    %    %      │       │   └── settings_helper.rb
+ %    %    %      │       ├── integration_spec.rb
+ %    %    %      │       └── model_spec.rb
+ %    %    %      ├── public
+ %    %    %      │   ├── 404.html
+ %    %    %      │   ├── 422.html
+ %    %    %      │   ├── 500.html
+ %    %    %      │   ├── dispatch.fcgi.example
+ %    %    %      │   ├── favicon.ico
+ %    %    %      │   ├── htaccess.fcgi.example
+ %    %    %      │   ├── images
+ %    %    %      │   │   ├── 1downarrow.png
+ %    %    %      │   │   ├── 1uparrow.png
+ %    %    %      │   │   ├── 2downarrow.png
+ %    %    %      │   │   ├── 2uparrow.png
+ %    %    %      │   │   ├── add.png
+ %    %    %      │   │   ├── arrow-bottom-right.png
+ %    %    %      │   │   ├── arrow-down-2.png
+ %    %    %      │   │   ├── arrow-down-3.png
+ %    %    %      │   │   ├── arrow-down-grey.png
+ %    %    %      │   │   ├── arrow-down-white.png
+ %    %    %      │   │   ├── arrow-down.png
+ %    %    %      │   │   ├── arrow-right.png
+ %    %    %      │   │   ├── arrow-up-white.png
+ %    %    %      │   │   ├── arrow_breadcrumb.png
+ %    %    %      │   │   ├── arrow_collapsed.png
+ %    %    %      │   │   ├── arrow_down.png
+ %    %    %      │   │   ├── arrow_expanded.png
+ %    %    %      │   │   ├── arrow_grey_top_navigation.png
+ %    %    %      │   │   ├── arrow_white_top_navigation.png
+ %    %    %      │   │   ├── attachment.png
+ %    %    %      │   │   ├── background_active_button.png
+ %    %    %      │   │   ├── background_breadcrumb.png
+ %    %    %      │   │   ├── background_header.png
+ %    %    %      │   │   ├── background_search.png
+ %    %    %      │   │   ├── background_top_navigation.png
+ %    %    %      │   │   ├── background_widgets.png
+ %    %    %      │   │   ├── blockquote-bg.png
+ %    %    %      │   │   ├── bullet_add.png
+ %    %    %      │   │   ├── bullet_arrow_left.png
+ %    %    %      │   │   ├── bullet_arrow_right.png
+ %    %    %      │   │   ├── bullet_black.png
+ %    %    %      │   │   ├── bullet_blue.png
+ %    %    %      │   │   ├── bullet_delete.png
+ %    %    %      │   │   ├── bullet_diamond.png
+ %    %    %      │   │   ├── bullet_end.png
+ %    %    %      │   │   ├── bullet_go.png
+ %    %    %      │   │   ├── bullet_orange.png
+ %    %    %      │   │   ├── bullet_purple.png
+ %    %    %      │   │   ├── bullet_toggle_minus.png
+ %    %    %      │   │   ├── bullet_toggle_plus.png
+ %    %    %      │   │   ├── calendar.png
+ %    %    %      │   │   ├── cancel.png
+ %    %    %      │   │   ├── changeset.png
+ %    %    %      │   │   ├── check.png
+ %    %    %      │   │   ├── clock.png
+ %    %    %      │   │   ├── close.png
+ %    %    %      │   │   ├── close_hl.png
+ %    %    %      │   │   ├── comment.png
+ %    %    %      │   │   ├── comments.png
+ %    %    %      │   │   ├── copy.png
+ %    %    %      │   │   ├── database_key.png
+ %    %    %      │   │   ├── delete.png
+ %    %    %      │   │   ├── delete.png.oxygen
+ %    %    %      │   │   ├── disk.png
+ %    %    %      │   │   ├── document.png
+ %    %    %      │   │   ├── dot-blue.png
+ %    %    %      │   │   ├── double_arrow_toggle_down.png
+ %    %    %      │   │   ├── double_arrow_toggle_down_white.png
+ %    %    %      │   │   ├── double_arrow_toggle_up.png
+ %    %    %      │   │   ├── double_arrow_toggle_up_white.png
+ %    %    %      │   │   ├── draft.png
+ %    %    %      │   │   ├── duplicate.png
+ %    %    %      │   │   ├── edit.png
+ %    %    %      │   │   ├── exclamation.png
+ %    %    %      │   │   ├── external.png
+ %    %    %      │   │   ├── false.png
+ %    %    %      │   │   ├── fav.png
+ %    %    %      │   │   ├── fav_off.png
+ %    %    %      │   │   ├── feed.png
+ %    %    %      │   │   ├── files
+ %    %    %      │   │   │   ├── c.png
+ %    %    %      │   │   │   ├── csharp.png
+ %    %    %      │   │   │   ├── default.png
+ %    %    %      │   │   │   ├── image.png
+ %    %    %      │   │   │   ├── pdf.png
+ %    %    %      │   │   │   ├── php.png
+ %    %    %      │   │   │   ├── ruby.png
+ %    %    %      │   │   │   ├── text.png
+ %    %    %      │   │   │   ├── xml.png
+ %    %    %      │   │   │   └── zip.png
+ %    %    %      │   │   ├── files-showhide.png
+ %    %    %      │   │   ├── folder.png
+ %    %    %      │   │   ├── folder_open.png
+ %    %    %      │   │   ├── folder_open_add.png
+ %    %    %      │   │   ├── folder_open_orange.png
+ %    %    %      │   │   ├── fugue
+ %    %    %      │   │   │   ├── arrow.png
+ %    %    %      │   │   │   ├── balloons.png
+ %    %    %      │   │   │   ├── books-stack.png
+ %    %    %      │   │   │   ├── burn.png
+ %    %    %      │   │   │   ├── calendar-month.png
+ %    %    %      │   │   │   ├── clock--plus.png
+ %    %    %      │   │   │   ├── clock.png
+ %    %    %      │   │   │   ├── dashboard--pencil.png
+ %    %    %      │   │   │   ├── disk-black.png
+ %    %    %      │   │   │   ├── document-horizontal-text.png
+ %    %    %      │   │   │   ├── document-text-image.png
+ %    %    %      │   │   │   ├── document-zipper.png
+ %    %    %      │   │   │   ├── documents-text.png
+ %    %    %      │   │   │   ├── documents.png
+ %    %    %      │   │   │   ├── equalizer.png
+ %    %    %      │   │   │   ├── hammer--arrow.png
+ %    %    %      │   │   │   ├── history.txt
+ %    %    %      │   │   │   ├── layout-2.png
+ %    %    %      │   │   │   ├── layout-select-content.png
+ %    %    %      │   │   │   ├── lightning.png
+ %    %    %      │   │   │   ├── magnifier-left.png
+ %    %    %      │   │   │   ├── map-pin.png
+ %    %    %      │   │   │   ├── money--pencil.png
+ %    %    %      │   │   │   ├── monitor.png
+ %    %    %      │   │   │   ├── newspaper.png
+ %    %    %      │   │   │   ├── notebooks--pencil.png
+ %    %    %      │   │   │   ├── pencil-small.png
+ %    %    %      │   │   │   ├── pill--exclamation.png
+ %    %    %      │   │   │   ├── plus-small.png
+ %    %    %      │   │   │   ├── projection-screen--pencil.png
+ %    %    %      │   │   │   ├── question-balloon.png
+ %    %    %      │   │   │   ├── readme.txt
+ %    %    %      │   │   │   ├── report--exclamation.png
+ %    %    %      │   │   │   ├── ruler--pencil.png
+ %    %    %      │   │   │   ├── safe.png
+ %    %    %      │   │   │   ├── star-empty.png
+ %    %    %      │   │   │   ├── star.png
+ %    %    %      │   │   │   ├── sticky-note.png
+ %    %    %      │   │   │   ├── tags-label.png
+ %    %    %      │   │   │   ├── tick-shield.png
+ %    %    %      │   │   │   ├── ticket--arrow.png
+ %    %    %      │   │   │   ├── ticket--minus.png
+ %    %    %      │   │   │   ├── ticket--plus.png
+ %    %    %      │   │   │   ├── ticket.png
+ %    %    %      │   │   │   ├── trophy.png
+ %    %    %      │   │   │   ├── ui-progress-bar.png
+ %    %    %      │   │   │   └── user-business.png
+ %    %    %      │   │   ├── gradient-down.png
+ %    %    %      │   │   ├── gradient-up.png
+ %    %    %      │   │   ├── group.png
+ %    %    %      │   │   ├── help.png
+ %    %    %      │   │   ├── history.png
+ %    %    %      │   │   ├── icon_help.png
+ %    %    %      │   │   ├── icon_help_grey.png
+ %    %    %      │   │   ├── icon_home.png
+ %    %    %      │   │   ├── icon_home_grey.png
+ %    %    %      │   │   ├── jstoolbar
+ %    %    %      │   │   │   ├── bt_bq.png
+ %    %    %      │   │   │   ├── bt_bq_remove.png
+ %    %    %      │   │   │   ├── bt_code.png
+ %    %    %      │   │   │   ├── bt_del.png
+ %    %    %      │   │   │   ├── bt_em.png
+ %    %    %      │   │   │   ├── bt_h1.png
+ %    %    %      │   │   │   ├── bt_h2.png
+ %    %    %      │   │   │   ├── bt_h3.png
+ %    %    %      │   │   │   ├── bt_img.png
+ %    %    %      │   │   │   ├── bt_ins.png
+ %    %    %      │   │   │   ├── bt_link.png
+ %    %    %      │   │   │   ├── bt_ol.png
+ %    %    %      │   │   │   ├── bt_pre.png
+ %    %    %      │   │   │   ├── bt_strong.png
+ %    %    %      │   │   │   └── bt_ul.png
+ %    %    %      │   │   ├── lightning.png
+ %    %    %      │   │   ├── link.png
+ %    %    %      │   │   ├── loading.gif
+ %    %    %      │   │   ├── loadingAnimation.gif
+ %    %    %      │   │   ├── locked.png
+ %    %    %      │   │   ├── macFFBgHack.png
+ %    %    %      │   │   ├── message.png
+ %    %    %      │   │   ├── milestone_done.png
+ %    %    %      │   │   ├── milestone_late.png
+ %    %    %      │   │   ├── milestone_todo.png
+ %    %    %      │   │   ├── mimetypes
+ %    %    %      │   │   │   ├── applix.png
+ %    %    %      │   │   │   ├── ascii.png
+ %    %    %      │   │   │   ├── binary.png
+ %    %    %      │   │   │   ├── cdbo_list.png
+ %    %    %      │   │   │   ├── cdimage.png
+ %    %    %      │   │   │   ├── cdr.png
+ %    %    %      │   │   │   ├── cdtrack.png
+ %    %    %      │   │   │   ├── colorscm.png
+ %    %    %      │   │   │   ├── core.png
+ %    %    %      │   │   │   ├── deb.png
+ %    %    %      │   │   │   ├── document.png
+ %    %    %      │   │   │   ├── document2.png
+ %    %    %      │   │   │   ├── dvi.png
+ %    %    %      │   │   │   ├── empty.png
+ %    %    %      │   │   │   ├── encrypted.png
+ %    %    %      │   │   │   ├── exec_wine.png
+ %    %    %      │   │   │   ├── file_locked.png
+ %    %    %      │   │   │   ├── file_temporary.png
+ %    %    %      │   │   │   ├── font.png
+ %    %    %      │   │   │   ├── font_bitmap.png
+ %    %    %      │   │   │   ├── font_truetype.png
+ %    %    %      │   │   │   ├── font_type1.png
+ %    %    %      │   │   │   ├── gf.png
+ %    %    %      │   │   │   ├── html.png
+ %    %    %      │   │   │   ├── image.png
+ %    %    %      │   │   │   ├── image2.png
+ %    %    %      │   │   │   ├── info.png
+ %    %    %      │   │   │   ├── karbon.png
+ %    %    %      │   │   │   ├── karbon_karbon.png
+ %    %    %      │   │   │   ├── kchart_chrt.png
+ %    %    %      │   │   │   ├── kformula_kfo.png
+ %    %    %      │   │   │   ├── kivio_flw.png
+ %    %    %      │   │   │   ├── kmultiple.png
+ %    %    %      │   │   │   ├── koffice.png
+ %    %    %      │   │   │   ├── kpresenter_kpr.png
+ %    %    %      │   │   │   ├── krita_kra.png
+ %    %    %      │   │   │   ├── kspread_ksp.png
+ %    %    %      │   │   │   ├── kugar_kud.png
+ %    %    %      │   │   │   ├── kugardata.png
+ %    %    %      │   │   │   ├── kword_kwd.png
+ %    %    %      │   │   │   ├── log.png
+ %    %    %      │   │   │   ├── make.png
+ %    %    %      │   │   │   ├── man.png
+ %    %    %      │   │   │   ├── message.png
+ %    %    %      │   │   │   ├── message2.png
+ %    %    %      │   │   │   ├── metafont.png
+ %    %    %      │   │   │   ├── midi.png
+ %    %    %      │   │   │   ├── mime-cdr.png
+ %    %    %      │   │   │   ├── mime-colorset.png
+ %    %    %      │   │   │   ├── mime-postscript.png
+ %    %    %      │   │   │   ├── mime-resource.png
+ %    %    %      │   │   │   ├── mime-template_source.png
+ %    %    %      │   │   │   ├── mime_ascii.png
+ %    %    %      │   │   │   ├── mime_colorset.png
+ %    %    %      │   │   │   ├── mime_empty.png
+ %    %    %      │   │   │   ├── mime_koffice.png
+ %    %    %      │   │   │   ├── misc.png
+ %    %    %      │   │   │   ├── mozilla_doc.png
+ %    %    %      │   │   │   ├── netscape_doc.png
+ %    %    %      │   │   │   ├── pdf.png
+ %    %    %      │   │   │   ├── php.png
+ %    %    %      │   │   │   ├── pk.png
+ %    %    %      │   │   │   ├── postscript.png
+ %    %    %      │   │   │   ├── ps.png
+ %    %    %      │   │   │   ├── quicktime.png
+ %    %    %      │   │   │   ├── readme.png
+ %    %    %      │   │   │   ├── real.png
+ %    %    %      │   │   │   ├── real_doc.png
+ %    %    %      │   │   │   ├── recycled.png
+ %    %    %      │   │   │   ├── resource.png
+ %    %    %      │   │   │   ├── rpm.png
+ %    %    %      │   │   │   ├── schedule.png
+ %    %    %      │   │   │   ├── shellscript.png
+ %    %    %      │   │   │   ├── soffice.png
+ %    %    %      │   │   │   ├── sound.png
+ %    %    %      │   │   │   ├── source.png
+ %    %    %      │   │   │   ├── source_c.png
+ %    %    %      │   │   │   ├── source_cpp.png
+ %    %    %      │   │   │   ├── source_f.png
+ %    %    %      │   │   │   ├── source_h.png
+ %    %    %      │   │   │   ├── source_j.png
+ %    %    %      │   │   │   ├── source_java.png
+ %    %    %      │   │   │   ├── source_l.png
+ %    %    %      │   │   │   ├── source_moc.png
+ %    %    %      │   │   │   ├── source_o.png
+ %    %    %      │   │   │   ├── source_p.png
+ %    %    %      │   │   │   ├── source_php.png
+ %    %    %      │   │   │   ├── source_pl.png
+ %    %    %      │   │   │   ├── source_py.png
+ %    %    %      │   │   │   ├── source_s.png
+ %    %    %      │   │   │   ├── source_y.png
+ %    %    %      │   │   │   ├── sownd.png
+ %    %    %      │   │   │   ├── spreadsheet.png
+ %    %    %      │   │   │   ├── swf.png
+ %    %    %      │   │   │   ├── tar.png
+ %    %    %      │   │   │   ├── template_source.png
+ %    %    %      │   │   │   ├── templates.png
+ %    %    %      │   │   │   ├── tex.png
+ %    %    %      │   │   │   ├── tgz.png
+ %    %    %      │   │   │   ├── txt.png
+ %    %    %      │   │   │   ├── txt2.png
+ %    %    %      │   │   │   ├── unknown.png
+ %    %    %      │   │   │   ├── vcalendar.png
+ %    %    %      │   │   │   ├── vcard.png
+ %    %    %      │   │   │   ├── vectorgfx.png
+ %    %    %      │   │   │   ├── video.png
+ %    %    %      │   │   │   ├── video2.png
+ %    %    %      │   │   │   ├── widget_doc.png
+ %    %    %      │   │   │   ├── wordprocessing.png
+ %    %    %      │   │   │   └── zip.png
+ %    %    %      │   │   ├── move.png
+ %    %    %      │   │   ├── news.png
+ %    %    %      │   │   ├── openid-bg.gif
+ %    %    %      │   │   ├── package.png
+ %    %    %      │   │   ├── pdf.png
+ %    %    %      │   │   ├── pencil.png
+ %    %    %      │   │   ├── plugin.png
+ %    %    %      │   │   ├── profile-arrow-down.png
+ %    %    %      │   │   ├── profile-arrow-up.png
+ %    %    %      │   │   ├── project_marker.png
+ %    %    %      │   │   ├── projects.png
+ %    %    %      │   │   ├── refresh.png
+ %    %    %      │   │   ├── reload.png
+ %    %    %      │   │   ├── report.png
+ %    %    %      │   │   ├── save.png
+ %    %    %      │   │   ├── search.png
+ %    %    %      │   │   ├── server_key.png
+ %    %    %      │   │   ├── shadow-down.png
+ %    %    %      │   │   ├── sort_asc.png
+ %    %    %      │   │   ├── sort_desc.png
+ %    %    %      │   │   ├── star.png
+ %    %    %      │   │   ├── stats.png
+ %    %    %      │   │   ├── table_multiple.png
+ %    %    %      │   │   ├── tag.png
+ %    %    %      │   │   ├── task_done.png
+ %    %    %      │   │   ├── task_late.png
+ %    %    %      │   │   ├── task_parent_end.png
+ %    %    %      │   │   ├── task_todo.png
+ %    %    %      │   │   ├── text_list_bullets.png
+ %    %    %      │   │   ├── textfield.png
+ %    %    %      │   │   ├── thumb-arrow-right.png
+ %    %    %      │   │   ├── ticket.png
+ %    %    %      │   │   ├── ticket_checked.png
+ %    %    %      │   │   ├── ticket_edit.png
+ %    %    %      │   │   ├── ticket_go.png
+ %    %    %      │   │   ├── ticket_note.png
+ %    %    %      │   │   ├── time.png
+ %    %    %      │   │   ├── time_add.png
+ %    %    %      │   │   ├── toggle_check.png
+ %    %    %      │   │   ├── tooltip-arrow.png
+ %    %    %      │   │   ├── top_navigation.png
+ %    %    %      │   │   ├── tr-hover.png
+ %    %    %      │   │   ├── true.png
+ %    %    %      │   │   ├── unlock.png
+ %    %    %      │   │   ├── user.png
+ %    %    %      │   │   ├── vcard.png
+ %    %    %      │   │   ├── version_marker.png
+ %    %    %      │   │   ├── warning.png
+ %    %    %      │   │   ├── wiki_edit.png
+ %    %    %      │   │   ├── wiki_styles
+ %    %    %      │   │   │   ├── caution.png
+ %    %    %      │   │   │   ├── caution_small.png
+ %    %    %      │   │   │   ├── important.png
+ %    %    %      │   │   │   ├── important_small.png
+ %    %    %      │   │   │   ├── info.png
+ %    %    %      │   │   │   ├── info_small.png
+ %    %    %      │   │   │   ├── note.png
+ %    %    %      │   │   │   ├── note_small.png
+ %    %    %      │   │   │   ├── see-also.png
+ %    %    %      │   │   │   ├── see-also_small.png
+ %    %    %      │   │   │   ├── tip.png
+ %    %    %      │   │   │   └── tip_small.png
+ %    %    %      │   │   ├── zoom_in.png
+ %    %    %      │   │   └── zoom_out.png
+ %    %    %      │   ├── javascripts
+ %    %    %      │   │   ├── application.js
+ %    %    %      │   │   ├── context_menu.jquery.js
+ %    %    %      │   │   ├── context_menu.js
+ %    %    %      │   │   ├── jquery-ui.js
+ %    %    %      │   │   ├── jquery-ui.min.js
+ %    %    %      │   │   ├── jquery.js
+ %    %    %      │   │   ├── jquery.menu_expand.js
+ %    %    %      │   │   ├── jquery.min.js
+ %    %    %      │   │   ├── jquery_ujs.js
+ %    %    %      │   │   ├── jstoolbar
+ %    %    %      │   │   │   ├── jstoolbar.js
+ %    %    %      │   │   │   ├── lang
+ %    %    %      │   │   │   │   ├── jstoolbar-bg.js
+ %    %    %      │   │   │   │   ├── jstoolbar-bs.js
+ %    %    %      │   │   │   │   ├── jstoolbar-ca.js
+ %    %    %      │   │   │   │   ├── jstoolbar-cs.js
+ %    %    %      │   │   │   │   ├── jstoolbar-da.js
+ %    %    %      │   │   │   │   ├── jstoolbar-de.js
+ %    %    %      │   │   │   │   ├── jstoolbar-en-gb.js
+ %    %    %      │   │   │   │   ├── jstoolbar-en.js
+ %    %    %      │   │   │   │   ├── jstoolbar-es.js
+ %    %    %      │   │   │   │   ├── jstoolbar-eu.js
+ %    %    %      │   │   │   │   ├── jstoolbar-fa.js
+ %    %    %      │   │   │   │   ├── jstoolbar-fi.js
+ %    %    %      │   │   │   │   ├── jstoolbar-fr.js
+ %    %    %      │   │   │   │   ├── jstoolbar-gl.js
+ %    %    %      │   │   │   │   ├── jstoolbar-he.js
+ %    %    %      │   │   │   │   ├── jstoolbar-hr.js
+ %    %    %      │   │   │   │   ├── jstoolbar-hu.js
+ %    %    %      │   │   │   │   ├── jstoolbar-id.js
+ %    %    %      │   │   │   │   ├── jstoolbar-it.js
+ %    %    %      │   │   │   │   ├── jstoolbar-ja.js
+ %    %    %      │   │   │   │   ├── jstoolbar-ko.js
+ %    %    %      │   │   │   │   ├── jstoolbar-lt.js
+ %    %    %      │   │   │   │   ├── jstoolbar-lv.js
+ %    %    %      │   │   │   │   ├── jstoolbar-mk.js
+ %    %    %      │   │   │   │   ├── jstoolbar-mn.js
+ %    %    %      │   │   │   │   ├── jstoolbar-nl.js
+ %    %    %      │   │   │   │   ├── jstoolbar-no.js
+ %    %    %      │   │   │   │   ├── jstoolbar-pl.js
+ %    %    %      │   │   │   │   ├── jstoolbar-pt-br.js
+ %    %    %      │   │   │   │   ├── jstoolbar-pt.js
+ %    %    %      │   │   │   │   ├── jstoolbar-ro.js
+ %    %    %      │   │   │   │   ├── jstoolbar-ru.js
+ %    %    %      │   │   │   │   ├── jstoolbar-sk.js
+ %    %    %      │   │   │   │   ├── jstoolbar-sl.js
+ %    %    %      │   │   │   │   ├── jstoolbar-sr-yu.js
+ %    %    %      │   │   │   │   ├── jstoolbar-sr.js
+ %    %    %      │   │   │   │   ├── jstoolbar-sv.js
+ %    %    %      │   │   │   │   ├── jstoolbar-th.js
+ %    %    %      │   │   │   │   ├── jstoolbar-tr.js
+ %    %    %      │   │   │   │   ├── jstoolbar-uk.js
+ %    %    %      │   │   │   │   ├── jstoolbar-vi.js
+ %    %    %      │   │   │   │   ├── jstoolbar-zh-tw.js
+ %    %    %      │   │   │   │   └── jstoolbar-zh.js
+ %    %    %      │   │   │   └── textile.js
+ %    %    %      │   │   ├── libs
+ %    %    %      │   │   │   └── ui
+ %    %    %      │   │   │       └── i18n
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-af.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ar-DZ.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ar.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-az.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-bg.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-bs.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ca.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-cs.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-cy-GB.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-da.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-de.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-el.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-en-AU.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-en-GB.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-en-NZ.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-eo.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-es.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-et.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-eu.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-fa.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-fi.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-fo.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-fr-CH.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-fr.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-gl.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-he.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-hi.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-hr.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-hu.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-hy.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-id.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-is.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-it.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ja.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ka.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-kk.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-km.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ko.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-lb.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-lt.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-lv.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-mk.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ml.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-mn.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ms.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-nl-BE.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-nl.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-no.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-pl.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-pt-BR.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-pt.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-rm.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ro.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ru.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-sk.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-sl.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-sq.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-sr-SR.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-sr.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-sv.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-ta.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-th.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-tj.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-tr.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-uk.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-vi.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-zh-CN.js
+ %    %    %      │   │   │           ├── jquery.ui.datepicker-zh-HK.js
+ %    %    %      │   │   │           └── jquery.ui.datepicker-zh-TW.js
+ %    %    %      │   │   ├── modernizr.min.js
+ %    %    %      │   │   ├── repository_navigation.js
+ %    %    %      │   │   └── select_list_move.js
+ %    %    %      │   ├── stylesheets
+ %    %    %      │   │   ├── application.css
+ %    %    %      │   │   ├── context_menu.css
+ %    %    %      │   │   ├── context_menu_rtl.css
+ %    %    %      │   │   ├── csshover.htc
+ %    %    %      │   │   ├── ie6.css
+ %    %    %      │   │   ├── ie7.css
+ %    %    %      │   │   ├── jstoolbar.css
+ %    %    %      │   │   ├── print.css
+ %    %    %      │   │   ├── redmine-reset.css
+ %    %    %      │   │   ├── reset.css
+ %    %    %      │   │   ├── rtl.css
+ %    %    %      │   │   ├── scm.css
+ %    %    %      │   │   └── smoothness
+ %    %    %      │   │       ├── images
+ %    %    %      │   │       │   ├── ui-bg_flat_0_aaaaaa_40x100.png
+ %    %    %      │   │       │   ├── ui-bg_flat_75_ffffff_40x100.png
+ %    %    %      │   │       │   ├── ui-bg_glass_55_fbf9ee_1x400.png
+ %    %    %      │   │       │   ├── ui-bg_glass_65_ffffff_1x400.png
+ %    %    %      │   │       │   ├── ui-bg_glass_75_dadada_1x400.png
+ %    %    %      │   │       │   ├── ui-bg_glass_75_e6e6e6_1x400.png
+ %    %    %      │   │       │   ├── ui-bg_glass_95_fef1ec_1x400.png
+ %    %    %      │   │       │   ├── ui-bg_highlight-soft_75_cccccc_1x100.png
+ %    %    %      │   │       │   ├── ui-icons_222222_256x240.png
+ %    %    %      │   │       │   ├── ui-icons_2e83ff_256x240.png
+ %    %    %      │   │       │   ├── ui-icons_454545_256x240.png
+ %    %    %      │   │       │   ├── ui-icons_888888_256x240.png
+ %    %    %      │   │       │   └── ui-icons_cd0a0a_256x240.png
+ %    %    %      │   │       └── jquery-ui.css
+ %    %    %      │   └── themes
+ %    %    %      │       ├── README
+ %    %    %      │       └── example
+ %    %    %      │           └── stylesheets
+ %    %    %      │               └── application.css
+ %    %    %      ├── script
+ %    %    %      │   ├── about
+ %    %    %      │   └── rails
+ %    %    %      ├── test
+ %    %    %      │   ├── exemplars
+ %    %    %      │   │   ├── attachment_exemplar.rb
+ %    %    %      │   │   ├── auth_source_exemplar.rb
+ %    %    %      │   │   ├── board_exemplar.rb
+ %    %    %      │   │   ├── change_exemplar.rb
+ %    %    %      │   │   ├── changeset_exemplar.rb
+ %    %    %      │   │   ├── comment_exemplar.rb
+ %    %    %      │   │   ├── custom_field_exemplar.rb
+ %    %    %      │   │   ├── custom_value_exemplar.rb
+ %    %    %      │   │   ├── document_category_exemplar.rb
+ %    %    %      │   │   ├── document_exemplar.rb
+ %    %    %      │   │   ├── enabled_module_exemplar.rb
+ %    %    %      │   │   ├── enumeration_exemplar.rb
+ %    %    %      │   │   ├── group_exemplar.rb
+ %    %    %      │   │   ├── issue_category_exemplar.rb
+ %    %    %      │   │   ├── issue_exemplar.rb
+ %    %    %      │   │   ├── issue_priority_exemplar.rb
+ %    %    %      │   │   ├── issue_status_exemplar.rb
+ %    %    %      │   │   ├── journal_exemplar.rb
+ %    %    %      │   │   ├── member_exemplar.rb
+ %    %    %      │   │   ├── member_role_exemplar.rb
+ %    %    %      │   │   ├── message_exemplar.rb
+ %    %    %      │   │   ├── news_exemplar.rb
+ %    %    %      │   │   ├── project_exemplar.rb
+ %    %    %      │   │   ├── query_exemplar.rb
+ %    %    %      │   │   ├── repository_exemplar.rb
+ %    %    %      │   │   ├── role_exemplar.rb
+ %    %    %      │   │   ├── subversion_repository_exemplar.rb
+ %    %    %      │   │   ├── time_entry_activity.rb
+ %    %    %      │   │   ├── time_entry_exemplar.rb
+ %    %    %      │   │   ├── tracker_exemplar.rb
+ %    %    %      │   │   ├── user_exemplar.rb
+ %    %    %      │   │   ├── version_exemplar.rb
+ %    %    %      │   │   ├── watcher_exemplar.rb
+ %    %    %      │   │   ├── wiki_content_exemplar.rb
+ %    %    %      │   │   ├── wiki_exemplar.rb
+ %    %    %      │   │   ├── wiki_page_exemplar.rb
+ %    %    %      │   │   └── wiki_redirect_exemplar.rb
+ %    %    %      │   ├── fixtures
+ %    %    %      │   │   ├── attachments.yml
+ %    %    %      │   │   ├── auth_sources.yml
+ %    %    %      │   │   ├── boards.yml
+ %    %    %      │   │   ├── changes.yml
+ %    %    %      │   │   ├── changesets.yml
+ %    %    %      │   │   ├── comments.yml
+ %    %    %      │   │   ├── configuration
+ %    %    %      │   │   │   ├── default.yml
+ %    %    %      │   │   │   ├── empty.yml
+ %    %    %      │   │   │   ├── no_default.yml
+ %    %    %      │   │   │   └── overrides.yml
+ %    %    %      │   │   ├── custom_fields.yml
+ %    %    %      │   │   ├── custom_fields_projects.yml
+ %    %    %      │   │   ├── custom_fields_trackers.yml
+ %    %    %      │   │   ├── custom_values.yml
+ %    %    %      │   │   ├── diffs
+ %    %    %      │   │   │   ├── partials.diff
+ %    %    %      │   │   │   └── subversion.diff
+ %    %    %      │   │   ├── documents.yml
+ %    %    %      │   │   ├── enabled_modules.yml
+ %    %    %      │   │   ├── encoding
+ %    %    %      │   │   │   └── iso-8859-1.txt
+ %    %    %      │   │   ├── enumerations.yml
+ %    %    %      │   │   ├── files
+ %    %    %      │   │   │   ├── 060719210727_archive.zip
+ %    %    %      │   │   │   ├── 060719210727_changeset_iso8859-1.diff
+ %    %    %      │   │   │   ├── 060719210727_changeset_utf8.diff
+ %    %    %      │   │   │   ├── 060719210727_source.rb
+ %    %    %      │   │   │   └── testfile.txt
+ %    %    %      │   │   ├── groups_users.yml
+ %    %    %      │   │   ├── issue_categories.yml
+ %    %    %      │   │   ├── issue_relations.yml
+ %    %    %      │   │   ├── issue_statuses.yml
+ %    %    %      │   │   ├── issues.yml
+ %    %    %      │   │   ├── journals.yml
+ %    %    %      │   │   ├── ldap
+ %    %    %      │   │   │   ├── slapd.conf
+ %    %    %      │   │   │   ├── slapd_config.ldif
+ %    %    %      │   │   │   └── test-ldap.ldif
+ %    %    %      │   │   ├── mail_handler
+ %    %    %      │   │   │   ├── issue_update_with_multiple_quoted_reply_above.eml
+ %    %    %      │   │   │   ├── issue_update_with_quoted_reply_above.eml
+ %    %    %      │   │   │   ├── japanese_keywords_iso_2022_jp.eml
+ %    %    %      │   │   │   ├── message_reply.eml
+ %    %    %      │   │   │   ├── message_reply_by_subject.eml
+ %    %    %      │   │   │   ├── ticket_by_empty_user.eml
+ %    %    %      │   │   │   ├── ticket_by_unknown_user.eml
+ %    %    %      │   │   │   ├── ticket_from_emission_address.eml
+ %    %    %      │   │   │   ├── ticket_html_only.eml
+ %    %    %      │   │   │   ├── ticket_on_given_project.eml
+ %    %    %      │   │   │   ├── ticket_on_project_with_missing_information.eml
+ %    %    %      │   │   │   ├── ticket_reply.eml
+ %    %    %      │   │   │   ├── ticket_reply_by_message_id.eml
+ %    %    %      │   │   │   ├── ticket_reply_with_status.eml
+ %    %    %      │   │   │   ├── ticket_with_attachment.eml
+ %    %    %      │   │   │   ├── ticket_with_attributes.eml
+ %    %    %      │   │   │   ├── ticket_with_cc.eml
+ %    %    %      │   │   │   ├── ticket_with_custom_fields.eml
+ %    %    %      │   │   │   ├── ticket_with_invalid_attributes.eml
+ %    %    %      │   │   │   ├── ticket_with_localized_attributes.eml
+ %    %    %      │   │   │   ├── ticket_with_long_subject.eml
+ %    %    %      │   │   │   ├── ticket_with_spaces_between_attribute_and_separator.eml
+ %    %    %      │   │   │   └── ticket_without_from_header.eml
+ %    %    %      │   │   ├── member_roles.yml
+ %    %    %      │   │   ├── members.yml
+ %    %    %      │   │   ├── messages.yml
+ %    %    %      │   │   ├── news.yml
+ %    %    %      │   │   ├── projects.yml
+ %    %    %      │   │   ├── projects_trackers.yml
+ %    %    %      │   │   ├── queries.yml
+ %    %    %      │   │   ├── repositories
+ %    %    %      │   │   │   ├── bazaar_repository.tar.gz
+ %    %    %      │   │   │   ├── cvs_repository.tar.gz
+ %    %    %      │   │   │   ├── darcs_repository.tar.gz
+ %    %    %      │   │   │   ├── filesystem_repository.tar.gz
+ %    %    %      │   │   │   ├── git_repository.tar.gz
+ %    %    %      │   │   │   ├── mercurial_repository.hg
+ %    %    %      │   │   │   └── subversion_repository.dump.gz
+ %    %    %      │   │   ├── repositories.yml
+ %    %    %      │   │   ├── roles.yml
+ %    %    %      │   │   ├── time_entries.yml
+ %    %    %      │   │   ├── tokens.yml
+ %    %    %      │   │   ├── trackers.yml
+ %    %    %      │   │   ├── user_preferences.yml
+ %    %    %      │   │   ├── users.yml
+ %    %    %      │   │   ├── versions.yml
+ %    %    %      │   │   ├── watchers.yml
+ %    %    %      │   │   ├── wiki_contents.yml
+ %    %    %      │   │   ├── wiki_pages.yml
+ %    %    %      │   │   ├── wikis.yml
+ %    %    %      │   │   └── workflows.yml
+ %    %    %      │   ├── functional
+ %    %    %      │   │   ├── account_controller_test.rb
+ %    %    %      │   │   ├── activities_controller_test.rb
+ %    %    %      │   │   ├── admin_controller_test.rb
+ %    %    %      │   │   ├── application_controller_test.rb
+ %    %    %      │   │   ├── attachments_controller_test.rb
+ %    %    %      │   │   ├── auth_sources_controller_test.rb
+ %    %    %      │   │   ├── auto_completes_controller_test.rb
+ %    %    %      │   │   ├── boards_controller_test.rb
+ %    %    %      │   │   ├── calendars_controller_test.rb
+ %    %    %      │   │   ├── comments_controller_test.rb
+ %    %    %      │   │   ├── context_menus_controller_test.rb
+ %    %    %      │   │   ├── custom_fields_controller_test.rb
+ %    %    %      │   │   ├── documents_controller_test.rb
+ %    %    %      │   │   ├── enumerations_controller_test.rb
+ %    %    %      │   │   ├── files_controller_test.rb
+ %    %    %      │   │   ├── gantts_controller_test.rb
+ %    %    %      │   │   ├── groups_controller_test.rb
+ %    %    %      │   │   ├── help_controller_test.rb
+ %    %    %      │   │   ├── issue_categories_controller_test.rb
+ %    %    %      │   │   ├── issue_moves_controller_test.rb
+ %    %    %      │   │   ├── issue_relations_controller_test.rb
+ %    %    %      │   │   ├── issue_statuses_controller_test.rb
+ %    %    %      │   │   ├── issues_controller_test.rb
+ %    %    %      │   │   ├── issues_controller_transaction_test.rb
+ %    %    %      │   │   ├── journals_controller_test.rb
+ %    %    %      │   │   ├── ldap_auth_sources_controller.rb
+ %    %    %      │   │   ├── mail_handler_controller_test.rb
+ %    %    %      │   │   ├── members_controller_test.rb
+ %    %    %      │   │   ├── messages_controller_test.rb
+ %    %    %      │   │   ├── my_controller_test.rb
+ %    %    %      │   │   ├── news_controller_test.rb
+ %    %    %      │   │   ├── previews_controller_test.rb
+ %    %    %      │   │   ├── project_enumerations_controller_test.rb
+ %    %    %      │   │   ├── projects_controller_test.rb
+ %    %    %      │   │   ├── queries_controller_test.rb
+ %    %    %      │   │   ├── reports_controller_test.rb
+ %    %    %      │   │   ├── repositories_bazaar_controller_test.rb
+ %    %    %      │   │   ├── repositories_controller_test.rb
+ %    %    %      │   │   ├── repositories_cvs_controller_test.rb
+ %    %    %      │   │   ├── repositories_darcs_controller_test.rb
+ %    %    %      │   │   ├── repositories_filesystem_controller_test.rb
+ %    %    %      │   │   ├── repositories_git_controller_test.rb
+ %    %    %      │   │   ├── repositories_mercurial_controller_test.rb
+ %    %    %      │   │   ├── repositories_subversion_controller_test.rb
+ %    %    %      │   │   ├── roles_controller_test.rb
+ %    %    %      │   │   ├── search_controller_test.rb
+ %    %    %      │   │   ├── settings_controller_test.rb
+ %    %    %      │   │   ├── sys_controller_test.rb
+ %    %    %      │   │   ├── time_entry_reports_controller_test.rb
+ %    %    %      │   │   ├── timelog_controller_test.rb
+ %    %    %      │   │   ├── trackers_controller_test.rb
+ %    %    %      │   │   ├── users_controller_test.rb
+ %    %    %      │   │   ├── versions_controller_test.rb
+ %    %    %      │   │   ├── watchers_controller_test.rb
+ %    %    %      │   │   ├── welcome_controller_test.rb
+ %    %    %      │   │   ├── wiki_controller_test.rb
+ %    %    %      │   │   ├── wikis_controller_test.rb
+ %    %    %      │   │   └── workflows_controller_test.rb
+ %    %    %      │   ├── helper_testcase.rb
+ %    %    %      │   ├── integration
+ %    %    %      │   │   ├── account_test.rb
+ %    %    %      │   │   ├── admin_test.rb
+ %    %    %      │   │   ├── api_test
+ %    %    %      │   │   │   ├── disabled_rest_api_test.rb
+ %    %    %      │   │   │   ├── http_basic_login_test.rb
+ %    %    %      │   │   │   ├── http_basic_login_with_api_token_test.rb
+ %    %    %      │   │   │   ├── issues_test.rb
+ %    %    %      │   │   │   ├── news_test.rb
+ %    %    %      │   │   │   ├── projects_test.rb
+ %    %    %      │   │   │   ├── time_entries_test.rb
+ %    %    %      │   │   │   ├── token_authentication_test.rb
+ %    %    %      │   │   │   └── users_test.rb
+ %    %    %      │   │   ├── application_test.rb
+ %    %    %      │   │   ├── issues_test.rb
+ %    %    %      │   │   ├── journals_test.rb
+ %    %    %      │   │   ├── layout_test.rb
+ %    %    %      │   │   ├── lib
+ %    %    %      │   │   │   └── redmine
+ %    %    %      │   │   │       ├── menu_manager_test.rb
+ %    %    %      │   │   │       └── themes_test.rb
+ %    %    %      │   │   ├── projects_test.rb
+ %    %    %      │   │   └── routing_test.rb
+ %    %    %      │   ├── integration_test_helpers.rb
+ %    %    %      │   ├── mocks
+ %    %    %      │   │   └── open_id_authentication_mock.rb
+ %    %    %      │   ├── object_daddy_helpers.rb
+ %    %    %      │   ├── test_helper.rb
+ %    %    %      │   └── unit
+ %    %    %      │       ├── activity_test.rb
+ %    %    %      │       ├── attachment_test.rb
+ %    %    %      │       ├── auth_source_ldap_test.rb
+ %    %    %      │       ├── board_test.rb
+ %    %    %      │       ├── changeset_test.rb
+ %    %    %      │       ├── comment_test.rb
+ %    %    %      │       ├── custom_field_test.rb
+ %    %    %      │       ├── custom_field_user_format_test.rb
+ %    %    %      │       ├── custom_value_test.rb
+ %    %    %      │       ├── default_data_test.rb
+ %    %    %      │       ├── document_category_test.rb
+ %    %    %      │       ├── document_test.rb
+ %    %    %      │       ├── enabled_module_test.rb
+ %    %    %      │       ├── enumeration_test.rb
+ %    %    %      │       ├── group_test.rb
+ %    %    %      │       ├── helpers
+ %    %    %      │       │   ├── application_helper_test.rb
+ %    %    %      │       │   ├── custom_fields_helper_test.rb
+ %    %    %      │       │   ├── issue_moves_helper_test.rb
+ %    %    %      │       │   ├── issues_helper_test.rb
+ %    %    %      │       │   ├── projects_helper_test.rb
+ %    %    %      │       │   ├── repository_helper_test.rb
+ %    %    %      │       │   ├── search_helper_test.rb
+ %    %    %      │       │   ├── sort_helper_test.rb
+ %    %    %      │       │   ├── timelog_helper_test.rb
+ %    %    %      │       │   └── watchers_helpers_test.rb
+ %    %    %      │       ├── issue_category_test.rb
+ %    %    %      │       ├── issue_drop_test.rb
+ %    %    %      │       ├── issue_nested_set_test.rb
+ %    %    %      │       ├── issue_priority_test.rb
+ %    %    %      │       ├── issue_relation_test.rb
+ %    %    %      │       ├── issue_status_drop_test.rb
+ %    %    %      │       ├── issue_status_test.rb
+ %    %    %      │       ├── issue_test.rb
+ %    %    %      │       ├── journal_observer_test.rb
+ %    %    %      │       ├── journal_test.rb
+ %    %    %      │       ├── lib
+ %    %    %      │       │   ├── chili_project
+ %    %    %      │       │   │   ├── database_test.rb
+ %    %    %      │       │   │   └── liquid_test.rb
+ %    %    %      │       │   ├── redmine
+ %    %    %      │       │   │   ├── access_control_test.rb
+ %    %    %      │       │   │   ├── ciphering_test.rb
+ %    %    %      │       │   │   ├── configuration_test.rb
+ %    %    %      │       │   │   ├── helpers
+ %    %    %      │       │   │   │   ├── calendar_test.rb
+ %    %    %      │       │   │   │   └── gantt_test.rb
+ %    %    %      │       │   │   ├── hook_test.rb
+ %    %    %      │       │   │   ├── i18n_test.rb
+ %    %    %      │       │   │   ├── menu_manager
+ %    %    %      │       │   │   │   ├── mapper_test.rb
+ %    %    %      │       │   │   │   ├── menu_helper_test.rb
+ %    %    %      │       │   │   │   └── menu_item_test.rb
+ %    %    %      │       │   │   ├── menu_manager_test.rb
+ %    %    %      │       │   │   ├── mime_type_test.rb
+ %    %    %      │       │   │   ├── notifiable_test.rb
+ %    %    %      │       │   │   ├── plugin_test.rb
+ %    %    %      │       │   │   ├── safe_attributes_test.rb
+ %    %    %      │       │   │   ├── scm
+ %    %    %      │       │   │   │   └── adapters
+ %    %    %      │       │   │   │       ├── bazaar_adapter_test.rb
+ %    %    %      │       │   │   │       ├── cvs_adapter_test.rb
+ %    %    %      │       │   │   │       ├── darcs_adapter_test.rb
+ %    %    %      │       │   │   │       ├── filesystem_adapter_test.rb
+ %    %    %      │       │   │   │       ├── git_adapter_test.rb
+ %    %    %      │       │   │   │       ├── mercurial_adapter_test.rb
+ %    %    %      │       │   │   │       └── subversion_adapter_test.rb
+ %    %    %      │       │   │   ├── themes_test.rb
+ %    %    %      │       │   │   ├── unified_diff_test.rb
+ %    %    %      │       │   │   ├── views
+ %    %    %      │       │   │   │   └── builders
+ %    %    %      │       │   │   │       ├── json_test.rb
+ %    %    %      │       │   │   │       └── xml_test.rb
+ %    %    %      │       │   │   ├── wiki_formatting
+ %    %    %      │       │   │   │   ├── macros_test.rb
+ %    %    %      │       │   │   │   ├── null_formatter_test.rb
+ %    %    %      │       │   │   │   └── textile_formatter_test.rb
+ %    %    %      │       │   │   └── wiki_formatting.rb
+ %    %    %      │       │   └── redmine_test.rb
+ %    %    %      │       ├── mail_handler_test.rb
+ %    %    %      │       ├── mailer_test.rb
+ %    %    %      │       ├── member_test.rb
+ %    %    %      │       ├── message_test.rb
+ %    %    %      │       ├── news_test.rb
+ %    %    %      │       ├── principal_drop_test.rb
+ %    %    %      │       ├── principal_test.rb
+ %    %    %      │       ├── project_drop_test.rb
+ %    %    %      │       ├── project_nested_set_test.rb
+ %    %    %      │       ├── project_test.rb
+ %    %    %      │       ├── query_test.rb
+ %    %    %      │       ├── repository_bazaar_test.rb
+ %    %    %      │       ├── repository_cvs_test.rb
+ %    %    %      │       ├── repository_darcs_test.rb
+ %    %    %      │       ├── repository_filesystem_test.rb
+ %    %    %      │       ├── repository_git_test.rb
+ %    %    %      │       ├── repository_mercurial_test.rb
+ %    %    %      │       ├── repository_subversion_test.rb
+ %    %    %      │       ├── repository_test.rb
+ %    %    %      │       ├── role_test.rb
+ %    %    %      │       ├── search_test.rb
+ %    %    %      │       ├── setting_test.rb
+ %    %    %      │       ├── testing_test.rb
+ %    %    %      │       ├── time_entry_activity_test.rb
+ %    %    %      │       ├── time_entry_test.rb
+ %    %    %      │       ├── token_test.rb
+ %    %    %      │       ├── tracker_drop_test.rb
+ %    %    %      │       ├── tracker_test.rb
+ %    %    %      │       ├── user_preference_test.rb
+ %    %    %      │       ├── user_test.rb
+ %    %    %      │       ├── version_test.rb
+ %    %    %      │       ├── watcher_test.rb
+ %    %    %      │       ├── wiki_content_test.rb
+ %    %    %      │       ├── wiki_page_drop_test.rb
+ %    %    %      │       ├── wiki_page_test.rb
+ %    %    %      │       ├── wiki_redirect_test.rb
+ %    %    %      │       ├── wiki_test.rb
+ %    %    %      │       └── workflow_test.rb
+ %    %    %      ├── tmp
+ %    %    %      │   └── test
+ %    %    %      │       └── empty
+ %    %    %      └── vendor
+ %    %    %          ├── chiliproject_plugins
+ %    %    %          │   └── README
+ %    %    %          └── plugins
+ %    %    %              ├── acts_as_activity_provider
+ %    %    %              │   ├── init.rb
+ %    %    %              │   └── lib
+ %    %    %              │       └── acts_as_activity_provider.rb
+ %    %    %              ├── acts_as_attachable
+ %    %    %              │   ├── init.rb
+ %    %    %              │   └── lib
+ %    %    %              │       └── acts_as_attachable.rb
+ %    %    %              ├── acts_as_customizable
+ %    %    %              │   ├── init.rb
+ %    %    %              │   └── lib
+ %    %    %              │       └── acts_as_customizable.rb
+ %    %    %              ├── acts_as_event
+ %    %    %              │   ├── init.rb
+ %    %    %              │   └── lib
+ %    %    %              │       └── acts_as_event.rb
+ %    %    %              ├── acts_as_journalized
+ %    %    %              │   ├── GPL.txt
+ %    %    %              │   ├── LICENSE
+ %    %    %              │   ├── README.rdoc
+ %    %    %              │   ├── REVISION
+ %    %    %              │   ├── init.rb
+ %    %    %              │   ├── lib
+ %    %    %              │   │   ├── acts_as_journalized.rb
+ %    %    %              │   │   ├── journal_deprecated.rb
+ %    %    %              │   │   ├── journal_detail.rb
+ %    %    %              │   │   ├── journal_formatter.rb
+ %    %    %              │   │   └── redmine
+ %    %    %              │   │       └── acts
+ %    %    %              │   │           └── journalized
+ %    %    %              │   │               ├── changes.rb
+ %    %    %              │   │               ├── configuration.rb
+ %    %    %              │   │               ├── creation.rb
+ %    %    %              │   │               ├── deprecated.rb
+ %    %    %              │   │               ├── format_hooks.rb
+ %    %    %              │   │               ├── options.rb
+ %    %    %              │   │               ├── permissions.rb
+ %    %    %              │   │               ├── reload.rb
+ %    %    %              │   │               ├── reset.rb
+ %    %    %              │   │               ├── reversion.rb
+ %    %    %              │   │               ├── save_hooks.rb
+ %    %    %              │   │               ├── users.rb
+ %    %    %              │   │               ├── versioned.rb
+ %    %    %              │   │               └── versions.rb
+ %    %    %              │   └── test
+ %    %    %              │       ├── changes_test.rb
+ %    %    %              │       ├── conditions_test.rb
+ %    %    %              │       ├── configuration_test.rb
+ %    %    %              │       ├── control_test.rb
+ %    %    %              │       ├── creation_test.rb
+ %    %    %              │       ├── options_test.rb
+ %    %    %              │       ├── reload_test.rb
+ %    %    %              │       ├── reset_test.rb
+ %    %    %              │       ├── reversion_test.rb
+ %    %    %              │       ├── schema.rb
+ %    %    %              │       ├── tagging_test.rb
+ %    %    %              │       ├── test_helper.rb
+ %    %    %              │       ├── users_test.rb
+ %    %    %              │       ├── version_test.rb
+ %    %    %              │       ├── versioned_test.rb
+ %    %    %              │       └── versions_test.rb
+ %    %    %              ├── acts_as_list
+ %    %    %              │   ├── README
+ %    %    %              │   ├── init.rb
+ %    %    %              │   ├── lib
+ %    %    %              │   │   └── active_record
+ %    %    %              │   │       └── acts
+ %    %    %              │   │           └── list.rb
+ %    %    %              │   └── test
+ %    %    %              │       └── list_test.rb
+ %    %    %              ├── acts_as_searchable
+ %    %    %              │   ├── init.rb
+ %    %    %              │   └── lib
+ %    %    %              │       └── acts_as_searchable.rb
+ %    %    %              ├── acts_as_tree
+ %    %    %              │   ├── README
+ %    %    %              │   ├── Rakefile
+ %    %    %              │   ├── init.rb
+ %    %    %              │   ├── lib
+ %    %    %              │   │   └── active_record
+ %    %    %              │   │       └── acts
+ %    %    %              │   │           └── tree.rb
+ %    %    %              │   └── test
+ %    %    %              │       ├── abstract_unit.rb
+ %    %    %              │       ├── acts_as_tree_test.rb
+ %    %    %              │       ├── database.yml
+ %    %    %              │       ├── fixtures
+ %    %    %              │       │   ├── mixin.rb
+ %    %    %              │       │   └── mixins.yml
+ %    %    %              │       └── schema.rb
+ %    %    %              ├── acts_as_watchable
+ %    %    %              │   ├── init.rb
+ %    %    %              │   └── lib
+ %    %    %              │       └── acts_as_watchable.rb
+ %    %    %              ├── classic_pagination
+ %    %    %              │   ├── CHANGELOG
+ %    %    %              │   ├── README
+ %    %    %              │   ├── Rakefile
+ %    %    %              │   ├── init.rb
+ %    %    %              │   ├── install.rb
+ %    %    %              │   ├── lib
+ %    %    %              │   │   ├── pagination.rb
+ %    %    %              │   │   └── pagination_helper.rb
+ %    %    %              │   └── test
+ %    %    %              │       ├── fixtures
+ %    %    %              │       │   ├── companies.yml
+ %    %    %              │       │   ├── company.rb
+ %    %    %              │       │   ├── developer.rb
+ %    %    %              │       │   ├── developers.yml
+ %    %    %              │       │   ├── developers_projects.yml
+ %    %    %              │       │   ├── project.rb
+ %    %    %              │       │   ├── projects.yml
+ %    %    %              │       │   ├── replies.yml
+ %    %    %              │       │   ├── reply.rb
+ %    %    %              │       │   ├── schema.sql
+ %    %    %              │       │   ├── topic.rb
+ %    %    %              │       │   └── topics.yml
+ %    %    %              │       ├── helper.rb
+ %    %    %              │       ├── pagination_helper_test.rb
+ %    %    %              │       └── pagination_test.rb
+ %    %    %              └── rfpdf
+ %    %    %                  ├── CHANGELOG
+ %    %    %                  ├── MIT-LICENSE
+ %    %    %                  ├── README
+ %    %    %                  ├── init.rb
+ %    %    %                  ├── lib
+ %    %    %                  │   ├── barcode
+ %    %    %                  │   │   ├── barcode.rb
+ %    %    %                  │   │   ├── c128aobject.rb
+ %    %    %                  │   │   ├── c128bobject.rb
+ %    %    %                  │   │   ├── c128cobject.rb
+ %    %    %                  │   │   ├── c39object.rb
+ %    %    %                  │   │   ├── i25object.rb
+ %    %    %                  │   │   ├── image.rb
+ %    %    %                  │   │   └── lesser.txt
+ %    %    %                  │   ├── config
+ %    %    %                  │   │   └── lang
+ %    %    %                  │   │       └── eng.rb
+ %    %    %                  │   ├── core
+ %    %    %                  │   │   ├── image_science.rb
+ %    %    %                  │   │   ├── rfpdf.rb
+ %    %    %                  │   │   └── rmagick.rb
+ %    %    %                  │   ├── fonts
+ %    %    %                  │   │   ├── FreeMono.ctg.z
+ %    %    %                  │   │   ├── FreeMono.z
+ %    %    %                  │   │   ├── FreeMonoBold.ctg.z
+ %    %    %                  │   │   ├── FreeMonoBold.z
+ %    %    %                  │   │   ├── FreeMonoBoldOblique.ctg.z
+ %    %    %                  │   │   ├── FreeMonoBoldOblique.z
+ %    %    %                  │   │   ├── FreeMonoOblique.ctg.z
+ %    %    %                  │   │   ├── FreeMonoOblique.z
+ %    %    %                  │   │   ├── FreeSans.ctg.z
+ %    %    %                  │   │   ├── FreeSans.z
+ %    %    %                  │   │   ├── FreeSansBold.ctg.z
+ %    %    %                  │   │   ├── FreeSansBold.z
+ %    %    %                  │   │   ├── FreeSansBoldOblique.ctg.z
+ %    %    %                  │   │   ├── FreeSansBoldOblique.z
+ %    %    %                  │   │   ├── FreeSansOblique.ctg.z
+ %    %    %                  │   │   ├── FreeSansOblique.z
+ %    %    %                  │   │   ├── README.z
+ %    %    %                  │   │   ├── courier.rb
+ %    %    %                  │   │   ├── dejavu-ttf-2.15
+ %    %    %                  │   │   │   ├── AUTHORS
+ %    %    %                  │   │   │   ├── BUGS
+ %    %    %                  │   │   │   ├── LICENSE
+ %    %    %                  │   │   │   ├── NEWS
+ %    %    %                  │   │   │   ├── README
+ %    %    %                  │   │   │   ├── langcover.txt
+ %    %    %                  │   │   │   ├── status.txt
+ %    %    %                  │   │   │   └── unicover.txt
+ %    %    %                  │   │   ├── freefont
+ %    %    %                  │   │   │   ├── AUTHORS
+ %    %    %                  │   │   │   ├── CREDITS
+ %    %    %                  │   │   │   ├── ChangeLog
+ %    %    %                  │   │   │   ├── INSTALL
+ %    %    %                  │   │   │   └── README
+ %    %    %                  │   │   ├── freemono.rb
+ %    %    %                  │   │   ├── freemonob.rb
+ %    %    %                  │   │   ├── freemonobi.rb
+ %    %    %                  │   │   ├── freemonoi.rb
+ %    %    %                  │   │   ├── freesans.rb
+ %    %    %                  │   │   ├── freesansb.rb
+ %    %    %                  │   │   ├── freesansbi.rb
+ %    %    %                  │   │   ├── freesansi.rb
+ %    %    %                  │   │   ├── helvetica.rb
+ %    %    %                  │   │   ├── helveticab.rb
+ %    %    %                  │   │   ├── helveticabi.rb
+ %    %    %                  │   │   ├── helveticai.rb
+ %    %    %                  │   │   ├── old
+ %    %    %                  │   │   │   └── makefont
+ %    %    %                  │   │   │       ├── cp1250.map
+ %    %    %                  │   │   │       ├── cp1251.map
+ %    %    %                  │   │   │       ├── cp1252.map
+ %    %    %                  │   │   │       ├── cp1253.map
+ %    %    %                  │   │   │       ├── cp1254.map
+ %    %    %                  │   │   │       ├── cp1255.map
+ %    %    %                  │   │   │       ├── cp1257.map
+ %    %    %                  │   │   │       ├── cp1258.map
+ %    %    %                  │   │   │       ├── cp874.map
+ %    %    %                  │   │   │       ├── iso-8859-1.map
+ %    %    %                  │   │   │       ├── iso-8859-11.map
+ %    %    %                  │   │   │       ├── iso-8859-15.map
+ %    %    %                  │   │   │       ├── iso-8859-16.map
+ %    %    %                  │   │   │       ├── iso-8859-2.map
+ %    %    %                  │   │   │       ├── iso-8859-4.map
+ %    %    %                  │   │   │       ├── iso-8859-5.map
+ %    %    %                  │   │   │       ├── iso-8859-7.map
+ %    %    %                  │   │   │       ├── iso-8859-9.map
+ %    %    %                  │   │   │       ├── koi8-r.map
+ %    %    %                  │   │   │       ├── koi8-u.map
+ %    %    %                  │   │   │       └── makefont.php
+ %    %    %                  │   │   ├── sjis.rb
+ %    %    %                  │   │   ├── symbol.rb
+ %    %    %                  │   │   ├── times.rb
+ %    %    %                  │   │   ├── timesb.rb
+ %    %    %                  │   │   ├── timesbi.rb
+ %    %    %                  │   │   ├── timesi.rb
+ %    %    %                  │   │   ├── ttf-bitstream-vera-1.10
+ %    %    %                  │   │   │   ├── COPYRIGHT.TXT
+ %    %    %                  │   │   │   ├── README.TXT
+ %    %    %                  │   │   │   ├── RELEASENOTES.TXT
+ %    %    %                  │   │   │   └── local.conf
+ %    %    %                  │   │   ├── ttf2ufm
+ %    %    %                  │   │   │   ├── README.TXT
+ %    %    %                  │   │   │   ├── makefontuni_ruby.php
+ %    %    %                  │   │   │   ├── ttf2ufm
+ %    %    %                  │   │   │   └── ttf2ufm.exe
+ %    %    %                  │   │   ├── vera.ctg.z
+ %    %    %                  │   │   ├── vera.rb
+ %    %    %                  │   │   ├── vera.z
+ %    %    %                  │   │   ├── verab.ctg.z
+ %    %    %                  │   │   ├── verab.rb
+ %    %    %                  │   │   ├── verab.z
+ %    %    %                  │   │   ├── verabi.ctg.z
+ %    %    %                  │   │   ├── verabi.rb
+ %    %    %                  │   │   ├── verabi.z
+ %    %    %                  │   │   ├── verai.ctg.z
+ %    %    %                  │   │   ├── verai.rb
+ %    %    %                  │   │   ├── verai.z
+ %    %    %                  │   │   ├── veramo.ctg.z
+ %    %    %                  │   │   ├── veramo.rb
+ %    %    %                  │   │   ├── veramo.z
+ %    %    %                  │   │   ├── veramob.ctg.z
+ %    %    %                  │   │   ├── veramob.rb
+ %    %    %                  │   │   ├── veramob.z
+ %    %    %                  │   │   ├── veramobi.ctg.z
+ %    %    %                  │   │   ├── veramobi.rb
+ %    %    %                  │   │   ├── veramobi.z
+ %    %    %                  │   │   ├── veramoi.ctg.z
+ %    %    %                  │   │   ├── veramoi.rb
+ %    %    %                  │   │   ├── veramoi.z
+ %    %    %                  │   │   ├── verase.ctg.z
+ %    %    %                  │   │   ├── verase.rb
+ %    %    %                  │   │   ├── verase.z
+ %    %    %                  │   │   ├── veraseb.ctg.z
+ %    %    %                  │   │   ├── veraseb.rb
+ %    %    %                  │   │   ├── veraseb.z
+ %    %    %                  │   │   └── zapfdingbats.rb
+ %    %    %                  │   ├── fpdf
+ %    %    %                  │   │   ├── bookmark.rb
+ %    %    %                  │   │   ├── chinese.rb
+ %    %    %                  │   │   ├── fpdf_eps.rb
+ %    %    %                  │   │   ├── japanese.rb
+ %    %    %                  │   │   ├── korean.rb
+ %    %    %                  │   │   └── makefont.rb
+ %    %    %                  │   ├── rfpdf
+ %    %    %                  │   │   ├── action_controller.rb
+ %    %    %                  │   │   ├── action_view.rb
+ %    %    %                  │   │   ├── errors.rb
+ %    %    %                  │   │   ├── fpdf.rb
+ %    %    %                  │   │   ├── math.rb
+ %    %    %                  │   │   ├── template_handler
+ %    %    %                  │   │   │   └── compile_support.rb
+ %    %    %                  │   │   └── template_handlers
+ %    %    %                  │   │       └── base.rb
+ %    %    %                  │   ├── rfpdf.rb
+ %    %    %                  │   └── tcpdf.rb
+ %    %    %                  ├── logo_example.png
+ %    %    %                  ├── test
+ %    %    %                  │   └── test_helper.rb
+ %    %    %                  ├── test_unicode.rfpdf
+ %    %    %                  └── utf8test.txt

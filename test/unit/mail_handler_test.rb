@@ -14,7 +14,45 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class MailHandlerTest < ActiveSupport::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures/mail_handler'
 
@@ -484,7 +522,10 @@ class MailHandlerTest < ActiveSupport::TestCase
     should "deliver an email error confirmation to the sender for a missing other attributes" do
       # Add a required custom field to simulate the error
       project = Project.find('onlinestore')
-      project.issue_custom_fields << IssueCustomField.generate(:name => 'Required Custom Field0', :is_required => true, :trackers => project.trackers)
+      project.issue_custom_fields << IssueCustomField.create(
+                                       :name => 'Required Custom Field0', :is_required => true, :trackers => project.trackers,
+                                       :field_format => 'string'
+                                     )
       project.save
 
       ActionMailer::Base.deliveries.clear
@@ -543,6 +584,32 @@ class MailHandlerTest < ActiveSupport::TestCase
     end
   end
 
+  def test_new_user_from_attributes_should_return_valid_user
+    to_test = {
+      # [address, name] => [login, firstname, lastname]
+      ['jsmith@example.net', nil] => ['jsmith@example.net', 'jsmith', '-'],
+      ['jsmith@example.net', 'John'] => ['jsmith@example.net', 'John', '-'],
+      ['jsmith@example.net', 'John Smith'] => ['jsmith@example.net', 'John', 'Smith'],
+      ['jsmith@example.net', 'John Paul Smith'] => ['jsmith@example.net', 'John', 'Paul Smith'],
+    }
+    to_test.each do |attrs, expected|
+      user = MailHandler.new_user_from_attributes(attrs.first, attrs.last)
+      assert user.valid?
+      assert_equal attrs.first, user.mail
+      assert_equal expected[0], user.login
+      assert_equal expected[1], user.firstname
+      assert_equal expected[2], user.lastname
+    end
+  end
+
+  def test_new_user_from_attributes_should_respect_minimum_password_length
+    with_settings :password_min_length => 15 do
+      user = MailHandler.new_user_from_attributes('jsmith@example.net')
+      assert user.valid?
+      assert user.password.length >= 15
+    end
+  end
+ 
   private
 
   def submit_email(filename, options={})
