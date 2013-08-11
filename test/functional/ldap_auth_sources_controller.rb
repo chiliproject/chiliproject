@@ -59,18 +59,14 @@ class LdapAuthSourcesControllerTest < ActionController::TestCase
     @request.session[:user_id] = 1
   end
 
-  context "get :new" do
-    setup do
-      get :new
-    end
+  def test_get_new
+    get :new
 
-    should assign_to :auth_source
-    should respond_with :success
-    should render_template :new
+    assert_not_nil assigns(:auth_source)
+    assert_response :success
+    assert_template :new
 
-    should "initilize a new AuthSource" do
-      assert_equal AuthSourceLdap, assigns(:auth_source).class
-      assert assigns(:auth_source).new_record?
-    end
+    assert_equal AuthSourceLdap, assigns(:auth_source).class
+    assert assigns(:auth_source).new_record?
   end
 end
