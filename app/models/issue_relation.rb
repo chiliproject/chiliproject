@@ -38,14 +38,18 @@ class IssueRelation < ActiveRecord::Base
   validates_numericality_of :delay, :allow_nil => true
   validates_uniqueness_of :issue_to_id, :scope => :issue_from_id
 
+  validate :validate_issue_relation
+
   attr_protected :issue_from_id, :issue_to_id
 
-  def validate
+  before_save :handle_issue_order
+
+  def validate_issue_relation
     if issue_from && issue_to
       errors.add :issue_to_id, :invalid if issue_from_id == issue_to_id
       errors.add :issue_to_id, :not_same_project unless issue_from.project_id == issue_to.project_id || Setting.cross_project_issue_relations?
-      errors.add_to_base :circular_dependency if issue_to.all_dependent_issues.include? issue_from
-      errors.add_to_base :cant_link_an_issue_with_a_descendant if issue_from.is_descendant_of?(issue_to) || issue_from.is_ancestor_of?(issue_to)
+      errors.add :base, :circular_dependency if issue_to.all_dependent_issues.include? issue_from
+      errors.add :base, :cant_link_an_issue_with_a_descendant if issue_from.is_descendant_of?(issue_to) || issue_from.is_ancestor_of?(issue_to)
     end
   end
 
@@ -68,7 +72,7 @@ class IssueRelation < ActiveRecord::Base
     TYPES[relation_type] ? TYPES[relation_type][(self.issue_from_id == issue.id) ? :name : :sym_name] : :unknow
   end
 
-  def before_save
+  def handle_issue_order
     reverse_if_needed
 
     if TYPE_PRECEDES == relation_type
