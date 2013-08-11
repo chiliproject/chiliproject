@@ -148,13 +148,7 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :versions, :collection => {:close_completed => :put}, :member => {:status_by => :post}
     project.resources :news, :shallow => true
     project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id'
-<<<<<<< HEAD
-=======
-    project.resources :queries, :only => [:new, :create]
-    project.resources :issue_categories, :shallow => true
-    project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
     project.resources :boards
->>>>>>> 2967023... Resourcified boards.
 
     project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
     project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
@@ -225,12 +219,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :groups
 
   #left old routes at the bottom for backwards compat
-<<<<<<< HEAD
   map.connect 'projects/:project_id/issues/:action', :controller => 'issues'
   map.connect 'projects/:project_id/documents/:action', :controller => 'documents'
-  map.connect 'projects/:project_id/boards/:action/:id', :controller => 'boards'
-=======
->>>>>>> 2967023... Resourcified boards.
   map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
   map.connect 'wiki/:id/:page/:action', :page => nil, :controller => 'wiki'
   map.connect 'issues/:issue_id/relations/:action/:id', :controller => 'issue_relations'
