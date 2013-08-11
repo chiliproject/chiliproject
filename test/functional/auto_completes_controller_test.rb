@@ -215,9 +215,9 @@ class AutoCompletesControllerTest < ActionController::TestCase
 
       assert_response 403
     end
+  end
 
-    context 'with a valid search' do
-      setup do
+  def test_post_to_projects_with_a_valid_search
         @user = User.generate_with_protected!
         @projects = [
                      Project.generate!(:name => "Test"),
@@ -230,16 +230,12 @@ class AutoCompletesControllerTest < ActionController::TestCase
           :id => @user.id,
           :q => 'TeST'
         }
+      assert_equal @user, assigns(:principal)
+      assert_equal @projects, assigns(:projects)
+      assert_template :projects
+  end
 
-      end
-
-      should assign_to(:principal).with(@user)
-      should assign_to(:projects).with(@projects)
-      should render_template :projects
-    end
-
-    context 'with an invalid search' do
-      setup do
+  def test_post_to_projects_with_an_invalid_search
         @user = User.generate_with_protected!
         Project.generate!(:name => "Test")
 
@@ -248,12 +244,8 @@ class AutoCompletesControllerTest < ActionController::TestCase
           :id => @user.id,
           :q => 'nothing'
         }
-
-      end
-      should assign_to(:principal).with(@user)
-      should assign_to(:projects).with([])
-      should render_template :projects
-
-    end
+      assert_equal @user, assigns(:principal)
+      assert_equal [], assigns(:projects)
+      assert_template :projects
   end
 end
