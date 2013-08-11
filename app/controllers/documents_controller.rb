@@ -46,7 +46,7 @@ class DocumentsController < ApplicationController
   end
 
   def create
-    @document = @project.documents.build(params[:document])    
+    @document = @project.documents.build(params[:document])
     if request.post?
       if User.current.allowed_to?(:add_document_watchers, @project) && params[:document]['watcher_user_ids'].present?
         @document.watcher_user_ids = params[:document]['watcher_user_ids']
