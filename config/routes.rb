@@ -131,7 +131,6 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :news, :shallow => true
     project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id'
     project.resources :boards
-    project.resources :queries, :only => [:new, :create]
     project.resources :issue_categories, :shallow => true
     project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
 
