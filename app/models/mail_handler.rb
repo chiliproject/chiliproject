@@ -34,7 +34,13 @@ class MailHandler < ActionMailer::Base
     @@handler_options[:allow_override] << 'status' unless @@handler_options[:issue].has_key?(:status)
 
     @@handler_options[:no_permission_check] = (@@handler_options[:no_permission_check].to_s == '1' ? true : false)
-    super email
+
+    email.force_encoding('ASCII-8BIT') if email.respond_to?(:force_encoding)
+    super(email)
+  end
+
+  def logger
+    Rails.logger
   end
 
   # Processes incoming emails
@@ -58,10 +64,10 @@ class MailHandler < ActionMailer::Base
       when 'accept'
         @user = User.anonymous
       when 'create'
-        @user = MailHandler.create_user_from_email(email)
+        @user = create_user_from_email
         if @user
           logger.info "MailHandler: [#{@user.login}] account created" if logger && logger.info
-          Mailer.deliver_account_information(@user, @user.password)
+          Mailer.account_information(@user, @user.password).deliver
         else
           logger.error "MailHandler: could not create account for [#{sender_email}]" if logger && logger.error
           return false
@@ -69,7 +75,7 @@ class MailHandler < ActionMailer::Base
       else
         # Default behaviour, emails from unknown users are ignored
         logger.info  "MailHandler: ignoring email from unknown user [#{sender_email}]" if logger && logger.info
-        Mailer.deliver_mail_handler_unauthorized_action(user, email.subject.to_s, :to => sender_email) if Setting.mail_handler_confirmation_on_failure
+        Mailer.mail_handler_unauthorized_action(user, email.subject.to_s, :to => sender_email).deliver if Setting.mail_handler_confirmation_on_failure
         return false
       end
     end
@@ -79,7 +85,7 @@ class MailHandler < ActionMailer::Base
 
   private
 
-  MESSAGE_ID_RE = %r{^<chiliproject\.([a-z0-9_]+)\-(\d+)\.\d+@}
+  MESSAGE_ID_RE = %r{^<?chiliproject\.([a-z0-9_]+)\-(\d+)\.\d+@}
   ISSUE_REPLY_SUBJECT_RE = %r{\[[^\]]*#(\d+)\]}
   MESSAGE_REPLY_SUBJECT_RE = %r{\[[^\]]*msg(\d+)\]}
 
@@ -103,15 +109,15 @@ class MailHandler < ActionMailer::Base
   rescue ActiveRecord::RecordInvalid => e
     # TODO: send a email to the user
     logger.error e.message if logger
-    Mailer.deliver_mail_handler_missing_information(user, email.subject.to_s, e.message) if Setting.mail_handler_confirmation_on_failure
+    Mailer.mail_handler_missing_information(user, email.subject.to_s, e.message).deliver if Setting.mail_handler_confirmation_on_failure
     false
   rescue MissingInformation => e
     logger.error "MailHandler: missing information from #{user}: #{e.message}" if logger
-    Mailer.deliver_mail_handler_missing_information(user, email.subject.to_s, e.message) if Setting.mail_handler_confirmation_on_failure
+    Mailer.mail_handler_missing_information(user, email.subject.to_s, e.message).deliver if Setting.mail_handler_confirmation_on_failure
     false
   rescue UnauthorizedAction => e
     logger.error "MailHandler: unauthorized attempt from #{user}" if logger
-    Mailer.deliver_mail_handler_unauthorized_action(user, email.subject.to_s) if Setting.mail_handler_confirmation_on_failure
+    Mailer.mail_handler_unauthorized_action(user, email.subject.to_s).deliver if Setting.mail_handler_confirmation_on_failure
     false
   end
 
@@ -145,7 +151,7 @@ class MailHandler < ActionMailer::Base
     issue.save!
     add_attachments(issue)
     logger.info "MailHandler: issue ##{issue.id} created by #{user}" if logger && logger.info
-    Mailer.deliver_mail_handler_confirmation(issue, user, issue.subject) if Setting.mail_handler_confirmation_on_success
+    Mailer.mail_handler_confirmation(issue, user, issue.subject).deliver if Setting.mail_handler_confirmation_on_success
     issue
   end
 
@@ -167,7 +173,7 @@ class MailHandler < ActionMailer::Base
     add_attachments(issue)
     issue.save!
     logger.info "MailHandler: issue ##{issue.id} updated by #{user}" if logger && logger.info
-    Mailer.deliver_mail_handler_confirmation(issue.last_journal, user, email.subject) if Setting.mail_handler_confirmation_on_success
+    Mailer.mail_handler_confirmation(issue.last_journal, user, email.subject).deliver if Setting.mail_handler_confirmation_on_success
     issue.last_journal
   end
 
@@ -196,7 +202,7 @@ class MailHandler < ActionMailer::Base
         reply.board = message.board
         message.children << reply
         add_attachments(reply)
-        Mailer.deliver_mail_handler_confirmation(message, user, reply.subject) if Setting.mail_handler_confirmation_on_success
+        Mailer.mail_handler_confirmation(message, user, reply.subject).deliver if Setting.mail_handler_confirmation_on_success
         reply
       else
         logger.info "MailHandler: ignoring reply from [#{sender_email}] to a locked topic" if logger && logger.info
@@ -208,9 +214,10 @@ class MailHandler < ActionMailer::Base
     if email.has_attachments?
       email.attachments.each do |attachment|
         Attachment.create(:container => obj,
-                          :file => attachment,
+                          :file => attachment.decoded,
+                          :filename => attachment.filename,
                           :author => user,
-                          :content_type => attachment.content_type)
+                          :content_type => attachment.mime_type)
       end
     end
   end
@@ -253,8 +260,13 @@ class MailHandler < ActionMailer::Base
     keys.reject! {|k| k.blank?}
     keys.collect! {|k| Regexp.escape(k)}
     format ||= '.+'
-    text.gsub!(/^(#{keys.join('|')})[ \t]*:[ \t]*(#{format})\s*$/i, '')
-    $2 && $2.strip
+    keyword = nil
+    regexp = /^(#{keys.join('|')})[ \t]*:[ \t]*(#{format})\s*$/i
+    if m = text.match(regexp)
+      keyword = m[2].strip
+      text.gsub!(regexp, '')
+    end
+    keyword
   end
 
   def target_project
@@ -305,20 +317,17 @@ class MailHandler < ActionMailer::Base
   # If not found (eg. HTML-only email), returns the body with tags removed
   def plain_text_body
     return @plain_text_body unless @plain_text_body.nil?
-    parts = @email.parts.collect {|c| (c.respond_to?(:parts) && !c.parts.empty?) ? c.parts : c}.flatten
-    if parts.empty?
-      parts << @email
+
+    part = email.text_part || email.html_part || email
+    @plain_text_body = Redmine::CodesetUtil.to_utf8(part.body.decoded, part.charset)
+
+    if @plain_text_body.respond_to?(:force_encoding)
+     # @plain_text_body = @plain_text_body.force_encoding(@email.charset).encode("UTF-8")
     end
-    plain_text_part = parts.detect {|p| p.content_type == 'text/plain'}
-    if plain_text_part.nil?
-      # no text/plain part found, assuming html-only email
-      # strip html tags and remove doctype directive
-      @plain_text_body = strip_tags(@email.body.to_s)
-      @plain_text_body.gsub! %r{^<!DOCTYPE .*$}, ''
-    else
-      @plain_text_body = plain_text_part.body.to_s
-    end
-    @plain_text_body.strip!
+
+    # strip html tags and remove doctype directive
+    @plain_text_body = strip_tags(@plain_text_body.strip)
+    @plain_text_body.sub! %r{^<!DOCTYPE .*$}, ''
     @plain_text_body
   end
 
@@ -330,22 +339,56 @@ class MailHandler < ActionMailer::Base
     @full_sanitizer ||= HTML::FullSanitizer.new
   end
 
+  def self.assign_string_attribute_with_limit(object, attribute, value, limit=nil)
+    limit ||= object.class.columns_hash[attribute.to_s].limit || 255
+    value = value.to_s.slice(0, limit)
+    object.send("#{attribute}=", value)
+  end
+
+  # Returns a User from an email address and a full name
+  def self.new_user_from_attributes(email_address, fullname=nil)
+    user = User.new
+
+    # Truncating the email address would result in an invalid format
+    user.mail = email_address
+    assign_string_attribute_with_limit(user, 'login', email_address)
+
+    names = fullname.blank? ? email_address.gsub(/@.*$/, '').split('.') : fullname.split
+    assign_string_attribute_with_limit(user, 'firstname', names.shift)
+    assign_string_attribute_with_limit(user, 'lastname', names.join(' '))
+    user.lastname = '-' if user.lastname.blank?
+
+    password_length = [Setting.password_min_length.to_i, 10].max
+    user.password = Redmine::Utils.random_hex(password_length / 2 + 1)
+    user.language = Setting.default_language
+
+    unless user.valid?
+      user.login = "user#{Redmine::Utils.random_hex(6)}" unless user.errors[:login].blank?
+      user.firstname = "-" unless user.errors[:firstname].blank?
+      user.lastname  = "-" unless user.errors[:lastname].blank?
+    end
+
+    user
+  end
+
   # Creates a user account for the +email+ sender
-  def self.create_user_from_email(email)
-    addr = email.from_addrs.to_a.first
-    if addr && !addr.spec.blank?
-      user = User.new
-      user.mail = addr.spec
-
-      names = addr.name.blank? ? addr.spec.gsub(/@.*$/, '').split('.') : addr.name.split
-      user.firstname = names.shift
-      user.lastname = names.join(' ')
-      user.lastname = '-' if user.lastname.blank?
-
-      user.login = user.mail
-      user.password = ActiveSupport::SecureRandom.hex(5)
-      user.language = Setting.default_language
-      user.save ? user : nil
+  def create_user_from_email
+    from = email.header['from'].to_s
+    addr, name = from, nil
+    if m = from.match(/^"?(.+?)"?\s+<(.+@.+)>$/)
+      addr, name = m[2], m[1]
+    end
+    if addr.present?
+      user = self.class.new_user_from_attributes(addr, name)
+      if user.save
+        user
+      else
+        logger.error "MailHandler: failed to create User: #{user.errors.full_messages}" if logger
+        nil
+      end
+    else
+      logger.error "MailHandler: failed to create User: no FROM address found" if logger
+      nil
     end
   end
 
