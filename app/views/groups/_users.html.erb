@@ -10,8 +10,9 @@
 			<tr id="user-<%= user.id %>" class="<%= cycle 'odd', 'even' %>">
 				<td class="user"><%= link_to_user user %></td>
 			  <td class="buttons">
-			      <%= link_to_remote l(:button_delete), { :url => { :controller => 'groups', :action => 'remove_user', :id => @group, :user_id => user },
+			      <%= link_to l(:button_delete), { :url => { :controller => 'groups', :action => 'remove_user', :id => @group, :user_id => user },
 			      																				:method => :post },
+                                                  :remote => true,
 			      																		  :class => 'icon icon-del' %>
 			  </td>
 			</tr>
@@ -26,7 +27,7 @@
 <div class="splitcontentright">
 <% users = User.active.not_in_group(@group).all(:limit => 100) %>
 <% if users.any? %>
-  <% remote_form_for(:group, @group, :url => {:controller => 'groups', :action => 'add_users', :id => @group}, :method => :post) do |f| %>
+  <%= form_for(@group, :remote => true, :url => {:controller => 'groups', :action => 'add_users', :id => @group}, :method => :post) do |f| %>
     <fieldset><legend><%=l(:label_user_new)%></legend>
 
 		<p><%= label_tag "user_search", l(:label_user_search) %><%= text_field_tag 'user_search', nil %></p>
