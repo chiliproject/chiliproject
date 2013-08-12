@@ -13,21 +13,22 @@
 #++
 
 class Principal < ActiveRecord::Base
-  set_table_name "#{table_name_prefix}users#{table_name_suffix}"
+  self.table_name = "#{table_name_prefix}users#{table_name_suffix}"
 
   has_many :members, :foreign_key => 'user_id', :dependent => :destroy
-  has_many :memberships, :class_name => 'Member', :foreign_key => 'user_id', :include => [ :project, :roles ], :conditions => "#{Project.table_name}.status=#{Project::STATUS_ACTIVE}", :order => "#{Project.table_name}.name"
+  has_many :memberships, :class_name => 'Member', :foreign_key => 'user_id', :include => [:project, :roles], :conditions => {:projects => {:status => Project::STATUS_ACTIVE}}, :order => "#{Project.table_name}.name"
   has_many :projects, :through => :memberships
 
   # Groups and active users
-  named_scope :active, :conditions => "#{Principal.table_name}.type='Group' OR (#{Principal.table_name}.type='User' AND #{Principal.table_name}.status = 1)"
-
-  named_scope :like, lambda {|q|
+  def self.active
+    where(['(type = ? OR type = ?) AND status = ?', 'Group', 'User', 1])
+  end
+  def self.like(q)
     s = "%#{q.to_s.strip.downcase}%"
-    {:conditions => ["LOWER(login) LIKE :s OR LOWER(firstname) LIKE :s OR LOWER(lastname) LIKE :s OR LOWER(mail) LIKE :s", {:s => s}],
-     :order => 'type, login, lastname, firstname, mail'
-    }
-  }
+
+    where(["LOWER(login) LIKE :s OR LOWER(firstname) LIKE :s OR LOWER(lastname) LIKE :s OR LOWER(mail) LIKE :s", {:s => s}]).
+    order('type, login, lastname, firstname, mail')
+  end
 
   before_create :set_default_empty_values
 
