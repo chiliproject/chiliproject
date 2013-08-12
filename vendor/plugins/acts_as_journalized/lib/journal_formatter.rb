@@ -29,7 +29,7 @@ module JournalFormatter
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::UrlHelper
   include ActionView::Helpers::TextHelper
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
   extend Redmine::I18n
 
   def self.included(base)
