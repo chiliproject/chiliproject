@@ -23,7 +23,6 @@ class ApplicationController < ActionController::Base
   include Redmine::I18n
 
   layout 'base'
-  exempt_from_layout 'builder', 'rsb'
 
   protect_from_forgery
   def handle_unverified_request
@@ -50,7 +49,6 @@ class ApplicationController < ActionController::Base
   end
 
   before_filter :user_setup, :check_if_login_required, :set_localization
-  filter_parameter_logging :password
 
   # FIXME: This doesn't work with Rails >= 3.0 anymore
   # Possible workaround: https://github.com/rails/rails/issues/671#issuecomment-1780159
@@ -223,7 +221,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_model_object
-    model = self.class.read_inheritable_attribute('model_object')
+    model = self._model_object
     if model
       @object = model.find(params[:id])
       self.instance_variable_set('@' + controller_name.singularize, @object) if @object
@@ -232,8 +230,9 @@ class ApplicationController < ActionController::Base
     render_404
   end
 
+  class_attribute :_model_object
   def self.model_object(model)
-    write_inheritable_attribute('model_object', model)
+    self._model_object = model
   end
 
   # Filter for bulk issue operations
