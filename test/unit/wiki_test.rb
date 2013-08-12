@@ -44,7 +44,7 @@ class WikiTest < ActiveSupport::TestCase
     page = WikiPage.find(10)
     assert_equal page, wiki.find_page('Этика_менеджмента')
 
-    page = WikiPage.generate!(:wiki => wiki, :title => '2009\\02\\09')
+    page = WikiPage.create!(:wiki => wiki, :title => '2009\\02\\09')
     assert_equal page, wiki.find_page('2009\\02\\09')
   end
 
