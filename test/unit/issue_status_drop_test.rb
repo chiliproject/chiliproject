@@ -16,7 +16,7 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class IssueStatusDropTest < ActiveSupport::TestCase
   def setup
-    @issue_status = IssueStatus.generate!
+    @issue_status = IssueStatus.create!(:name => "test")
     @drop = @issue_status.to_liquid
   end
 
