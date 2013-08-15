@@ -109,6 +109,14 @@ module Redmine
           context[:controller].send(:render_to_string, {:locals => context}.merge(options))
         end
       end
+
+      def controller
+        nil
+      end
+      
+      def config
+        ActionController::Base.config
+      end
     end
 
     # Helper module included in ApplicationHelper and ActionControllerso that
