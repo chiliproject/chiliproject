@@ -147,7 +147,7 @@ module Redmine
           default_context = { :project => @project }
           default_context[:controller] = controller if respond_to?(:controller)
           default_context[:request] = request if respond_to?(:request)
-          Redmine::Hook.call_hook(hook, default_context.merge(context)).join(' ')
+          Redmine::Hook.call_hook(hook, default_context.merge(context)).join(' ').html_safe
         end
       end
     end
