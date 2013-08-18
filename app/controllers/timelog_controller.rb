@@ -113,6 +113,7 @@ class TimelogController < ApplicationController
     render :action => 'edit'
   end
 
+  verify :method => :post, :only => :create, :render => {:nothing => true, :status => :method_not_allowed }
   def create
     @time_entry ||= TimeEntry.new(:project => @project, :issue => @issue, :user => User.current, :spent_on => User.current.today)
     @time_entry.safe_attributes = params[:time_entry]
@@ -141,6 +142,7 @@ class TimelogController < ApplicationController
     call_hook(:controller_timelog_edit_before_save, { :params => params, :time_entry => @time_entry })
   end
 
+  verify :method => :put, :only => :update, :render => {:nothing => true, :status => :method_not_allowed }
   def update
     @time_entry.safe_attributes = params[:time_entry]
 
@@ -162,6 +164,7 @@ class TimelogController < ApplicationController
     end
   end
 
+  verify :method => :delete, :only => :destroy, :render => {:nothing => true, :status => :method_not_allowed }
   def destroy
     if @time_entry.destroy && @time_entry.destroyed?
       respond_to do |format|
