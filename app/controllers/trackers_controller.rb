@@ -59,6 +59,7 @@ class TrackersController < ApplicationController
     render :action => 'edit'
   end
 
+  verify :method => :delete, :only => :destroy, :redirect_to => { :action => :index }
   def destroy
     @tracker = Tracker.find(params[:id])
     unless @tracker.issues.empty?

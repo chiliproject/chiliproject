@@ -15,6 +15,10 @@
 class MailHandlerController < ActionController::Base
   before_filter :check_credential
 
+  verify :method => :post,
+         :only => :index,
+         :render => { :nothing => true, :status => 405 }
+
   # Submits an incoming email to MailHandler
   def index
     options = params.dup
