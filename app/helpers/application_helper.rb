@@ -857,7 +857,7 @@ module ApplicationHelper
     options = args.last
     options[:html] ||= {}
     options[:html][:class] = 'tabular' unless options[:html].has_key?(:class)
-    options.merge!({:builder => TabularFormBuilder})
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
     form_for(*args, &proc)
   end
 
