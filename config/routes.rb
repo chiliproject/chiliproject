@@ -90,7 +90,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'my/remove_block', :controller => 'my', :action => 'remove_block', :conditions => {:method => :post}
   map.connect 'my/order_blocks', :controller => 'my', :action => 'order_blocks', :conditions => {:method => :post}
 
-  map.resources :issues, :collection => {:bulk_edit => :get, :bulk_update => :post} do |issues|
   map.resources :issues, :member => { :edit => :post }, :collection => {} do |issues|
     issues.resources :relations, :controller => 'issue_relations', :only => [:show, :create, :destroy]
   end
