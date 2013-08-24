@@ -50,8 +50,7 @@ class ContextMenusControllerTest < ActionController::TestCase
     assert_tag :tag => 'a', :content => 'Move',
                :attributes => { :href => '/issues/move/new?ids%5B%5D=1'}
     assert_tag :tag => 'a', :content => 'Delete',
-                            :attributes => { :href => '/issues?ids%5B%5D=1',
-                                             :class => 'icon-del' }
+                            :attributes => { :href => '/issues?ids%5B%5D=1' }
   end
 
   def test_context_menu_one_issue_by_anonymous
@@ -87,8 +86,7 @@ class ContextMenusControllerTest < ActionController::TestCase
     assert_tag :tag => 'a', :content => 'Move',
                :attributes => { :href => "/issues/move/new?#{ids}"}
     assert_tag :tag => 'a', :content => 'Delete',
-                            :attributes => { :href => "/issues?#{ids}",
-                                             :class => 'icon-del' }
+                            :attributes => { :href => "/issues?#{ids}" }
   end
 
   def test_context_menu_multiple_issues_of_different_projects
@@ -113,8 +111,7 @@ class ContextMenusControllerTest < ActionController::TestCase
                             :attributes => { :href => "/issues/bulk_edit?#{ids}&amp;issue%5Bassigned_to_id%5D=2",
                                              :class => '' }
     assert_tag :tag => 'a', :content => 'Delete',
-                            :attributes => { :href => "/issues?#{ids}",
-                                             :class => 'icon-del' }
+                            :attributes => { :href => "/issues?#{ids}" }
   end
 
   def test_context_menu_issue_visibility
