@@ -182,11 +182,6 @@ ActionController::Routing::Routes.draw do |map|
 
   #left old routes at the bottom for backwards compat
   map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
-<<<<<<< HEAD
-  map.connect 'issues/:issue_id/relations/:action/:id', :controller => 'issue_relations'
-=======
-  map.connect 'wiki/:id/:page/:action', :page => nil, :controller => 'wiki'
->>>>>>> add REST API for issue relations
   map.connect 'projects/:project_id/news/:action', :controller => 'news'
 
   map.with_options :controller => 'sys' do |sys|
