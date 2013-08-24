@@ -19,7 +19,7 @@
   </td>
   <td class="roles">
     <span id="member-<%= membership.id %>-roles"><%=h membership.roles.sort.collect(&:to_s).join(', ') %></span>
-    <% remote_form_for(:membership, :url => user_membership_path(@user, membership),
+    <%= form_for(:membership, :remote => true, :url => user_membership_path(@user, membership),
                        :method => :put,
                        :html => { :id => "member-#{membership.id}-roles-form", :style => 'display:none;'}) do %>
       	<p><% roles.each do |role| %>
