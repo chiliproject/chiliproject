@@ -189,7 +189,6 @@ ActionController::Routing::Routes.draw do |map|
 
   #left old routes at the bottom for backwards compat
   map.connect 'projects/:project_id/queries/:action', :controller => 'queries'
-  map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
 
   map.with_options :controller => 'sys' do |sys|
     sys.connect 'sys/projects.:format', :action => 'projects', :conditions => {:method => :get}
