@@ -32,7 +32,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'roles/workflow/:id/:role_id/:tracker_id', :controller => 'roles', :action => 'workflow'
 
-  map.connect 'help/:ctrl/:page', :controller => 'help', :conditions => {:method => :get}
+  map.connect 'help/wiki_syntax', :controller => 'help', :action => 'wiki_syntax', :conditions => {:method => :get}
+  map.connect 'help/wiki_syntax_detailed', :controller => 'help', :action => 'wiki_syntax_detailed', :conditions => {:method => :get}
 
   map.connect '/time_entries/destroy',
                    :controller => 'timelog', :action => 'destroy', :conditions => { :method => :delete }
