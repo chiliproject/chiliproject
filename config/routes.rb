@@ -188,6 +188,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :custom_fields, :except => :show
   map.resources :roles, :except => :show, :collection => {:permissions => [:get, :post]}
 
+  map.connect 'journals/diff/:id', :controller => 'journals', :action => 'diff'
+
   #left old routes at the bottom for backwards compat
   map.connect 'projects/:project_id/queries/:action', :controller => 'queries'
 
