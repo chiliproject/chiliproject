@@ -342,9 +342,10 @@ Redmine::MenuManager.map :project_menu do |menu|
               :caption => :label_board_plural,
               :if => Proc.new { |p| p.boards.any? },
               :children => Proc.new {|project|
+                children = []
                 project.boards.collect do |board|
-                  if board && !board.new_record?
-                    Redmine::MenuManager::MenuItem.new(
+                  if !board.new_record?
+                    children << Redmine::MenuManager::MenuItem.new(
                                                      "board-#{board.id}".to_sym,
                                                      { :controller => 'boards', :action => 'show', :project_id => project, :id => board },
                                                      {
@@ -352,6 +353,7 @@ Redmine::MenuManager.map :project_menu do |menu|
                                                      })
                    end
                 end
+                children
               }
             })
   menu.push(:new_board, { :controller => 'boards', :action => 'new' }, {
