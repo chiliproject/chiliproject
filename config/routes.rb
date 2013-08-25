@@ -26,7 +26,8 @@ ActionController::Routing::Routes.draw do |map|
   map.signout 'logout', :controller => 'account', :action => 'logout'
 
   map.connect 'roles/workflow/:id/:role_id/:tracker_id', :controller => 'roles', :action => 'workflow'
-  map.connect 'help/:ctrl/:page', :controller => 'help'
+  map.connect 'help/wiki_syntax', :controller => 'help', :action => 'wiki_syntax', :conditions => {:method => :get}
+  map.connect 'help/wiki_syntax_detailed', :controller => 'help', :action => 'wiki_syntax_detailed', :conditions => {:method => :get}
 
   map.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
 
