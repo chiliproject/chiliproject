@@ -102,7 +102,7 @@ ActionController::Routing::Routes.draw do |map|
     issues.resources :relations, :controller => 'issue_relations', :only => [:show, :create, :destroy]
   end
 
-  map.resources :issues do |issues|
+  map.resources :issues, :collection => {:bulk_edit => :get, :bulk_update => :post} do |issues|
     issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
   end
   # Bulk deletion
