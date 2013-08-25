@@ -22,13 +22,13 @@ Redmine::Application.routes.draw do |map|
 
   map.home '', :controller => 'welcome', :conditions => {:method => :get}
 
-  map.signin 'login', :controller => 'account', :action => 'login', :conditions => {:method => [:get, :post]}
-  map.signout 'logout', :controller => 'account', :action => 'logout', :conditions => {:method => :get}
-  map.connect 'account/register', :controller => 'account', :action => 'register', :conditions => {:method => [:get, :post]}
-  map.connect 'account/lost_password', :controller => 'account', :action => 'lost_password', :conditions => {:method => [:get, :post]}
-  map.connect 'account/login', :controller => 'account', :action => 'login', :conditions => {:method => [:get, :post]}
-  map.connect 'account/logout', :controller => 'account', :action => 'logout', :conditions => {:method => :get}
-  map.connect 'account/activate', :controller => 'account', :action => 'activate', :conditions => {:method => :get}
+  match 'login', :to => 'account#login', :as => 'signin', :via => [:get, :post]
+  match 'logout', :to => 'account#logout', :as => 'signout', :via => [:get, :post]
+  match 'account/register', :to => 'account#register', :via => [:get, :post], :as => 'register'
+  match 'account/lost_password', :to => 'account#lost_password', :via => [:get, :post], :as => 'lost_password'
+  match 'account/login', :to => 'account#login', :via => [:get, :post]
+  match 'account/logout', :to => 'account#logout', :via => [:get, :post]
+  match 'account/activate', :to => 'account#activate', :via => :get
 
   map.connect 'help/wiki_syntax', :controller => 'help', :action => 'wiki_syntax', :conditions => {:method => :get}
   map.connect 'help/wiki_syntax_detailed', :controller => 'help', :action => 'wiki_syntax_detailed', :conditions => {:method => :get}
