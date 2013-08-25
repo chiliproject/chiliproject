@@ -288,7 +288,7 @@ Redmine::MenuManager.map :project_menu do |menu|
               :if => Proc.new {|p| User.current.allowed_to?(:log_time, p) },
               :parent => :time_entries
             })
-  menu.push(:time_entry_report, { :controller => 'time_entry_reports', :action => 'report' }, {
+  menu.push(:time_entry_report, { :controller => 'timelog', :action => 'report' }, {
               :param => :project_id,
               :if => Proc.new {|p| User.current.allowed_to?(:view_time_entries, p) },
               :parent => :time_entries
