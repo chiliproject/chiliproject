@@ -235,9 +235,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'journals/diff/:id', :controller => 'journals', :action => 'diff'
 
-  #left old routes at the bottom for backwards compat
-  map.connect 'projects/:project_id/queries/:action', :controller => 'queries'
-
   map.connect 'custom_fields', :controller => 'custom_fields', :action => 'index', :conditions => {:method => :get}
   map.connect 'custom_fields/new', :controller => 'custom_fields', :action => 'new', :conditions => {:method => [:get, :post]}
   map.connect 'custom_fields/edit/:id', :controller => 'custom_fields', :action => 'edit', :id => /\d+/, :conditions => {:method => [:get, :post]}
