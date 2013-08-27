@@ -1,4 +1,4 @@
-<%= labelled_remote_form_for :repository, @repository,
+<%= labelled_remote_form_for @repository, :as => :repository,
                    :url => { :controller => 'repositories', :action => 'edit', :id => @project } do |f| %>
 
 <%= error_messages_for 'repository' %>
