@@ -30,8 +30,8 @@ Redmine::Application.routes.draw do |map|
   match 'account/logout', :to => 'account#logout', :via => [:get, :post]
   match 'account/activate', :to => 'account#activate', :via => :get
 
-  map.connect 'help/wiki_syntax', :controller => 'help', :action => 'wiki_syntax', :conditions => {:method => :get}
-  map.connect 'help/wiki_syntax_detailed', :controller => 'help', :action => 'wiki_syntax_detailed', :conditions => {:method => :get}
+  match 'help/wiki_syntax', :to => 'help#wiki_syntax', :via => [:get]
+  match 'help/wiki_syntax_detailed', :to => 'help#wiki_syntax_detailed', :via => [:get]
 
   map.connect '/time_entries/destroy',
                    :controller => 'timelog', :action => 'destroy', :conditions => { :method => :delete }
