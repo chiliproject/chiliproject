@@ -98,13 +98,12 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'my/remove_block', :controller => 'my', :action => 'remove_block', :conditions => {:method => :post}
   map.connect 'my/order_blocks', :controller => 'my', :action => 'order_blocks', :conditions => {:method => :post}
 
-  map.resources :issues, :member => { :edit => :post }, :collection => {} do |issues|
+  map.resources :issues, :member => { :edit => :post },
+                :collection => {:bulk_edit => :get, :bulk_update => :post} do |issues|
     issues.resources :relations, :controller => 'issue_relations', :only => [:show, :create, :destroy]
-  end
-
-  map.resources :issues, :collection => {:bulk_edit => :get, :bulk_update => :post} do |issues|
     issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
   end
+
   # Bulk deletion
   map.connect '/issues', :controller => 'issues', :action => 'destroy', :conditions => {:method => :delete}
 
