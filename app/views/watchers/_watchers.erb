@@ -5,13 +5,14 @@
 <h3><%= l(:label_issue_watchers) %> (<%= watched.watcher_users.size %>)</h3>
 
 <% if User.current.allowed_to?("add_#{watched.class.name.underscore}_watchers".to_sym, @project) %>
-	<% remote_form_for(:watcher, @watcher,
-                	   :url => {:controller => 'watchers',
+	<%= form_for(@watcher,
+                	  {:as =>:watcher, :remote => true,
+                     :url => {:controller => 'watchers',
               	              :action => 'new',
             	                :object_type => watched.class.name.underscore,
          	                    :object_id => watched},
        	             :method => :post,
-      	             :html => {:id => 'new-watcher-form', :style => 'display:none;'}) do |f| %>
+      	             :html => {:id => 'new-watcher-form', :style => 'display:none;'}}) do |f| %>
     <% users = Principal.active.find(:all, :limit => 25) - watched.watcher_users %>
 		<p><%= label_tag "user_search", l(:label_user_search) %><%= text_field_tag 'user_search', nil, :style => "width:98%;" %></p>
 		<%= observe_field(:user_search,
