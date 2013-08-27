@@ -41,21 +41,15 @@ Redmine::Application.routes.draw do |map|
   map.connect 'projects/:id/wiki', :controller => 'wikis', :action => 'edit', :conditions => {:method => :post}
   map.connect 'projects/:id/wiki/destroy', :controller => 'wikis', :action => 'destroy', :conditions => {:method => [:get, :post]}
 
-  map.with_options :controller => 'messages' do |messages_routes|
-    messages_routes.with_options :conditions => {:method => :get} do |messages_views|
-      messages_views.connect 'boards/:board_id/topics/new', :action => 'new'
-      messages_views.connect 'boards/:board_id/topics/:id', :action => 'show'
-      messages_views.connect 'boards/:board_id/topics/:id/edit', :action => 'edit'
-    end
-    messages_routes.with_options :conditions => {:method => :post} do |messages_actions|
-      messages_actions.connect 'boards/:board_id/topics/new', :action => 'new'
-      messages_actions.connect 'boards/:board_id/topics/preview', :action => 'preview'
-      messages_actions.connect 'boards/:board_id/topics/quote/:id', :action => 'quote'
-      messages_actions.connect 'boards/:board_id/topics/:id/replies', :action => 'reply'
-      messages_actions.connect 'boards/:board_id/topics/:id/edit', :action => 'edit'
-      messages_actions.connect 'boards/:board_id/topics/:id/destroy', :action => 'destroy'
-    end
-  end
+  match 'boards/:board_id/topics/new', :to => 'messages#new', :via => [:get, :post], :as => 'new_board_message'
+  get 'boards/:board_id/topics/:id', :to => 'messages#show', :as => 'board_message'
+  match 'boards/:board_id/topics/quote/:id', :to => 'messages#quote', :via => [:get, :post]
+  get 'boards/:board_id/topics/:id/edit', :to => 'messages#edit'
+
+  post 'boards/:board_id/topics/preview', :to => 'messages#preview', :as => 'preview_board_message'
+  post 'boards/:board_id/topics/:id/replies', :to => 'messages#reply'
+  post 'boards/:board_id/topics/:id/edit', :to => 'messages#edit'
+  post 'boards/:board_id/topics/:id/destroy', :to => 'messages#destroy'
 
   map.resources :issue_moves, :only => [:new, :create], :path_prefix => '/issues', :as => 'move'
 
