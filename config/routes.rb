@@ -85,16 +85,17 @@ Redmine::Application.routes.draw do |map|
     reports.connect 'projects/:id/issues/report/:detail', :action => 'issue_report_details'
   end
 
-  map.connect 'my/account', :controller => 'my', :action => 'account', :conditions => {:method => [:get, :post]}
-  map.connect 'my/page', :controller => 'my', :action => 'page', :conditions => {:method => :get}
-  map.connect 'my', :controller => 'my', :action => 'index', :conditions => {:method => :get} # Redirects to my/page
-  map.connect 'my/reset_rss_key', :controller => 'my', :action => 'reset_rss_key', :conditions => {:method => :post}
-  map.connect 'my/reset_api_key', :controller => 'my', :action => 'reset_api_key', :conditions => {:method => :post}
-  map.connect 'my/password', :controller => 'my', :action => 'password', :conditions => {:method => [:get, :post]}
-  map.connect 'my/page_layout', :controller => 'my', :action => 'page_layout', :conditions => {:method => :get}
-  map.connect 'my/add_block', :controller => 'my', :action => 'add_block', :conditions => {:method => :post}
-  map.connect 'my/remove_block', :controller => 'my', :action => 'remove_block', :conditions => {:method => :post}
-  map.connect 'my/order_blocks', :controller => 'my', :action => 'order_blocks', :conditions => {:method => :post}
+  match 'my/account', :controller => 'my', :action => 'account', :via => [:get, :post]
+  match 'my/account/destroy', :controller => 'my', :action => 'destroy', :via => [:get, :post]
+  match 'my/page', :controller => 'my', :action => 'page', :via => :get
+  match 'my', :controller => 'my', :action => 'index', :via => :get # Redirects to my/page
+  match 'my/reset_rss_key', :controller => 'my', :action => 'reset_rss_key', :via => :post
+  match 'my/reset_api_key', :controller => 'my', :action => 'reset_api_key', :via => :post
+  match 'my/password', :controller => 'my', :action => 'password', :via => [:get, :post]
+  match 'my/page_layout', :controller => 'my', :action => 'page_layout', :via => :get
+  match 'my/add_block', :controller => 'my', :action => 'add_block', :via => :post
+  match 'my/remove_block', :controller => 'my', :action => 'remove_block', :via => :post
+  match 'my/order_blocks', :controller => 'my', :action => 'order_blocks', :via => :post
 
   map.with_options :controller => 'users' do |users|
     users.user_membership 'users/:id/memberships/:membership_id', :action => 'edit_membership', :conditions => {:method => :put}
