@@ -33,8 +33,8 @@ Redmine::Application.routes.draw do |map|
   match 'help/wiki_syntax', :to => 'help#wiki_syntax', :via => [:get]
   match 'help/wiki_syntax_detailed', :to => 'help#wiki_syntax_detailed', :via => [:get]
 
-  map.connect '/time_entries/destroy',
-                   :controller => 'timelog', :action => 'destroy', :conditions => { :method => :delete }
+  match 'time_entries/destroy',
+        :to => 'timelog#destroy', :via => [:delete]
 
   map.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
 
