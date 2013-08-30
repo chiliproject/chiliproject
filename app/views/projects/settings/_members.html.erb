@@ -59,9 +59,11 @@
 
 <div class="splitcontentright">
 <% if roles.any? && principals.any? %>
-  <% remote_form_for(:membership, @member, :url => project_memberships_path(@project), :method => :post,
+  <%= form_for(@member,
+               {:as => :membership, :remote => true,
+                :url => project_memberships_path(@project), :method => :post,
                      :loading => '$(\'member-add-submit\').disable();',
-                     :complete => 'if($(\'member-add-submit\')) $(\'member-add-submit\').enable();') do |f| %>
+                     :complete => 'if($(\'member-add-submit\')) $(\'member-add-submit\').enable();'}) do |f| %>
     <fieldset><legend><%=l(:label_member_new)%></legend>
 		<p><%= label_tag "principal_search", l(:label_principal_search) %><%= text_field_tag 'principal_search', nil %></p>
 		<%= observe_field(:principal_search,
