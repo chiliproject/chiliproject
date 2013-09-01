@@ -175,7 +175,11 @@ Redmine::Application.routes.draw do |map|
   map.connect '/issues', :controller => 'issues', :action => 'destroy',
               :conditions => {:method => :delete}
 
-  map.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
+  resources :time_entries, :controller => 'timelog' do
+    collection do
+      get 'report'
+    end
+  end
 
   get 'projects/:id/activity', :to => 'activities#index'
   get 'projects/:id/activity.:format', :to => 'activities#index'
