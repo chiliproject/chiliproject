@@ -185,12 +185,9 @@ Redmine::Application.routes.draw do |map|
 
   map.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
 
-  map.with_options :controller => 'activities', :action => 'index', :conditions => {:method => :get} do |activity|
-    activity.connect 'projects/:id/activity'
-    activity.connect 'projects/:id/activity.:format'
-    activity.connect 'activity', :id => nil
-    activity.connect 'activity.:format', :id => nil
-  end
+  get 'projects/:id/activity', :to => 'activities#index'
+  get 'projects/:id/activity.:format', :to => 'activities#index'
+  get 'activity', :to => 'activities#index'
 
   map.with_options :controller => 'repositories' do |repositories|
     repositories.with_options :conditions => {:method => :get} do |repository_views|
