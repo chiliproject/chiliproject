@@ -57,7 +57,7 @@ Redmine::Application.routes.draw do |map|
   match '/issues/preview/new/:project_id', :to => 'previews#issue', :as => 'preview_new_issue'
   match '/issues/preview/edit/:id', :to => 'previews#issue', :as => 'preview_edit_issue'
 
-  map.issues_context_menu '/issues/context_menu', :controller => 'context_menus', :action => 'issues'
+  match '/issues/context_menu', :to => 'context_menus#issues', :as => 'issues_context_menu'
   map.issue_changes '/issues/changes', :controller => 'journals', :action => 'index'
   map.quoted_issue '/issues/:id/quoted', :controller => 'journals', :action => 'new', :id => /\d+/, :conditions => { :method => :post }
   map.journal_diff '/journals/:id/diff/:field', :controller => 'journals', :action => 'diff', :conditions => { :method => :get }
