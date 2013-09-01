@@ -123,12 +123,6 @@ class RoutingRepositoriesTest < ActionController::IntegrationTest
       )
     assert_routing(
         { :method => 'get',
-          :path => "/projects/redmine/repository/revisions/2457/diff.diff" },
-        { :controller => 'repositories', :action => 'diff', :id => 'redmine',
-          :rev => '2457', :format => 'diff' }
-      )
-    assert_routing(
-        { :method => 'get',
           :path => "/projects/redmine/repository/revisions/2/diff/#{@path_hash[:path]}" },
         { :controller => 'repositories', :action => 'diff', :id => 'redmine',
           :path => @path_hash[:param], :rev => '2' }
@@ -150,6 +144,15 @@ class RoutingRepositoriesTest < ActionController::IntegrationTest
           :path => "/projects/redmine/repository/revisions/2/annotate/#{@path_hash[:path]}" },
         { :controller => 'repositories', :action => 'annotate', :id => 'redmine',
           :path => @path_hash[:param], :rev => '2' }
+      )
+  end
+
+  def test_repositories_revisions_diff
+    assert_routing(
+        { :method => 'get',
+          :path => "/projects/redmine/repository/revisions/2457/diff.diff" },
+        { :controller => 'repositories', :action => 'diff', :id => 'redmine',
+          :rev => '2457', :format => 'diff' }
       )
   end
 
