@@ -63,11 +63,8 @@ Redmine::Application.routes.draw do |map|
   match '/journals/:id/diff/:field', :to => 'journals#diff', :id => /\d+/, :via => :get, :as => 'journal_diff'
   match '/journals/edit/:id', :to => 'journals#edit', :id => /\d+/, :via => [:get, :post]
 
-  map.with_options :controller => 'gantts', :action => 'show' do |gantts_routes|
-    gantts_routes.connect '/projects/:project_id/issues/gantt'
-    gantts_routes.connect '/projects/:project_id/issues/gantt.:format'
-    gantts_routes.connect '/issues/gantt.:format'
-  end
+  match '/projects/:project_id/issues/gantt', :to => 'gantts#show'
+  match '/issues/gantt', :to => 'gantts#show'
 
   map.with_options :controller => 'calendars', :action => 'show' do |calendars_routes|
     calendars_routes.connect '/projects/:project_id/issues/calendar'
