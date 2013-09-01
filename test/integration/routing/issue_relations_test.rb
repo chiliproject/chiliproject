@@ -20,21 +20,6 @@ require File.expand_path('../../../test_helper', __FILE__)
 class RoutingIssueRelationsTest < ActionController::IntegrationTest
   def test_issue_relations
     assert_routing(
-        { :method => 'get', :path => "/issues/1/relations" },
-        { :controller => 'issue_relations', :action => 'index',
-          :issue_id => '1' }
-      )
-    assert_routing(
-        { :method => 'get', :path => "/issues/1/relations.xml" },
-        { :controller => 'issue_relations', :action => 'index',
-          :issue_id => '1', :format => 'xml' }
-      )
-    assert_routing(
-        { :method => 'get', :path => "/issues/1/relations.json" },
-        { :controller => 'issue_relations', :action => 'index',
-          :issue_id => '1', :format => 'json' }
-      )
-    assert_routing(
         { :method => 'post', :path => "/issues/1/relations" },
         { :controller => 'issue_relations', :action => 'create',
           :issue_id => '1' }
@@ -50,32 +35,32 @@ class RoutingIssueRelationsTest < ActionController::IntegrationTest
           :issue_id => '1', :format => 'json' }
       )
     assert_routing(
-        { :method => 'get', :path => "/relations/23" },
-        { :controller => 'issue_relations', :action => 'show', :id => '23' }
+        { :method => 'get', :path => "/issues/1/relations/23" },
+        { :controller => 'issue_relations', :action => 'show', :id => '23', :issue_id => '1' }
       )
     assert_routing(
-        { :method => 'get', :path => "/relations/23.xml" },
+        { :method => 'get', :path => "/issues/1/relations/23.xml" },
         { :controller => 'issue_relations', :action => 'show', :id => '23',
-          :format => 'xml' }
+          :format => 'xml', :issue_id => '1' }
       )
     assert_routing(
-        { :method => 'get', :path => "/relations/23.json" },
+        { :method => 'get', :path => "/issues/1/relations/23.json" },
         { :controller => 'issue_relations', :action => 'show', :id => '23',
-          :format => 'json' }
+          :format => 'json', :issue_id => '1' }
       )
     assert_routing(
-        { :method => 'delete', :path => "/relations/23" },
-        { :controller => 'issue_relations', :action => 'destroy', :id => '23' }
+        { :method => 'delete', :path => "/issues/1/relations/23" },
+        { :controller => 'issue_relations', :action => 'destroy', :id => '23', :issue_id => '1' }
       )
     assert_routing(
-        { :method => 'delete', :path => "/relations/23.xml" },
+        { :method => 'delete', :path => "/issues/1/relations/23.xml" },
         { :controller => 'issue_relations', :action => 'destroy', :id => '23',
-          :format => 'xml' }
+          :format => 'xml', :issue_id => '1' }
       )
     assert_routing(
-        { :method => 'delete', :path => "/relations/23.json" },
+        { :method => 'delete', :path => "/issues/1/relations/23.json" },
         { :controller => 'issue_relations', :action => 'destroy', :id => '23',
-          :format => 'json' }
+          :format => 'json', :issue_id => '1' }
       )
   end
 end
