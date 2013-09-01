@@ -46,7 +46,7 @@ Redmine::Application.routes.draw do |map|
   post 'boards/:board_id/topics/:id/edit', :to => 'messages#edit'
   post 'boards/:board_id/topics/:id/destroy', :to => 'messages#destroy'
 
-  map.resources :issue_moves, :only => [:new, :create], :path_prefix => '/issues', :as => 'move'
+  resources :issue_moves, :only => [:new, :create], :path => "/issues/move"
 
   # Misc issue routes. TODO: move into resources
   map.auto_complete_issues '/issues/auto_complete', :controller => 'auto_completes', :action => 'issues', :conditions => { :method => :get }
