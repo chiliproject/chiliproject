@@ -216,7 +216,7 @@ Redmine::Application.routes.draw do |map|
   map.resources :roles, :except => :show, :collection => {:permissions => [:get, :post]}
   map.resources :enumerations, :except => :show
 
-  map.connect 'journals/diff/:id', :controller => 'journals', :action => 'diff'
+  match '/journals/diff/:id', :to => 'journals#diff', :via => :get
 
   map.connect 'projects/:id/search', :controller => 'search', :action => 'index', :conditions => {:method => :get}
   map.connect 'search', :controller => 'search', :action => 'index', :conditions => {:method => :get}
