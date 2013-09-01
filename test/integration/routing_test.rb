@@ -310,4 +310,8 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :post, "/projects/ladida/wiki", :controller => 'wikis', :action => 'edit', :id => 'ladida'
     should_route :post, "/projects/ladida/wiki/destroy", :controller => 'wikis', :action => 'destroy', :id => 'ladida'
   end
+
+  context "auto_completes" do
+    should_route :get, "/users/auto_complete", :controller => 'auto_completes', :action => 'users'
+  end
 end
