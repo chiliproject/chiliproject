@@ -20,10 +20,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :post, "/issues/move", :controller => 'issue_moves', :action => 'create'
   end
 
-  context "journals" do
-    should_route :get, "/journals/100/diff/description", :controller => 'journals', :action => 'diff', :id => '100', :field => 'description'
-  end
-
   context "issue relations" do
     should_route :post, "/issues/1/relations", :controller => 'issue_relations', :action => 'create', :issue_id => '1'
     should_route :post, "/issues/1/relations.xml", :controller => 'issue_relations', :action => 'create', :issue_id => '1', :format => 'xml'
