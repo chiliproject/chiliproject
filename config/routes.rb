@@ -49,9 +49,10 @@ Redmine::Application.routes.draw do |map|
   resources :issue_moves, :only => [:new, :create], :path => "/issues/move"
 
   # Misc issue routes. TODO: move into resources
-  map.auto_complete_issues '/issues/auto_complete', :controller => 'auto_completes', :action => 'issues', :conditions => { :method => :get }
-  map.auto_complete_users '/users/auto_complete', :controller => 'auto_completes', :action => 'users', :conditions => { :method => :get }
-  map.auto_complete_projects '/projects/auto_complete', :controller => 'auto_completes', :action => 'projects', :conditions => { :method => :post }
+  match '/issues/auto_complete', :to => 'auto_completes#issues', :via => :get, :as => 'auto_complete_issues'
+  match '/users/auto_complete', :to => 'auto_completes#users', :via => :get, :as => 'auto_complete_users'
+  match '/projects/auto_complete', :to => 'auto_completes#projects', :via => :post, :as => 'auto_complete_projects'
+
 
   # TODO: would look nicer as /issues/:id/preview
   map.preview_new_issue '/issues/preview/new/:project_id', :controller => 'previews',
