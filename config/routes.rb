@@ -33,11 +33,6 @@ Redmine::Application.routes.draw do |map|
   match 'help/wiki_syntax', :to => 'help#wiki_syntax', :via => [:get]
   match 'help/wiki_syntax_detailed', :to => 'help#wiki_syntax_detailed', :via => [:get]
 
-  match 'time_entries/destroy',
-        :to => 'timelog#destroy', :via => [:delete]
-
-  map.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
-
   map.connect 'projects/:id/wiki', :controller => 'wikis', :action => 'edit', :conditions => {:method => :post}
   map.connect 'projects/:id/wiki/destroy', :controller => 'wikis', :action => 'destroy', :conditions => {:method => [:get, :post]}
 
@@ -187,6 +182,8 @@ Redmine::Application.routes.draw do |map|
   # Bulk deletion
   map.connect '/issues', :controller => 'issues', :action => 'destroy',
               :conditions => {:method => :delete}
+
+  map.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
 
   map.with_options :controller => 'activities', :action => 'index', :conditions => {:method => :get} do |activity|
     activity.connect 'projects/:id/activity'
