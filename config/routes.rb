@@ -221,7 +221,7 @@ Redmine::Application.routes.draw do |map|
   map.connect 'projects/:id/search', :controller => 'search', :action => 'index', :conditions => {:method => :get}
   map.connect 'search', :controller => 'search', :action => 'index', :conditions => {:method => :get}
 
-  map.connect 'mail_handler', :controller => 'mail_handler', :action => 'index', :conditions => {:method => :post}
+  match 'mail_handler', :controller => 'mail_handler', :action => 'index', :via => :post
 
   match 'admin', :controller => 'admin', :action => 'index', :via => :get
   match 'admin/projects', :controller => 'admin', :action => 'projects', :via => :get
