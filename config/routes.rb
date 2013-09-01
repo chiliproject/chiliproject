@@ -66,10 +66,8 @@ Redmine::Application.routes.draw do |map|
   match '/projects/:project_id/issues/gantt', :to => 'gantts#show'
   match '/issues/gantt', :to => 'gantts#show'
 
-  map.with_options :controller => 'calendars', :action => 'show' do |calendars_routes|
-    calendars_routes.connect '/projects/:project_id/issues/calendar'
-    calendars_routes.connect '/issues/calendar'
-  end
+  match '/projects/:project_id/issues/calendar', :to => 'calendars#show'
+  match '/issues/calendar', :to => 'calendars#show'
 
   map.with_options :controller => 'reports', :conditions => {:method => :get} do |reports|
     reports.connect 'projects/:id/issues/report', :action => 'issue_report'
