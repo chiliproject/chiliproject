@@ -186,14 +186,6 @@ class RoutingTest < ActionController::IntegrationTest
   end
 
   context "queries" do
-    should_route :get, "/queries/new", :controller => 'queries', :action => 'new'
-    should_route :get, "/projects/redmine/queries/new", :controller => 'queries', :action => 'new', :project_id => 'redmine'
-
-    should_route :post, "/queries/new", :controller => 'queries', :action => 'new'
-    should_route :post, "/projects/redmine/queries/new", :controller => 'queries', :action => 'new', :project_id => 'redmine'
-  end
-
-  context "queries" do
     should_route :get, "/queries.xml", :controller => 'queries', :action => 'index', :format => 'xml'
     should_route :get, "/queries.json", :controller => 'queries', :action => 'index', :format => 'json'
 
