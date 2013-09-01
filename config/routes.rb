@@ -189,26 +189,19 @@ Redmine::Application.routes.draw do |map|
   get 'projects/:id/activity.:format', :to => 'activities#index'
   get 'activity', :to => 'activities#index'
 
-  map.with_options :controller => 'repositories' do |repositories|
-    repositories.with_options :conditions => {:method => :get} do |repository_views|
-      repository_views.connect 'projects/:id/repository', :action => 'show'
-      repository_views.connect 'projects/:id/repository/statistics', :action => 'stats'
-      repository_views.connect 'projects/:id/repository/revisions', :action => 'revisions'
-      repository_views.connect 'projects/:id/repository/revisions.:format', :action => 'revisions'
-      repository_views.connect 'projects/:id/repository/revisions/:rev', :action => 'revision'
-      repository_views.connect 'projects/:id/repository/revisions/:rev/diff', :action => 'diff'
-      repository_views.connect 'projects/:id/repository/revisions/:rev/diff.:format', :action => 'diff'
-      repository_views.connect 'projects/:id/repository/revisions/:rev/raw/*path', :action => 'entry', :format => 'raw', :requirements => { :rev => /[a-z0-9\.\-_]+/ }
-      repository_views.connect 'projects/:id/repository/revisions/:rev/:action/*path', :requirements => { :rev => /[a-z0-9\.\-_]+/ }
-      repository_views.connect 'projects/:id/repository/raw/*path', :action => 'entry', :format => 'raw'
-      repository_views.connect 'projects/:id/repository/browse/*path', :action => 'browse'
-      repository_views.connect 'projects/:id/repository/entry/*path', :action => 'entry'
-      repository_views.connect 'projects/:id/repository/changes/*path', :action => 'changes'
-      repository_views.connect 'projects/:id/repository/annotate/*path', :action => 'annotate'
-      repository_views.connect 'projects/:id/repository/diff/*path', :action => 'diff'
-      repository_views.connect 'projects/:id/repository/show/*path', :action => 'show'
-      repository_views.connect 'projects/:id/repository/graph', :action => 'graph'
-      repository_views.connect 'projects/:id/repository/revision', :action => 'revision'
+  scope :controller => 'repositories' do
+    scope :via => :get do
+      match '/projects/:id/repository', :action => :show, :path => nil, :rev => nil
+      match '/projects/:id/repository/statistics', :action => :stats
+      match '/projects/:id/repository/committers', :action => :committers
+      match '/projects/:id/repository/graph', :action => :graph
+      match '/projects/:id/repository/revisions/:rev', :action => :revision, :rev => /[a-z0-9\.\-_]+/
+      match '/projects/:id/repository/revisions', :action => :revisions
+      match '/projects/:id/repository/revision', :action => :revision
+      match '/projects/:id/repository/revisions/:rev/:format(/*path(.:ext))', :action => :entry, :format => /raw/, :rev => /[a-z0-9\.\-_]+/
+      match '/projects/:id/repository/revisions/:rev/:action(/*path(.:ext))', :rev => /[a-z0-9\.\-_]+/, :action => /(browse|show|entry|changes|annotate|diff)/
+      match '/projects/:id/repository/:format(/*path(.:ext))', :action => :entry, :format => /raw/
+      match '/projects/:id/repository/:action(/*path(.:ext))', :action => /(browse|show|entry|changes|annotate|diff)/
     end
   end
 
