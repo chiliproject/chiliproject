@@ -214,7 +214,7 @@ Redmine::Application.routes.draw do |map|
   map.resources :issue_statuses, :except => :show, :collection => {:update_issue_done_ratio => :post}
   map.resources :custom_fields, :except => :show
   map.resources :roles, :except => :show, :collection => {:permissions => [:get, :post]}
-  map.resources :enumerations, :except => :show
+  resources :enumerations, :except => :show
 
   match '/journals/diff/:id', :to => 'journals#diff', :via => :get
 
