@@ -217,11 +217,11 @@ Redmine::Application.routes.draw do |map|
   match 'attachments/download/:id', :controller => 'attachments', :action => 'download', :id => /\d+/, :via => :get
   resources :attachments, :only => [:show, :destroy]
 
-  map.resources :groups
-  map.group_users 'groups/:id/users', :controller => 'groups', :action => 'add_users', :id => /\d+/, :conditions => {:method => :post}
-  map.group_user  'groups/:id/users/:user_id', :controller => 'groups', :action => 'remove_user', :id => /\d+/, :conditions => {:method => :delete}
-  map.connect 'groups/destroy_membership/:id', :controller => 'groups', :action => 'destroy_membership', :id => /\d+/, :conditions => {:method => :post}
-  map.connect 'groups/edit_membership/:id', :controller => 'groups', :action => 'edit_membership', :id => /\d+/, :conditions => {:method => :post}
+  resources :groups
+  match 'groups/:id/users', :controller => 'groups', :action => 'add_users', :id => /\d+/, :via => :post, :as => 'group_users'
+  match 'groups/:id/users/:user_id', :controller => 'groups', :action => 'remove_user', :id => /\d+/, :via => :delete, :as => 'group_user'
+  match 'groups/destroy_membership/:id', :controller => 'groups', :action => 'destroy_membership', :id => /\d+/, :via => :post
+  match 'groups/edit_membership/:id', :controller => 'groups', :action => 'edit_membership', :id => /\d+/, :via => :post
 
   map.resources :trackers, :except => :show
   map.resources :issue_statuses, :except => :show, :collection => {:update_issue_done_ratio => :post}
