@@ -20,7 +20,6 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :post, "/issues/move", :controller => 'issue_moves', :action => 'create'
 
     should_route :post, "/issues/1/quoted", :controller => 'journals', :action => 'new', :id => '1'
-    should_route :post, "/issues/preview/123", :controller => 'previews', :action => 'issue', :id => '123'
     should_route :get, "/issues/changes", :controller => 'journals', :action => 'index'
   end
 
