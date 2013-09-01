@@ -165,10 +165,20 @@ Redmine::Application.routes.draw do |map|
   match '/news/:id/comments', :to => 'comments#create', :via => :post
   match '/news/:id/comments/:comment_id', :to => 'comments#destroy', :via => :delete
 
-  map.resources :issues, :member => { :edit => :post },
-                :collection => {:bulk_edit => :get, :bulk_update => :post} do |issues|
-    issues.resources :relations, :controller => 'issue_relations', :only => [:show, :create, :destroy]
-    issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
+  resources :issues do
+    member do
+      post 'edit'
+    end
+    collection do
+      get 'bulk_edit'
+      post 'bulk_update'
+    end
+    resources :time_entries, :controller => 'timelog' do
+      collection do
+        get 'report'
+      end
+    end
+    resources :relations, :controller => 'issue_relations', :only => [:show, :create, :destroy]
   end
 
   # Bulk deletion
