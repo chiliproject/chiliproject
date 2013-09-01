@@ -14,12 +14,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class RoutingTest < ActionController::IntegrationTest
-  context "issues" do
-    # Extra actions
-    should_route :get, "/issues/move/new", :controller => 'issue_moves', :action => 'new'
-    should_route :post, "/issues/move", :controller => 'issue_moves', :action => 'create'
-  end
-
   context "issue reports" do
     should_route :get, "/projects/567/issues/report", :controller => 'reports', :action => 'issue_report', :id => '567'
     should_route :get, "/projects/567/issues/report/assigned_to", :controller => 'reports', :action => 'issue_report_details', :id => '567', :detail => 'assigned_to'
