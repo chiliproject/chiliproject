@@ -224,7 +224,11 @@ Redmine::Application.routes.draw do |map|
   match 'groups/edit_membership/:id', :controller => 'groups', :action => 'edit_membership', :id => /\d+/, :via => :post
 
   map.resources :trackers, :except => :show
-  map.resources :issue_statuses, :except => :show, :collection => {:update_issue_done_ratio => :post}
+  resources :issue_statuses, :except => :show do
+    collection do
+      post 'update_issue_done_ratio'
+    end
+  end
   map.resources :custom_fields, :except => :show
   map.resources :roles, :except => :show, :collection => {:permissions => [:get, :post]}
   resources :enumerations, :except => :show
