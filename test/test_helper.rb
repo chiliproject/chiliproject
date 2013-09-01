@@ -137,7 +137,7 @@ class ActiveSupport::TestCase
   def repository_path_hash(arr)
     hs = {}
     hs[:path]  = arr.join("/")
-    hs[:param] = arr
+    hs[:param] = arr.join("/")
     hs
   end
 
