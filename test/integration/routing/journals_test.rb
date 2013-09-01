@@ -37,5 +37,9 @@ class RoutingJournalsTest < ActionController::IntegrationTest
           { :controller => 'journals', :action => 'edit', :id => '1' }
         )
     end
+    assert_routing(
+        { :method => 'get', :path => "/journals/100/diff/description" },
+        { :controller => 'journals', :action => 'diff', :id => '100', :field => 'description' }
+      )
   end
 end
