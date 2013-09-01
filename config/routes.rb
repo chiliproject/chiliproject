@@ -53,12 +53,9 @@ Redmine::Application.routes.draw do |map|
   match '/users/auto_complete', :to => 'auto_completes#users', :via => :get, :as => 'auto_complete_users'
   match '/projects/auto_complete', :to => 'auto_completes#projects', :via => :post, :as => 'auto_complete_projects'
 
-
   # TODO: would look nicer as /issues/:id/preview
-  map.preview_new_issue '/issues/preview/new/:project_id', :controller => 'previews',
-                        :action => 'issue'
-  map.preview_edit_issue '/issues/preview/edit/:id', :controller => 'previews',
-                         :action => 'issue'
+  match '/issues/preview/new/:project_id', :to => 'previews#issue', :as => 'preview_new_issue'
+  match '/issues/preview/edit/:id', :to => 'previews#issue', :as => 'preview_edit_issue'
 
   map.issues_context_menu '/issues/context_menu', :controller => 'context_menus', :action => 'issues'
   map.issue_changes '/issues/changes', :controller => 'journals', :action => 'index'
@@ -104,7 +101,7 @@ Redmine::Application.routes.draw do |map|
   # For nice "roadmap" in the url for the index action
   map.connect 'projects/:project_id/roadmap', :controller => 'versions', :action => 'index'
 
-  map.preview_news '/news/preview', :controller => 'previews', :action => 'news'
+  match '/news/preview', :controller => 'previews', :action => 'news', :as => 'preview_news'
   map.connect 'news/:id/comments', :controller => 'comments', :action => 'create', :conditions => {:method => :post}
   map.connect 'news/:id/comments/:comment_id', :controller => 'comments', :action => 'destroy', :conditions => {:method => :delete}
 
