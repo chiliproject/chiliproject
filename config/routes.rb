@@ -97,8 +97,6 @@ Redmine::Application.routes.draw do |map|
   map.connect 'projects/:project_id/roadmap', :controller => 'versions', :action => 'index'
 
   match '/news/preview', :controller => 'previews', :action => 'news', :as => 'preview_news'
-  map.connect 'news/:id/comments', :controller => 'comments', :action => 'create', :conditions => {:method => :post}
-  map.connect 'news/:id/comments/:comment_id', :controller => 'comments', :action => 'destroy', :conditions => {:method => :delete}
 
   map.connect 'watchers/new', :controller=> 'watchers', :action => 'new', :conditions => {:method => [:get, :post]}
   map.connect 'watchers/destroy', :controller=> 'watchers', :action => 'destroy', :conditions => {:method => :post}
@@ -161,10 +159,11 @@ Redmine::Application.routes.draw do |map|
     }
   end
 
-  map.connect 'news', :controller => 'news', :action => 'index'
-  map.connect 'news.:format', :controller => 'news', :action => 'index'
-
   map.resources :queries, :except => [:show]
+
+  resources :news, :only => [:index, :show, :edit, :update, :destroy]
+  match '/news/:id/comments', :to => 'comments#create', :via => :post
+  match '/news/:id/comments/:comment_id', :to => 'comments#destroy', :via => :delete
 
   map.resources :issues, :member => { :edit => :post },
                 :collection => {:bulk_edit => :get, :bulk_update => :post} do |issues|
