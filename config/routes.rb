@@ -58,10 +58,10 @@ Redmine::Application.routes.draw do |map|
   match '/issues/preview/edit/:id', :to => 'previews#issue', :as => 'preview_edit_issue'
 
   match '/issues/context_menu', :to => 'context_menus#issues', :as => 'issues_context_menu'
-  map.issue_changes '/issues/changes', :controller => 'journals', :action => 'index'
-  map.quoted_issue '/issues/:id/quoted', :controller => 'journals', :action => 'new', :id => /\d+/, :conditions => { :method => :post }
-  map.journal_diff '/journals/:id/diff/:field', :controller => 'journals', :action => 'diff', :conditions => { :method => :get }
-  map.connect '/journals/edit/:id', :controller => 'journals', :action => 'edit', :id => /\d+/, :conditions => { :method => [:get, :post] }
+  match '/issues/changes', :to => 'journals#index', :as => 'issue_changes'
+  match '/issues/:id/quoted', :to => 'journals#new', :id => /\d+/, :via => :post, :as => 'quoted_issue'
+  match '/journals/:id/diff/:field', :to => 'journals#diff', :id => /\d+/, :via => :get, :as => 'journal_diff'
+  match '/journals/edit/:id', :to => 'journals#edit', :id => /\d+/, :via => [:get, :post]
 
   map.with_options :controller => 'gantts', :action => 'show' do |gantts_routes|
     gantts_routes.connect '/projects/:project_id/issues/gantt'
