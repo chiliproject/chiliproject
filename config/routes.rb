@@ -255,9 +255,9 @@ Redmine::Application.routes.draw do |map|
   match 'workflows', :controller => 'workflows', :action => 'index', :via => :get
   match 'workflows/edit', :controller => 'workflows', :action => 'edit', :via => [:get, :post]
   match 'workflows/copy', :controller => 'workflows', :action => 'copy', :via => [:get, :post]
-  map.connect 'settings', :controller => 'settings', :action => 'index', :conditions => {:method => :get}
-  map.connect 'settings/edit', :controller => 'settings', :action => 'edit', :conditions => {:method => [:get, :post]}
-  map.connect 'settings/plugin/:id', :controller => 'settings', :action => 'plugin', :conditions => {:method => [:get, :post]}
+  match 'settings', :controller => 'settings', :action => 'index', :via => :get
+  match 'settings/edit', :controller => 'settings', :action => 'edit', :via => [:get, :post]
+  match 'settings/plugin/:id', :controller => 'settings', :action => 'plugin', :via => [:get, :post]
 
   map.with_options :controller => 'sys' do |sys|
     sys.connect 'sys/projects.:format', :action => 'projects', :conditions => {:method => :get}
