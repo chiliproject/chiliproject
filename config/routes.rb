@@ -218,7 +218,7 @@ Redmine::Application.routes.draw do |map|
   match 'groups/destroy_membership/:id', :controller => 'groups', :action => 'destroy_membership', :id => /\d+/, :via => :post
   match 'groups/edit_membership/:id', :controller => 'groups', :action => 'edit_membership', :id => /\d+/, :via => :post
 
-  map.resources :trackers, :except => :show
+  resources :trackers, :except => :show
   resources :issue_statuses, :except => :show do
     collection do
       post 'update_issue_done_ratio'
