@@ -220,7 +220,11 @@ Redmine::Application.routes.draw do |map|
     end
   end
   resources :custom_fields, :except => :show
-  map.resources :roles, :except => :show, :collection => {:permissions => [:get, :post]}
+  resources :roles, :except => :show do
+    collection do
+      match 'permissions', :via => [:get, :post]
+    end
+  end
   resources :enumerations, :except => :show
 
   match '/journals/diff/:id', :to => 'journals#diff', :via => :get
