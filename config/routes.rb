@@ -150,7 +150,7 @@ Redmine::Application.routes.draw do |map|
     }
   end
 
-  map.resources :queries, :except => [:show]
+  resources :queries, :except => [:show]
 
   resources :news, :only => [:index, :show, :edit, :update, :destroy]
   match '/news/:id/comments', :to => 'comments#create', :via => :post
