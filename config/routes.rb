@@ -178,8 +178,7 @@ Redmine::Application.routes.draw do |map|
   end
 
   # Bulk deletion
-  map.connect '/issues', :controller => 'issues', :action => 'destroy',
-              :conditions => {:method => :delete}
+  match '/issues', :controller => 'issues', :action => 'destroy', :via => :delete
 
   resources :time_entries, :controller => 'timelog' do
     collection do
