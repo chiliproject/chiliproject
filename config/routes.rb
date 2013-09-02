@@ -259,11 +259,9 @@ Redmine::Application.routes.draw do |map|
   match 'settings/edit', :controller => 'settings', :action => 'edit', :via => [:get, :post]
   match 'settings/plugin/:id', :controller => 'settings', :action => 'plugin', :via => [:get, :post]
 
-  map.with_options :controller => 'sys' do |sys|
-    sys.connect 'sys/projects.:format', :action => 'projects', :conditions => {:method => :get}
-    sys.connect 'sys/projects/:id/repository.:format', :action => 'create_project_repository', :conditions => {:method => :post}
-    sys.connect 'sys/fetch_changesets', :action => 'fetch_changesets', :conditions => {:method => :get}
-  end
+  match 'sys/projects', :to => 'sys#projects', :via => :get
+  match 'sys/projects/:id/repository', :to => 'sys#create_project_repository', :via => :post
+  match 'sys/fetch_changesets', :to => 'sys#fetch_changesets', :via => :get
 
   map.connect 'robots.txt', :controller => 'welcome', :action => 'robots', :conditions => {:method => :get}
 
