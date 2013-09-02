@@ -89,9 +89,6 @@ Redmine::Application.routes.draw do |map|
   match 'users/:id/memberships/:membership_id', :to => 'users#destroy_membership', :via => :delete
   match 'users/:id/memberships', :to => 'users#edit_membership', :via => :post, :as => 'user_memberships'
 
-  # For nice "roadmap" in the url for the index action
-  map.connect 'projects/:project_id/roadmap', :controller => 'versions', :action => 'index'
-
   match '/news/preview', :controller => 'previews', :action => 'news', :as => 'preview_news'
 
   map.connect 'watchers/new', :controller=> 'watchers', :action => 'new', :conditions => {:method => [:get, :post]}
@@ -107,52 +104,80 @@ Redmine::Application.routes.draw do |map|
   match 'projects/:id/settings/:tab', :to => "projects#settings"
   match 'projects/:project_id/issues/:copy_from/copy', :to => 'issues#new'
 
-  map.resources :projects, :member => {
-    :copy => [:get, :post],
-    :settings => :get,
-    :modules => :post,
-    :archive => :post,
-    :unarchive => :post
-  } do |project|
-    project.resource :enumerations, :controller => 'project_enumerations',
-                     :only => [:update, :destroy]
+ resources :projects do
+    member do
+      get 'settings'
+      post 'modules'
+      post 'archive'
+      post 'unarchive'
+      match 'copy', :via => [:get, :post]
+    end
+    resources :memberships, :shallow => true, :controller => 'members', :only => [:create, :update, :destroy] do
+      collection do
+        get 'autocomplete'
+      end
+    end
+    resource :enumerations, :controller => 'project_enumerations', :only => [:update, :destroy]
+
+    resources :issues, :only => [:index, :new, :create] do
+      resources :time_entries, :controller => 'timelog' do
+        collection do
+          get 'report'
+        end
+      end
+    end
     # issue form update
-    project.issue_form 'issues/new', :controller => 'issues',
-                       :action => 'new', :conditions => {:method => [:post, :put]}
-    project.resources :issues, :only => [:index, :new, :create] do |issues|
-      issues.resources :time_entries, :controller => 'timelog', :collection => {:report => :get}
+    match 'issues/new', :controller => 'issues', :action => 'new', :via => [:put, :post], :as => 'issue_form'
+
+    resources :files, :only => [:index, :new, :create]
+
+    resources :versions, :except => [:index, :show, :edit, :update, :destroy] do
+      collection do
+        put 'close_completed'
+      end
+    end
+    match 'versions.:format', :to => 'versions#index'
+    match 'roadmap', :to => 'versions#index', :format => false
+    match 'versions', :to => 'versions#index'
+
+    resources :news, :shallow => true
+    resources :time_entries, :controller => 'timelog' do
+      get 'report', :on => :collection
+    end
+    resources :boards
+    resources :documents, :shallow => true do
+      member do
+        post "add_attachment"
+      end
+    end
+    resources :issue_categories, :shallow => true
+    resources :queries, :only => [:new, :create]
+    resources :repositories, :shallow => true, :except => [:index, :show] do
+      member do
+        match 'committers', :via => [:get, :post]
+      end
     end
 
-    project.resources :files, :only => [:index, :new, :create]
-    project.resources :versions, :shallow => true, :collection => {:close_completed => :put}, :member => {:status_by => :post}
-    project.resources :news, :shallow => true
-    project.resources :time_entries, :controller => 'timelog',
-                      :collection => {:report => :get}
-    project.resources :boards
-    project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
-    project.resources :issue_categories, :shallow => true
-    project.resources :queries, :only => [:new, :create]
-    project.resources :repositories, :shallow => true, :except => [:index, :show],
-                      :member => {:committers => [:get, :post]}
-    project.resources :memberships, :shallow => true, :controller => 'members',
-                      :only => [:create, :update, :destroy],
-                      :collection => {:autocomplete => :get}
-
-    project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
-    project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
-    project.wiki_diff 'wiki/:id/diff/:version', :controller => 'wiki', :action => 'diff', :version => nil
-    project.wiki_diff 'wiki/:id/diff/:version/vs/:version_from', :controller => 'wiki', :action => 'diff'
-    project.wiki_annotate 'wiki/:id/annotate/:version', :controller => 'wiki', :action => 'annotate'
-    project.resources :wiki, :except => [:new, :create], :member => {
-      :rename => [:get, :post],
-      :history => :get,
-      :preview => :any,
-      :protect => :post,
-      :add_attachment => :post
-    }, :collection => {
-      :export => :get,
-      :date_index => :get
-    }
+    match 'wiki/index', :controller => 'wiki', :action => 'index', :via => :get
+    match 'wiki/:id/diff/:version/vs/:version_from', :controller => 'wiki', :action => 'diff'
+    match 'wiki/:id/diff/:version', :controller => 'wiki', :action => 'diff'
+    resources :wiki, :except => [:index, :new, :create] do
+      member do
+        get 'rename'
+        post 'rename'
+        get 'history'
+        get 'diff'
+        match 'preview', :via => [:post, :put]
+        post 'protect'
+        post 'add_attachment'
+      end
+      collection do
+        get 'export'
+        get 'date_index'
+      end
+    end
+    match 'wiki', :controller => 'wiki', :action => 'show', :via => :get
+    match 'wiki/:id/annotate/:version', :controller => 'wiki', :action => 'annotate'
   end
 
   resources :queries, :except => [:show]
@@ -160,6 +185,10 @@ Redmine::Application.routes.draw do |map|
   resources :news, :only => [:index, :show, :edit, :update, :destroy]
   match '/news/:id/comments', :to => 'comments#create', :via => :post
   match '/news/:id/comments/:comment_id', :to => 'comments#destroy', :via => :delete
+
+  resources :versions, :only => [:show, :edit, :update, :destroy] do
+    post 'status_by', :on => :member
+  end
 
   resources :issues do
     member do
