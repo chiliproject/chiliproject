@@ -84,12 +84,10 @@ Redmine::Application.routes.draw do |map|
   match 'my/remove_block', :controller => 'my', :action => 'remove_block', :via => :post
   match 'my/order_blocks', :controller => 'my', :action => 'order_blocks', :via => :post
 
-  map.with_options :controller => 'users' do |users|
-    users.user_membership 'users/:id/memberships/:membership_id', :action => 'edit_membership', :conditions => {:method => :put}
-    users.connect 'users/:id/memberships/:membership_id', :action => 'destroy_membership', :conditions => {:method => :delete}
-    users.user_memberships 'users/:id/memberships', :action => 'edit_membership', :conditions => {:method => :post}
-  end
-  map.resources :users
+  resources :users
+  match 'users/:id/memberships/:membership_id', :to => 'users#edit_membership', :via => :put, :as => 'user_membership'
+  match 'users/:id/memberships/:membership_id', :to => 'users#destroy_membership', :via => :delete
+  match 'users/:id/memberships', :to => 'users#edit_membership', :via => :post, :as => 'user_memberships'
 
   # For nice "roadmap" in the url for the index action
   map.connect 'projects/:project_id/roadmap', :controller => 'versions', :action => 'index'
