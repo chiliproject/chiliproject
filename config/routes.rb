@@ -263,7 +263,7 @@ Redmine::Application.routes.draw do |map|
   match 'sys/projects/:id/repository', :to => 'sys#create_project_repository', :via => :post
   match 'sys/fetch_changesets', :to => 'sys#fetch_changesets', :via => :get
 
-  map.connect 'robots.txt', :controller => 'welcome', :action => 'robots', :conditions => {:method => :get}
+  get 'robots.txt', :to => 'welcome#robots'
 
   # Used for OpenID
   map.root :controller => 'account', :action => 'login'
