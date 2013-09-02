@@ -69,10 +69,8 @@ Redmine::Application.routes.draw do |map|
   match '/projects/:project_id/issues/calendar', :to => 'calendars#show'
   match '/issues/calendar', :to => 'calendars#show'
 
-  map.with_options :controller => 'reports', :conditions => {:method => :get} do |reports|
-    reports.connect 'projects/:id/issues/report', :action => 'issue_report'
-    reports.connect 'projects/:id/issues/report/:detail', :action => 'issue_report_details'
-  end
+  match 'projects/:id/issues/report', :to => 'reports#issue_report', :via => :get
+  match 'projects/:id/issues/report/:detail', :to => 'reports#issue_report_details', :via => :get
 
   match 'my/account', :controller => 'my', :action => 'account', :via => [:get, :post]
   match 'my/account/destroy', :controller => 'my', :action => 'destroy', :via => [:get, :post]
