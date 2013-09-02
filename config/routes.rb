@@ -99,6 +99,11 @@ Redmine::Application.routes.draw do |map|
   map.connect 'watchers/watch', :controller=> 'watchers', :action => 'watch', :conditions => {:method => :post}
   map.connect 'watchers/unwatch', :controller=> 'watchers', :action => 'unwatch', :conditions => {:method => :post}
 
+  match 'watchers/new', :controller=> 'watchers', :action => 'new', :via => [:get, :post]
+  match 'watchers/destroy', :controller=> 'watchers', :action => 'destroy', :via => :post
+  match 'watchers/watch', :controller=> 'watchers', :action => 'watch', :via => :post
+  match 'watchers/unwatch', :controller=> 'watchers', :action => 'unwatch', :via => :post
+
   # TODO: port to be part of the resources route(s)
   map.with_options :conditions => {:method => :get} do |project_views|
     project_views.connect 'projects/:id/settings/:tab',
