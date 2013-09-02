@@ -241,7 +241,11 @@ Redmine::Application.routes.draw do |map|
   match 'admin/test_email', :controller => 'admin', :action => 'test_email', :via => :get
   match 'admin/default_configuration', :controller => 'admin', :action => 'default_configuration', :via => :post
 
-  map.resources :auth_sources, :member => {:test_connection => :get}
+  resources :auth_sources do
+    member do
+      get 'test_connection'
+    end
+  end
 
   map.connect 'workflows', :controller => 'workflows', :action => 'index', :conditions => {:method => :get}
   map.connect 'workflows/edit', :controller => 'workflows', :action => 'edit', :conditions => {:method => [:get, :post]}
