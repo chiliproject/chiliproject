@@ -33,8 +33,8 @@ Redmine::Application.routes.draw do |map|
   match 'help/wiki_syntax', :to => 'help#wiki_syntax', :via => [:get]
   match 'help/wiki_syntax_detailed', :to => 'help#wiki_syntax_detailed', :via => [:get]
 
-  map.connect 'projects/:id/wiki', :controller => 'wikis', :action => 'edit', :conditions => {:method => :post}
-  map.connect 'projects/:id/wiki/destroy', :controller => 'wikis', :action => 'destroy', :conditions => {:method => [:get, :post]}
+  match 'projects/:id/wiki', :to => 'wikis#edit', :via => :post
+  match 'projects/:id/wiki/destroy', :to => 'wikis#destroy', :via => [:get, :post]
 
   match 'boards/:board_id/topics/new', :to => 'messages#new', :via => [:get, :post], :as => 'new_board_message'
   get 'boards/:board_id/topics/:id', :to => 'messages#show', :as => 'board_message'
