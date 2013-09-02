@@ -103,9 +103,9 @@ Redmine::Application.routes.draw do |map|
   map.with_options :conditions => {:method => :get} do |project_views|
     project_views.connect 'projects/:id/settings/:tab',
                           :controller => 'projects', :action => 'settings'
-    project_views.connect 'projects/:project_id/issues/:copy_from/copy',
-                          :controller => 'issues', :action => 'new'
   end
+
+  match 'projects/:project_id/issues/:copy_from/copy', :to => 'issues#new'
 
   map.resources :projects, :member => {
     :copy => [:get, :post],
