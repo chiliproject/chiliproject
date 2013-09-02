@@ -259,7 +259,4 @@ Redmine::Application.routes.draw do |map|
   match 'sys/fetch_changesets', :to => 'sys#fetch_changesets', :via => :get
 
   get 'robots.txt', :to => 'welcome#robots'
-
-  # Used for OpenID
-  map.root :controller => 'account', :action => 'login'
 end
