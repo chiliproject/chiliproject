@@ -11,4 +11,5 @@
 <p><em><%= l(:text_user_mail_option) %></em></p>
 <% end %>
 <p><label><%= l(:label_user_mail_no_self_notified) %><%= check_box_tag 'no_self_notified', 1, @user.pref[:no_self_notified] %></label></p>
-
+<p><label><%= l(:label_user_mail_hide_due_date_notifications) %><%= check_box_tag 'hide_due_date_notifications', 1, @user.pref[:hide_due_date_notifications] %></label></p>
+<p><label><%= l(:label_user_mail_hide_past_due_date_notifications) %><%= check_box_tag 'hide_past_due_date_notifications', 1, @user.pref[:hide_past_due_date_notifications] %></label></p>

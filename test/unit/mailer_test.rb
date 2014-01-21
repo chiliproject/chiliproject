@@ -319,6 +319,30 @@ class MailerTest < ActiveSupport::TestCase
     assert mail.body.include?('Bug #3: Error 281 when updating a recipe')
   end
 
+  def test_reminders_with_hide_preference
+    user = User.find(3)
+    user.pref[:hide_due_date_notifications] = true
+    user.pref.save
+    Mailer.reminders(:days => 42)
+    assert_equal 0, ActionMailer::Base.deliveries.size
+    Mailer.reminders(:days => 42, :users => ['3'])
+    assert_equal 0, ActionMailer::Base.deliveries.size
+  end
+
+  def test_reminders_with_past_preference
+    issue = Issue.find(3)
+    issue.due_date = Time.now - 1.week
+    issue.save
+    Mailer.reminders(:days => 42)
+    assert_equal 1, ActionMailer::Base.deliveries.size
+    user = User.find(3)
+    user.pref[:hide_past_due_date_notifications] = true
+    user.pref.save
+    ActionMailer::Base.deliveries.clear
+    Mailer.reminders(:days => 42)
+    assert_equal 0, ActionMailer::Base.deliveries.size
+  end
+
   def last_email
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail

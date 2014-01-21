@@ -376,18 +376,23 @@ class Mailer < ActionMailer::Base
     tracker = options[:tracker] ? Tracker.find(options[:tracker]) : nil
     user_ids = options[:users]
 
-    s = ARCondition.new ["#{IssueStatus.table_name}.is_closed = ? AND #{Issue.table_name}.due_date <= ?", false, days.day.from_now.to_date]
-    s << "#{Issue.table_name}.assigned_to_id IS NOT NULL"
-    s << ["#{Issue.table_name}.assigned_to_id IN (?)", user_ids] if user_ids.present?
-    s << "#{Project.table_name}.status = #{Project::STATUS_ACTIVE}"
-    s << "#{Issue.table_name}.project_id = #{project.id}" if project
-    s << "#{Issue.table_name}.tracker_id = #{tracker.id}" if tracker
+    setup_conditions = proc do |options|
+      options ||= {}
+      s = ARCondition.new ["#{IssueStatus.table_name}.is_closed = ? AND #{Issue.table_name}.due_date <= ?", false, days.day.from_now.to_date]
+      s << "#{Project.table_name}.status = #{Project::STATUS_ACTIVE}"
+      s << "#{Issue.table_name}.project_id = #{project.id}" if project
+      s << "#{Issue.table_name}.tracker_id = #{tracker.id}" if tracker
+      s << ["#{Issue.table_name}.due_date > ?", Time.now.to_date] if options[:hide_past_due_date_notifications]
+      s
+    end
 
-    issues_by_assignee = Issue.find(:all, :include => [:status, :assigned_to, :project, :tracker],
-                                          :conditions => s.conditions
-                                    ).group_by(&:assigned_to)
-    issues_by_assignee.each do |assignee, issues|
-      deliver_reminder(assignee, issues, days) if assignee && assignee.active?
+    User.find(user_ids.presence || :all, :include => :preference).each do |user|
+      next unless user.active? && !user.pref[:hide_due_date_notifications]
+      s = setup_conditions.call(:hide_past_due_date_notifications => user.pref[:hide_past_due_date_notifications])
+      issues = user.assigned_issues.all(:include => [:status, :assigned_to, :project, :tracker],
+                                        :order => "#{Issue.table_name}.due_date DESC",
+                                        :conditions => s.conditions)
+      deliver_reminder(user, issues, days) unless issues.empty?
     end
   end
 
