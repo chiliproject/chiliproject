@@ -197,6 +197,11 @@ RAW
 
     source_url = {:controller => 'repositories', :action => 'entry', :id => 'ecookbook', :path => ['some', 'file']}
     source_url_with_ext = {:controller => 'repositories', :action => 'entry', :id => 'ecookbook', :path => ['some', 'file.ext']}
+    
+    user_url_jsmith = link_to('jsmith', { :controller=>"users", :action=>"show", :id => 2}, 
+                                  :class => 'user', :title => 'Smith, John <jsmith@somenet.foo>')
+    user_url_dlopper = link_to('dlopper', { :controller=>"users", :action=>"show", :id => 3}, 
+                                  :class => 'user', :title => 'Lopper, Dave <dlopper@somenet.foo>')
 
     to_test = {
       # tickets
@@ -248,6 +253,15 @@ RAW
       'source:'                     => 'source:',
       # url hash
       "http://foo.bar/FAQ#3"       => '<a class="external" href="http://foo.bar/FAQ#3">http://foo.bar/FAQ#3</a>',
+      # username linking
+      "@jsmith"                    => user_url_jsmith,
+      "@jsmith @dlopper"           => "#{user_url_jsmith} #{user_url_dlopper}",
+      "@jsmith dlopper@somenet.foo" => "#{user_url_jsmith} <a class=\"email\" href=\"mailto:dlopper@somenet.foo\">dlopper@somenet.foo</a>",
+      "@jsmith \"system administrator\":mailto:sysadmin@example.com?subject=redmine%20permissions" => "#{user_url_jsmith} <a href=\"mailto:sysadmin@example.com?subject=redmine%20permissions\">system administrator</a>",
+      "@jsmith http://foo@www.bar.com" => "#{user_url_jsmith} <a class=\"external\" href=\"http://foo@www.bar.com\">http://foo@www.bar.com</a>",
+      "user:jsmith"                    => user_url_jsmith,
+      "user:jsmith user:dlopper"           => "#{user_url_jsmith} #{user_url_dlopper}",
+      
     }
     @project = Project.find(1)
     to_test.each { |text, result| assert_equal "<p>#{result}</p>", textilizable(text), "#{text} failed" }

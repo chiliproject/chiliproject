@@ -674,6 +674,8 @@ module ApplicationHelper
   #     export:some/file -> Force the download of the file
   #   Forum messages:
   #     message#1218 -> Link to message with id 1218
+  #   Users:
+  #     @username
   #
   #   Links can refer other objects from other projects, using project identifier:
   #     identifier:r52
@@ -681,7 +683,7 @@ module ApplicationHelper
   #     identifier:version:1.0.0
   #     identifier:source:some/file
   def parse_redmine_links(text, project, obj, attr, only_path, options)
-    text.gsub!(%r{([\s\(,\-\[\>]|^)(!)?(([a-z0-9\-]+):)?(attachment|document|version|commit|source|export|message|project)?((#|r)(\d+)|(:)([^"\s<>][^\s<>]*?|"[^"]+?"))(?=(?=[[:punct:]]\W)|,|\s|\]|<|$)}) do |m|
+    text.gsub!(%r{([\s\(,\-\[\>]|^)(!)?(([a-z0-9\-]+):)?(attachment|document|version|commit|source|export|message|project|user)?((#|r)(\d+)|(:|@)([^"\s<>][^\s<>]*?|"[^"]+?"))(?=(?=[[:punct:]]\W)|,|\s|\]|<|$)}) do |m|
       leading, esc, project_prefix, project_identifier, prefix, sep, identifier = $1, $2, $3, $4, $5, $7 || $9, $8 || $10
       link = nil
       if project_identifier
@@ -723,6 +725,11 @@ module ApplicationHelper
               link = link_to_project(p, {:only_path => only_path}, :class => 'project')
             end
           end
+        elsif sep == '@'
+          name = identifier.gsub(%r{^"(.*)"$}, "\\1")
+          if user = User.find_by_login(name)
+            link = link_to( user.login, {:controller => 'users', :action => 'show', :id => user}, :class => 'user', :title => "#{user.lastname}, #{user.firstname} <#{user.mail}>" )
+          end
         elsif sep == ':'
           # removes the double quotes if any
           name = identifier.gsub(%r{^"(.*)"$}, "\\1")
@@ -763,6 +770,10 @@ module ApplicationHelper
           when 'project'
             if p = Project.visible.find(:first, :conditions => ["identifier = :s OR LOWER(name) = :s", {:s => name.downcase}])
               link = link_to_project(p, {:only_path => only_path}, :class => 'project')
+            end
+          when 'user'
+            if user = User.find_by_login(name)
+              link = link_to( user.login, {:controller => 'users', :action => 'show', :id => user}, :class => 'user', :title => "#{user.lastname}, #{user.firstname} <#{user.mail}>" )
             end
           end
         end
