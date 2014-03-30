@@ -2,6 +2,7 @@ source :rubygems
 
 gem "rails", "2.3.18"
 gem "rake", "~> 10.1.1"
+gem "mime-types", "~> 1.25"
 
 gem "json", "~> 1.7.7"
 gem "coderay", "~> 0.9.7"
