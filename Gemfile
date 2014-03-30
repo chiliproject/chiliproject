@@ -16,7 +16,10 @@ group :test do
   gem 'shoulda', '~> 2.10.3'
   gem 'edavis10-object_daddy', :require => 'object_daddy'
   gem 'mocha'
-  gem 'capybara'
+  if RUBY_VERSION >= '1.9.3'
+    gem "capybara", "~> 2.1.0"
+    gem "selenium-webdriver"
+  end
 end
 
 group :ldap do
