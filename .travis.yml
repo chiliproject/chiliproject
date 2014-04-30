@@ -26,6 +26,7 @@ before_script:
 script: "bundle exec rake test:$TEST_SUITE"
 branches:
   only:
+    - ci-fixes
     - unstable
     - master
     - stable
