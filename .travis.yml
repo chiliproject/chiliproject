@@ -20,6 +20,7 @@ before_install:
   - "sudo apt-get --no-install-recommends install bzr cvs git mercurial subversion"
 before_script:
   - "rvm rubygems 1.8.25" # Rubygems 2.0.x fails with Rails 2.3
+  - "gem update --system 1.8.25"
   - "rake ci:travis:prepare"
   - "rm -rf tmp/test/darcs_repository" # Don't test Darcs on Travis. It breaks there :(
 script: "bundle exec rake test:$TEST_SUITE"
