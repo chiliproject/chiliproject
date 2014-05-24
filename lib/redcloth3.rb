@@ -475,7 +475,6 @@ class RedCloth3 < String
             style << "vertical-align:#{ v_align( $& ) };" if text =~ A_VLGN
         end
 
-        #style << "#{ htmlesc $1 };" if text.sub!( /\{([^}]*)\}/, '' ) && !filter_styles
         if text.sub!( /\{([^"}]*)\}/, '' ) && !filter_styles
           sanitized = sanitize_styles($1)
           style << "#{ sanitized };" unless sanitized.blank?
