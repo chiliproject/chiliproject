@@ -56,33 +56,6 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
 
-  map.with_options :controller => 'boards' do |board_routes|
-    board_routes.with_options :conditions => {:method => :get} do |board_views|
-      board_views.connect 'projects/:project_id/boards', :action => 'index'
-      board_views.connect 'projects/:project_id/boards/new', :action => 'new'
-      board_views.connect 'projects/:project_id/boards/:id', :action => 'show'
-      board_views.connect 'projects/:project_id/boards/:id.:format', :action => 'show'
-      board_views.connect 'projects/:project_id/boards/:id/edit', :action => 'edit'
-    end
-    board_routes.with_options :conditions => {:method => :post} do |board_actions|
-      board_actions.connect 'projects/:project_id/boards', :action => 'new'
-      board_actions.connect 'projects/:project_id/boards/:id/:action', :action => /edit|destroy/
-    end
-  end
-
-  map.with_options :controller => 'documents' do |document_routes|
-    document_routes.with_options :conditions => {:method => :get} do |document_views|
-      document_views.connect 'projects/:project_id/documents', :action => 'index'
-      document_views.connect 'projects/:project_id/documents/new', :action => 'new'
-      document_views.connect 'documents/:id', :action => 'show'
-      document_views.connect 'documents/:id/edit', :action => 'edit'
-    end
-    document_routes.with_options :conditions => {:method => :post} do |document_actions|
-      document_actions.connect 'projects/:project_id/documents', :action => 'new'
-      document_actions.connect 'documents/:id/:action', :action => /destroy|edit/
-    end
-  end
-
   map.resources :issue_moves, :only => [:new, :create], :path_prefix => '/issues', :as => 'move'
 
   # Misc issue routes. TODO: move into resources
@@ -162,6 +135,8 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :versions, :collection => {:close_completed => :put}, :member => {:status_by => :post}
     project.resources :news, :shallow => true
     project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id'
+    project.resources :boards
+    project.resources :documents, :shallow => true, :member => {:add_attachment => :post}
 
     project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
     project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
@@ -233,8 +208,6 @@ ActionController::Routing::Routes.draw do |map|
 
   #left old routes at the bottom for backwards compat
   map.connect 'projects/:project_id/issues/:action', :controller => 'issues'
-  map.connect 'projects/:project_id/documents/:action', :controller => 'documents'
-  map.connect 'projects/:project_id/boards/:action/:id', :controller => 'boards'
   map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
   map.connect 'wiki/:id/:page/:action', :page => nil, :controller => 'wiki'
   map.connect 'issues/:issue_id/relations/:action/:id', :controller => 'issue_relations'
