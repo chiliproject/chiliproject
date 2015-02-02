@@ -20,16 +20,10 @@ class EnumerationsController < ApplicationController
   include CustomFieldsHelper
 
   def index
-    list
-    render :action => 'list'
   end
 
-  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
   verify :method => :post, :only => [ :destroy, :create, :update ],
-         :redirect_to => { :action => :list }
-
-  def list
-  end
+         :redirect_to => { :action => :index }
 
   def new
     begin
@@ -44,7 +38,7 @@ class EnumerationsController < ApplicationController
     @enumeration.type = params[:enumeration][:type]
     if @enumeration.save
       flash[:notice] = l(:notice_successful_create)
-      redirect_to :action => 'list', :type => @enumeration.type
+      redirect_to :action => 'index', :type => @enumeration.type
     else
       render :action => 'new'
     end
@@ -59,7 +53,7 @@ class EnumerationsController < ApplicationController
     @enumeration.type = params[:enumeration][:type] if params[:enumeration][:type]
     if @enumeration.update_attributes(params[:enumeration])
       flash[:notice] = l(:notice_successful_update)
-      redirect_to :action => 'list', :type => @enumeration.type
+      redirect_to :action => 'index', :type => @enumeration.type
     else
       render :action => 'edit'
     end
