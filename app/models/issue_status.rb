@@ -60,7 +60,7 @@ class IssueStatus < ActiveRecord::Base
         (author || !w.author) &&
         (assignee || !w.assignee)
       end
-      transitions.collect{|w| w.new_status}.compact.sort
+      transitions.collect{|w| w.new_status}.compact.sort.uniq
     else
       []
     end
@@ -76,7 +76,7 @@ class IssueStatus < ActiveRecord::Base
 
       workflows.find(:all,
                      :include => :new_status,
-                     :conditions => conditions).collect{|w| w.new_status}.compact.sort
+                     :conditions => conditions).collect{|w| w.new_status}.compact.sort.uniq
     else
       []
     end
