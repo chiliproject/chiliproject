@@ -45,6 +45,7 @@ class Message < ActiveRecord::Base
   validates_length_of :subject, :maximum => 255
 
   after_create :add_author_as_watcher
+  after_update :update_messages_board
 
   named_scope :visible, lambda {|*args| { :include => {:board => :project},
                                           :conditions => Project.allowed_to_condition(args.first || User.current, :view_messages) } }
@@ -71,7 +72,7 @@ class Message < ActiveRecord::Base
     board.reset_counters!
   end
 
-  def after_update
+  def update_messages_board
     if board_id_changed?
       Message.update_all("board_id = #{board_id}", ["id = ? OR parent_id = ?", root.id, root.id])
       Board.reset_counters!(board_id_was)
