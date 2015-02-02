@@ -15,7 +15,45 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class ContextMenusControllerTest < ActionController::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def test_context_menu_one_issue
     @request.session[:user_id] = 2
@@ -50,7 +88,7 @@ class ContextMenusControllerTest < ActionController::TestCase
     assert_tag :tag => 'a', :content => 'Move',
                :attributes => { :href => '/issues/move/new?ids%5B%5D=1'}
     assert_tag :tag => 'a', :content => 'Delete',
-               :attributes => { :href => '/issues/destroy?ids%5B%5D=1' }
+                            :attributes => { :href => '/issues?ids%5B%5D=1' }
   end
 
   def test_context_menu_one_issue_by_anonymous
@@ -86,7 +124,7 @@ class ContextMenusControllerTest < ActionController::TestCase
     assert_tag :tag => 'a', :content => 'Move',
                :attributes => { :href => "/issues/move/new?#{ids}"}
     assert_tag :tag => 'a', :content => 'Delete',
-               :attributes => { :href => "/issues/destroy?#{ids}"}
+                            :attributes => { :href => "/issues?#{ids}" }
   end
 
   def test_context_menu_multiple_issues_of_different_projects
@@ -111,7 +149,7 @@ class ContextMenusControllerTest < ActionController::TestCase
                             :attributes => { :href => "/issues/bulk_edit?#{ids}&amp;issue%5Bassigned_to_id%5D=2",
                                              :class => '' }
     assert_tag :tag => 'a', :content => 'Delete',
-               :attributes => { :href => "/issues/destroy?#{ids}"}
+                            :attributes => { :href => "/issues?#{ids}" }
   end
 
   def test_context_menu_issue_visibility
