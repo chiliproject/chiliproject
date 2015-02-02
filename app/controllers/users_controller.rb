@@ -195,16 +195,16 @@ class UsersController < ApplicationController
     end
   end
 
-
+  verify :method => [:post, :put], :only => :edit_membership, :render => {:nothing => true, :status => :method_not_allowed }
   def edit_membership
     if params[:project_ids] # Multiple memberships, one per project
       params[:project_ids].each do |project_id|
         @membership = Member.edit_membership(params[:membership_id], (params[:membership] || {}).merge(:project_id => project_id), @user)
-        @membership.save if request.post?
+        @membership.save
       end
     else # Single membership
       @membership = Member.edit_membership(params[:membership_id], params[:membership], @user)
-      @membership.save if request.post?
+      @membership.save
     end
 
     respond_to do |format|
@@ -226,9 +226,10 @@ class UsersController < ApplicationController
     end
   end
 
+  verify :method => :delete, :only => :destroy_membership, :render => {:nothing => true, :status => :method_not_allowed }
   def destroy_membership
     @membership = Member.find(params[:membership_id])
-    if request.post? && @membership.deletable?
+    if @membership.deletable?
       @membership.destroy
     end
     respond_to do |format|
