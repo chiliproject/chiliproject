@@ -55,4 +55,10 @@ class Redmine::ThemesTest < ActiveSupport::TestCase
 
     assert_nil Redmine::Themes.theme(theme.id, :rescan => false)
   end
+  
+  def test_theme_invalid
+    theme = Redmine::Themes.theme("invalid_theme")
+    
+    assert_nil theme
+  end
 end

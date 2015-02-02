@@ -36,4 +36,44 @@ class UserPreferenceTest < ActiveSupport::TestCase
     user.reload
     assert_equal 'value', user.pref['preftest']
   end
+  
+  def test_settings_default_preference_theme
+    Setting.ui_theme = "alternate"
+    
+    user = User.new(:firstname => "new", :lastname => "user", :mail => "newuser@somenet.foo")
+    user.login = "newuser"
+    user.password, user.password_confirmation = "password", "password"
+    assert user.save
+    
+    assert user.pref.ui_theme, Setting.ui_theme
+  end
+  
+  def test_overridden_theme
+    user = User.find(1)
+    user.pref.ui_theme = "alternate"
+    assert user.pref.save
+    
+    assert user.pref.ui_theme, "alternate"
+  end
+  
+  def test_overridden_invalid_theme
+    Setting.ui_theme = "alternate"
+    
+    user = User.find(1)
+    user.pref.ui_theme = "invalid_theme"
+    assert user.pref.save
+    
+    assert_not_equal user.pref.ui_theme, "invalid_theme"
+    assert_equal user.pref.ui_theme, Setting.ui_theme
+  end
+  
+  def test_default_preference_theme
+    Setting.ui_theme = "alternate"
+    
+    user = User.find(1)
+    user.pref.ui_theme = ""
+    assert user.pref.save
+    
+    assert_equal user.pref.ui_theme, ""
+  end
 end
