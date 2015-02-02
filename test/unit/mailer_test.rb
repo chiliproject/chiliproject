@@ -35,7 +35,7 @@ class MailerTest < ActiveSupport::TestCase
     assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
 
     assert_select_email do
       # link to the main ticket
@@ -57,7 +57,7 @@ class MailerTest < ActiveSupport::TestCase
     assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
 
     assert_select_email do
       # link to the main ticket
@@ -82,7 +82,7 @@ class MailerTest < ActiveSupport::TestCase
     assert Mailer.deliver_issue_edit(journal,'dlopper@somenet.foo')
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
 
     assert_select_email do
       # link to the main ticket
@@ -292,7 +292,11 @@ class MailerTest < ActiveSupport::TestCase
     ActionMailer::Base.deliveries.clear
     assert Mailer.deliver_register(token)
     mail = ActionMailer::Base.deliveries.last
-    assert mail.body.include?("https://redmine.foo/account/activate?token=#{token.value}")
+    assert_select_email do
+      assert_select "a[href=?]",
+                      "https://redmine.foo/account/activate?token=#{token.value}",
+                      :text => "https://redmine.foo/account/activate?token=#{token.value}"
+    end
   end
 
   def test_test
@@ -305,7 +309,7 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal 1, ActionMailer::Base.deliveries.size
     mail = ActionMailer::Base.deliveries.last
     assert mail.to.include?('dlopper@somenet.foo')
-    assert mail.body.include?('Bug #3: Error 281 when updating a recipe')
+    assert_mail_body_match 'Bug #3: Error 281 when updating a recipe', mail
     assert_equal '1 issue(s) due in the next 42 days', mail.subject
   end
 
@@ -316,7 +320,7 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal 1, ActionMailer::Base.deliveries.size
     mail = ActionMailer::Base.deliveries.last
     assert mail.to.include?('dlopper@somenet.foo')
-    assert mail.body.include?('Bug #3: Error 281 when updating a recipe')
+    assert_mail_body_match 'Bug #3: Error 281 when updating a recipe', mail
   end
 
   def last_email
@@ -334,7 +338,7 @@ class MailerTest < ActiveSupport::TestCase
     user.language = 'fr'
     Mailer.deliver_account_activated(user)
     mail = ActionMailer::Base.deliveries.last
-    assert mail.body.include?('Votre compte')
+    assert_mail_body_match 'Votre compte', mail
 
     assert_equal :it, current_language
   end
