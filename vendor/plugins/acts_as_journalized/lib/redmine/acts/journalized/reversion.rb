@@ -71,7 +71,7 @@ module Redmine::Acts::Journalized
       def revert_to(value)
         to_number = journals.journal_at(value)
 
-        changes_between(journal, to_number).each do |attribute, change|
+        changes_between(version, to_number).each do |attribute, change|
           write_attribute(attribute, change.last)
         end
 

@@ -1,7 +1,7 @@
 #-- encoding: UTF-8
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class ConfigurationTest < Test::Unit::TestCase
+class ConfigurationTest < ActiveSupport::TestCase
   context 'Global configuration options' do
     setup do
       module Extension; end
@@ -12,13 +12,13 @@ class ConfigurationTest < Test::Unit::TestCase
         :as => :parent
       }
       
-      VestalVersions.configure do |config|
+      Redmine::Acts::Journalized.configure do |config|
         @options.each do |key, value|
           config.send("#{key}=", value)
         end
       end
 
-      @configuration = VestalVersions::Configuration.options
+      @configuration = Redmine::Acts::Journalized::Configuration.options
     end
 
     should 'should be a hash' do
@@ -34,7 +34,7 @@ class ConfigurationTest < Test::Unit::TestCase
     end
 
     teardown do
-      VestalVersions::Configuration.options.clear
+      Redmine::Acts::Journalized::Configuration.options.clear
     end
   end
 end

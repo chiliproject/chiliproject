@@ -1,10 +1,10 @@
 #-- encoding: UTF-8
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class ChangesTest < Test::Unit::TestCase
+class ChangesTest < ActiveSupport::TestCase
   context "A journal's changes" do
     setup do
-      @user = User.create(:name => 'Steve Richert')
+      @user = TestUser.create(:name => 'Steve Richert')
       @user.update_attribute(:last_name, 'Jobs')
       @changes = @user.journals.last.changes
     end
@@ -84,7 +84,7 @@ class ChangesTest < Test::Unit::TestCase
   context 'The changes between two journals' do
     setup do
       name = 'Steve Richert'
-      @user = User.create(:name => name)              # 1
+      @user = TestUser.create(:name => name)              # 1
       @user.update_attribute(:last_name, 'Jobs')      # 2
       @user.update_attribute(:first_name, 'Stephen')  # 3
       @user.update_attribute(:last_name, 'Richert')   # 4
