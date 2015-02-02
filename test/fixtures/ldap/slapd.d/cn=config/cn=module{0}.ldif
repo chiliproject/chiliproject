@@ -1,0 +1,12 @@
+dn: cn=module{0}
+objectClass: olcModuleList
+cn: module{0}
+olcModulePath: /usr/lib/ldap
+olcModuleLoad: {0}back_hdb
+structuralObjectClass: olcModuleList
+entryUUID: 7cf4c9a0-0b92-1031-91ab-430cf9135336
+creatorsName: cn=config
+createTimestamp: 20120326132232Z
+entryCSN: 20120326132232.336747Z#000000#000#000000
+modifiersName: cn=config
+modifyTimestamp: 20120326132232Z

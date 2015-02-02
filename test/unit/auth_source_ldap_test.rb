@@ -53,11 +53,11 @@ class AuthSourceLdapTest < ActiveSupport::TestCase
 
       context 'with a valid LDAP user' do
         should 'return the user attributes' do
-          attributes =  @auth.authenticate('example1','123456')
+          attributes =  @auth.authenticate('john','123456')
           assert attributes.is_a?(Hash), "An hash was not returned"
-          assert_equal 'Example', attributes[:firstname]
-          assert_equal 'One', attributes[:lastname]
-          assert_equal 'example1@redmine.org', attributes[:mail]
+          assert_equal 'John', attributes[:firstname]
+          assert_equal 'Doe', attributes[:lastname]
+          assert_equal 'john.doe@chiliproject.org', attributes[:mail]
           assert_equal @auth.id, attributes[:auth_source_id]
           attributes.keys.each do |attribute|
             assert User.new.respond_to?("#{attribute}="), "Unexpected :#{attribute} attribute returned"
@@ -85,11 +85,11 @@ class AuthSourceLdapTest < ActiveSupport::TestCase
 
       context "using a valid custom filter" do
         setup do
-          @auth.update_attributes(:custom_filter => "(& (homeDirectory=*) (sn=O*))")
+          @auth.update_attributes(:custom_filter => "(& (homeDirectory=*) (sn=Do*))")
         end
 
         should "find a user who authenticates and matches the custom filter" do
-          assert_not_nil @auth.authenticate('example1', '123456')
+          assert_not_nil @auth.authenticate('john', '123456')
         end
 
         should "be nil for users who don't match the custom filter" do
@@ -104,7 +104,7 @@ class AuthSourceLdapTest < ActiveSupport::TestCase
         end
 
         should "skip the custom filter" do
-          assert_not_nil @auth.authenticate('example1', '123456')
+          assert_not_nil @auth.authenticate('john', '123456')
           assert_not_nil @auth.authenticate('edavis', '123456')
         end
       end

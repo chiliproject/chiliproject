@@ -190,6 +190,8 @@ en:
   error_workflow_copy_target: 'Please select target tracker(s) and role(s)'
   error_unable_delete_issue_status: 'Unable to delete issue status'
   error_unable_to_connect: "Unable to connect (%{value})"
+  error_auth_source_offline: "The authorization service is offline at this moment, try again later or contact to administrator."
+  error_user_password_empty: "User password can't be empty"
   warning_attachments_not_saved: "%{count} file(s) could not be saved."
 
   mail_subject_lost_password: "Your %{value} password"

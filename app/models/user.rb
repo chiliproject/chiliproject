@@ -115,24 +115,27 @@ class User < Principal
     self.read_attribute(:identity_url)
   end
 
+  def invalid_credentials
+    logger.warn "Failed login for '#{params[:username]}' from #{request.remote_ip} at #{Time.now.utc}"
+    flash.now[:error] = I18n.t(:notice_account_invalid_creditentials)
+  end
+
   # Returns the user that matches provided login and password, or nil
   def self.try_to_login(login, password)
-    # Make sure no one can sign in with an empty password
-    return nil if password.to_s.empty?
+    return [nil, {:type => :invalid_credentials}] if password.to_s.empty?
     user = find_by_login(login)
     if user
-      # user is already in local database
-      return nil if !user.active?
+      return [nil, {:type => :invalid_credentials}] if !user.active?
       if user.auth_source
-        # user has an external authentication method
-        return nil unless user.auth_source.authenticate(login, password)
+        attrs, error = user.auth_source.authenticate(login, password)
+        return [nil, {:type => :auth_source, :message => I18n.t(:error_auth_source_offline)}] if error
+        return [nil, {:type => :invalid_credentials}] unless attrs
       else
-        # authentication with local password
-        return nil unless user.check_password?(password)
+        return [nil, {:type => :invalid_credentials}] unless user.check_password?(password)
       end
     else
       # user is not yet registered, try to authenticate with available sources
-      attrs = AuthSource.authenticate(login, password)
+      attrs, error = AuthSource.authenticate(login, password)
       if attrs
         user = new(attrs)
         user.login = login
@@ -144,7 +147,7 @@ class User < Principal
       end
     end
     user.update_attribute(:last_login_on, Time.now) if user && !user.new_record?
-    user
+    [user, nil]
   rescue => text
     raise text
   end
@@ -214,7 +217,7 @@ class User < Principal
 
   # Returns true if +clear_password+ is the correct user's password, otherwise false
   def check_password?(clear_password)
-    if auth_source_id.present?
+    if auth_source.present?
       auth_source.authenticate(self.login, clear_password)
     else
       User.hash_password("#{salt}#{User.hash_password clear_password}") == hashed_password

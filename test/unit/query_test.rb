@@ -568,7 +568,7 @@ class QueryTest < ActiveSupport::TestCase
             assert @query.available_filters["watcher_id"][:values].include?(["<< me >>", "me"])
             assert @query.available_filters["watcher_id"][:values].include?(["John Smith", "2"])
             assert @query.available_filters["watcher_id"][:values].include?(["Dave Lopper", "3"])
-            assert @query.available_filters["watcher_id"][:values].include?(["redMine Admin", "1"])
+            assert @query.available_filters["watcher_id"][:values].include?(["Maly Admin", "1"])
             assert @query.available_filters["watcher_id"][:values].include?(["User Misc", "8"])
           end
 

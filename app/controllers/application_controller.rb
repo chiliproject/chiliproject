@@ -97,7 +97,7 @@ class ApplicationController < ActionController::Base
       else
         # HTTP Basic, either username/password or API key/random
         authenticate_with_http_basic do |username, password|
-          User.try_to_login(username, password) || User.find_by_api_key(username)
+          User.try_to_login(username, password).first || User.find_by_api_key(username)
         end
       end
     end
