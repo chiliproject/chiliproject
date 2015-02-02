@@ -245,11 +245,23 @@ class Query < ActiveRecord::Base
 
   def available_columns
     return @available_columns if @available_columns
-    @available_columns = Query.available_columns
+    @available_columns = Query.available_columns.dup
     @available_columns += (project ?
                             project.all_issue_custom_fields :
                             IssueCustomField.find(:all)
                            ).collect {|cf| QueryCustomFieldColumn.new(cf) }
+
+    if User.current.allowed_to?(:view_time_entries, project, :global => true)
+      index = @available_columns.index {|column| column.name == :estimated_hours}
+      index = (index ? index + 1 : -1)
+      # insert the column after estimated_hours or at the end
+      @available_columns.insert index, QueryColumn.new(:spent_hours,
+        :sortable => "(SELECT COALESCE(SUM(hours), 0) FROM #{TimeEntry.table_name} WHERE #{TimeEntry.table_name}.issue_id = #{Issue.table_name}.id)",
+        :default_order => 'desc',
+        :caption => :label_spent_time
+      )
+    end
+    @available_columns
   end
 
   def self.available_columns=(v)
@@ -298,7 +310,7 @@ class Query < ActiveRecord::Base
   end
 
   def has_column?(column)
-    column_names && column_names.include?(column.name)
+    column_names && column_names.include?(column.is_a?(QueryColumn) ? column.name : column)
   end
 
   def has_default_columns?
@@ -503,11 +515,16 @@ class Query < ActiveRecord::Base
     order_option = [group_by_sort_order, options[:order]].reject {|s| s.blank?}.join(',')
     order_option = nil if order_option.blank?
 
-    Issue.find :all, :include => ([:status, :project] + (options[:include] || [])).uniq,
+    issues = Issue.find :all, :include => ([:status, :project] + (options[:include] || [])).uniq,
                      :conditions => Query.merge_conditions(statement, options[:conditions]),
                      :order => order_option,
                      :limit  => options[:limit],
                      :offset => options[:offset]
+
+    if has_column?(:spent_hours)
+      Issue.load_visible_spent_hours(issues)
+    end
+    issues
   rescue ::ActiveRecord::StatementInvalid => e
     raise Query::StatementInvalid.new(e.message)
   end

@@ -466,13 +466,18 @@ class Issue < ActiveRecord::Base
     notified.collect(&:mail)
   end
 
+  # Returns the number of hours spent on this issue
+  def spent_hours
+    @spent_hours ||= time_entries.sum(:hours) || 0
+  end
+
   # Returns the total number of hours spent on this issue and its descendants
   #
   # Example:
   #   spent_hours => 0.0
   #   spent_hours => 50.2
-  def spent_hours
-    @spent_hours ||= self_and_descendants.sum("#{TimeEntry.table_name}.hours", :include => :time_entries).to_f || 0.0
+  def total_spent_hours
+    @total_spent_hours ||= self_and_descendants.sum("#{TimeEntry.table_name}.hours", :include => :time_entries).to_f || 0.0
   end
 
   def relations
@@ -489,6 +494,16 @@ class Issue < ActiveRecord::Base
       end
     end
     dependencies
+  end
+
+  # Preloads visible spent time for a collection of issues
+  def self.load_visible_spent_hours(issues, user=User.current)
+    if issues.any?
+      hours_by_issue_id = TimeEntry.visible(user).sum(:hours, :group => :issue_id)
+      issues.each do |issue|
+        issue.instance_variable_set "@spent_hours", (hours_by_issue_id[issue.id] || 0)
+      end
+    end
   end
 
   # Returns an array of issues that duplicate this one

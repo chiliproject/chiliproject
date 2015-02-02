@@ -241,6 +241,13 @@ class IssuesControllerTest < ActionController::TestCase
     assert_equal issues.sort {|a,b| a.tracker == b.tracker ? b.id <=> a.id : a.tracker <=> b.tracker }.collect(&:id), issues.collect(&:id)
   end
 
+  def test_index_group_by_spent_hours
+    get :index, :group_by => 'author', :sort => 'spent_hours:desc'
+    assert_response :success
+    hours = assigns(:issues).collect(&:spent_hours)
+    assert_equal hours.sort.reverse, hours
+  end
+
   def test_index_with_columns
     columns = ['tracker', 'subject', 'assigned_to']
     get :index, :set_filter => 1, :c => columns
@@ -255,6 +262,22 @@ class IssuesControllerTest < ActionController::TestCase
     assert_kind_of Hash, session[:query]
     assert_kind_of Array, session[:query][:column_names]
     assert_equal columns, session[:query][:column_names].map(&:to_s)
+  end
+
+  def test_index_with_spent_hours_column
+    get :index, :set_filter => 1, :c => %w(subject spent_hours)
+
+    assert_tag 'tr', :attributes => {:id => 'issue-3'},
+      :child => {
+        :tag => 'td', :attributes => {:class => /spent_hours/}, :content => '1.00'
+      }
+  end
+
+  def test_index_should_not_show_spent_hours_column_without_permission
+    Role.anonymous.remove_permission! :view_time_entries
+    get :index, :set_filter => 1, :c => %w(subject spent_hours)
+
+    assert_no_tag 'td', :attributes => {:class => /spent_hours/}
   end
 
   def test_show_by_anonymous
