@@ -1,82 +1,72 @@
-var NS4 = (navigator.appName == "Netscape" && parseInt(navigator.appVersion) < 5);
+(function($) {
+    $(function() {
+        var avaliableColumns = '#available_columns';
+        var selectedColumns = '#selected_columns';
+        var queryForm = '#query_form';
+        var main = $('#main');
 
-function addOption(theSel, theText, theValue)
-{
-  var newOpt = new Option(theText, theValue);
-  var selLength = theSel.length;
-  theSel.options[selLength] = newOpt;
-}
+        main.on('click', queryForm + ' .add', function() {
+            moveOptions(avaliableColumns, selectedColumns);
+        });
+        main.on('click', queryForm + ' .remove', function() {
+            moveOptions(selectedColumns, avaliableColumns);
+        });
 
-function swapOptions(theSel, index1, index2)
-{
-	var text, value;
-  text = theSel.options[index1].text;
-  value = theSel.options[index1].value;
-  theSel.options[index1].text = theSel.options[index2].text;
-  theSel.options[index1].value = theSel.options[index2].value;
-  theSel.options[index2].text = text;
-  theSel.options[index2].value = value;
-}
+        main.on('click', queryForm + ' .up', function() {
+            changeOptionPosition(selectedColumns, 0);
+        });
+        main.on('click', queryForm + ' .down', function() {
+            changeOptionPosition(selectedColumns, 1);
+        });
 
-function deleteOption(theSel, theIndex)
-{ 
-  var selLength = theSel.length;
-  if(selLength>0)
-  {
-    theSel.options[theIndex] = null;
-  }
-}
+        main.on('click', queryForm + ' .apply', function(e) {
+            e.preventDefault();
+            selectAllOptions(selectedColumns);
 
-function moveOptions(theSelFrom, theSelTo)
-{
-  
-  var selLength = theSelFrom.length;
-  var selectedText = new Array();
-  var selectedValues = new Array();
-  var selectedCount = 0;
-  
-  var i;
-  
-  for(i=selLength-1; i>=0; i--)
-  {
-    if(theSelFrom.options[i].selected)
-    {
-      selectedText[selectedCount] = theSelFrom.options[i].text;
-      selectedValues[selectedCount] = theSelFrom.options[i].value;
-      deleteOption(theSelFrom, i);
-      selectedCount++;
-    }
-  }
-  
-  for(i=selectedCount-1; i>=0; i--)
-  {
-    addOption(theSelTo, selectedText[i], selectedValues[i]);
-  }
-  
-  if(NS4) history.go(0);
-}
+            var data = $(queryForm).serializeArray();
+            var url = jQuery('form[action*="issues"]').attr('action');
+            $.ajax({
+                url: url + '?set_filter=1',
+                data: data,
+                type: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    $('#content').html(response);
+                    apply_filters_observer();
+                }
+            });
+        });
 
-function moveOptionUp(theSel) {
-	var index = theSel.selectedIndex;
-	if (index > 0) {
-		swapOptions(theSel, index-1, index);
-  	theSel.selectedIndex = index-1;
-	}
-}
+        function moveOptions(theSelFrom, theSelTo) {
+            theSelFrom = $(theSelFrom);
+            theSelTo = $(theSelTo);
+            selectedOptions = theSelFrom.find('option:selected');
+            selectedOptions.appendTo(theSelTo).attr('selected', false);
+        }
 
-function moveOptionDown(theSel) {
-	var index = theSel.selectedIndex;
-	if (index < theSel.length - 1) {
-		swapOptions(theSel, index, index+1);
-  	theSel.selectedIndex = index+1;
-	}
-}
+        function changeOptionPosition(theSelForm, direction) {
+            theSelForm = $(theSelForm);
+            var selectedItems = theSelForm.find('option:selected');
+            if(direction === 1) {
+                selectedItems = $(selectedItems.get().reverse());
+            }
 
-function selectAllOptions(id)
-{
-  var select = $(id);
-  for (var i=0; i<select.options.length; i++) {
-    select.options[i].selected = true;
-  }
-}
+            selectedItems.each(function() {
+                var self = $(this);
+                if(direction === 0) {
+                    if(self.prev('option').is(':selected') === false) {
+                        self.prev('option').before(self);
+                    }
+                } else {
+                    if(self.next('option').is(':selected') === false) {
+                        self.next('option').after(self);
+                    }
+                }
+            });
+        }
 
+        function selectAllOptions(id) {
+            $(id + ' option').attr('selected', true);
+        }
+    });
+})(jQuery);

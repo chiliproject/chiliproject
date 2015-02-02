@@ -7,11 +7,10 @@
 		          options_for_select((query.available_columns - query.columns).collect {|column| [column.caption, column.name]}),
 		          :multiple => true, :size => 10, :style => "width:150px" %>
 		</td>
-        <td class="buttons">
-			<input type="button" value="&#8594;"
-			 onclick="moveOptions(this.form.available_columns, this.form.selected_columns);" /><br />
-			<input type="button" value="&#8592;"
-			 onclick="moveOptions(this.form.selected_columns, this.form.available_columns);" />
+        <td class="buttons move">
+			<button type="button" class="add">&#8594;</button>
+			<br />
+			<button type="button" class="remove">&#8592;</button>
 		</td>
 		<td>
                 <%= label_tag "selected_columns", l(:description_selected_columns) %>
@@ -20,9 +19,10 @@
 		          options_for_select(query.columns.collect {|column| [column.caption, column.name]}),
 		          :id => 'selected_columns', :multiple => true, :size => 10, :style => "width:150px" %>
 		</td>
-        <td class="buttons">
-			<input type="button" value="&#8593;" onclick="moveOptionUp(this.form.selected_columns);" /><br />
-			<input type="button" value="&#8595;" onclick="moveOptionDown(this.form.selected_columns);" />
+        <td class="buttons position">
+			<button type="button" class="up">&#8593;</button>
+			<br />
+			<button type="button" class="down">&#8595;</button>
 		</td>
 	</tr>
 </table>

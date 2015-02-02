@@ -94,7 +94,7 @@ class JournalsController < ApplicationController
       @diff = Redmine::Helpers::Diff.new(to, from)
       @issue = @journal.journaled
       respond_to do |format|
-        format.html { }
+        format.html { render :layout => !request.xhr? }
         format.js { render :layout => false }
       end
     else

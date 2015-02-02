@@ -661,7 +661,6 @@ table.query-columns {
 
 table.query-columns td.buttons {
   vertical-align: middle;
-  text-align: center;
 }
 
 td.center {
@@ -1858,6 +1857,10 @@ div.autocomplete ul li span.informal {
 
 #related_issue_candidates ul li {
   width: 500px;
+}
+
+.ui-autocomplete a {
+  font-weight: normal;
 }
 
 /***** Diff *****/
