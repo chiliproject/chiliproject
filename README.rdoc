@@ -1,4 +1,4 @@
-= ChiliProject {<img src="https://travis-ci.org/chiliproject/chiliproject.png?branch=master" />}[http://travis-ci.org/chiliproject/chiliproject]
+= ChiliProject {<img src="https://travis-ci.org/tipitnet/chiliproject.png?branch=master" />}[http://travis-ci.org/tipitnet/chiliproject]
 
 <b>ChiliProject is not maintained anymore. Please be advised that there will no more updates.</b>
 
