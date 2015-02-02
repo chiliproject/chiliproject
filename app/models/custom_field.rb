@@ -21,19 +21,22 @@ class CustomField < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :type
   validates_length_of :name, :maximum => 30
   validates_inclusion_of :field_format, :in => Redmine::CustomFieldFormat.available_formats
+  validate :validate_custom_field
 
-  def initialize(attributes = nil)
+  before_validation :set_searchable
+
+  def initialize(attributes=nil, *args)
     super
     self.possible_values ||= []
   end
 
-  def before_validation
+  def set_searchable
     # make sure these fields are not searchable
     self.searchable = false if %w(int float date bool).include?(field_format)
     true
   end
 
-  def validate
+  def validate_custom_field
     if self.field_format == "list"
       errors.add(:possible_values, :blank) if self.possible_values.nil? || self.possible_values.empty?
       errors.add(:possible_values, :invalid) unless self.possible_values.is_a? Array
@@ -138,6 +141,22 @@ class CustomField < ActiveRecord::Base
   # to move in project_custom_field
   def self.for_all
     find(:all, :conditions => ["is_for_all=?", true], :order => 'position')
+  end
+
+  # Returns an instance of the given subclass name
+  def self.new_subclass_instance(class_name, *args)
+    klass = nil
+    begin
+      klass = class_name.to_s.classify.constantize
+    rescue
+      # invalid class name
+    end
+    unless subclasses.include? klass
+      klass = nil
+    end
+    if klass
+      klass.new(*args)
+    end
   end
 
   def type_name
