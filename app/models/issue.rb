@@ -89,7 +89,7 @@ class Issue < ActiveRecord::Base
   }
 
   before_create :default_assign
-  before_save :close_duplicates, :update_done_ratio_from_issue_status
+  before_save :close_duplicates, :update_done_ratio_from_issue_status, :issue_closed_is_fully_done
   after_save :reschedule_following_issues, :update_nested_set_attributes, :update_parent_attributes
   after_destroy :update_parent_attributes
 
@@ -361,6 +361,13 @@ class Issue < ActiveRecord::Base
   def update_done_ratio_from_issue_status
     if Issue.use_status_for_done_ratio? && status && status.default_done_ratio
       self.done_ratio = status.default_done_ratio
+    end
+  end
+
+  # Set the done_ratio to 100% when the issue status set the issue to "closed".
+  def issue_closed_is_fully_done
+    if Setting.issue_closed_is_fully_done? && self.status.is_closed?
+      self.done_ratio = 100
     end
   end
 

@@ -745,6 +745,43 @@ class IssueTest < ActiveSupport::TestCase
     end
   end
 
+  context "#set_done_ratio_to_hundred_percent_when_closing_issue" do
+    setup do
+      @issue = Issue.find(14)
+      @issue_status = IssueStatus.find(14)
+      @issue2 = Issue.find(15)
+      @issue_status2 = IssueStatus.find(15)
+    end
+
+    context "with Setting.issue_closed_is_fully_done using 0" do
+      setup do
+        Setting.issue_closed_is_fully_done = 0
+      end
+
+      should "not change the done_ratio" do
+        # Closing issue 14
+	@issue.init_journal(User.find(:first), "Closing issue 14")
+	@issue.status = IssueStatus.find :first, :conditions => {:is_closed => true}
+	assert @issue.save
+	assert_equal 10, @issue.read_attribute(:done_ratio)
+      end
+    end
+
+    context "with Setting.issue_closed_is_fully_done using 1" do
+      setup do
+        Setting.issue_closed_is_fully_done = 1
+      end
+
+      should "change the issue's done ratio to 100%" do
+        # Closing issue 15
+	@issue2.init_journal(User.find(:first), "Closing issue 15")
+	@issue2.status = IssueStatus.find :first, :conditions => {:is_closed => true}
+	assert @issue2.save
+	assert_equal 100, @issue2.read_attribute(:done_ratio)
+      end
+    end
+  end
+
   test "#by_tracker" do
     groups = Issue.by_tracker(Project.find(1))
     assert_equal 3, groups.size
