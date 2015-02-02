@@ -1,27 +1,16 @@
 = ChiliProject {<img src="https://travis-ci.org/chiliproject/chiliproject.png?branch=master" />}[http://travis-ci.org/chiliproject/chiliproject]
 
+<b>ChiliProject is not maintained anymore. Please be advised that there will no more updates.</b>
+
+<b>We do not recommend that you setup new ChiliProject instances and we urge all existing users to migrate their data to a maintained system, e.g. Redmine[http://www.redmine.org].</b>
+
+<b>If you want to take over ChiliProject maintenance, please contact {@meineerde}[https://github.com/meineerde] or {@thegcat}[https://github.com/thegcat].</b>
+
+== What is ChiliProject?
+
 ChiliProject is a web based project management system. It supports your team throughout the complete project life cycle, from setting up and discussing a project plan, over tracking issues and reporting work progress to collaboratively sharing knowledge.
 
 More documentation and user guides can be found on the official website[https://www.chiliproject.org] and in the doc/ directory.
-
-== Getting Started
-
-We have a complete {install guide}[https://www.chiliproject.org/projects/chiliproject/wiki/Installation] online.
-
-== Getting Help
-
-ChiliProject is an run by a community of volunteers. We have set up different ways to get help depending on your preferences.
-
-* Self guided help and user documentation - https://www.chiliproject.org/projects/chiliproject/wiki/Help
-* Forums for specific questions - https://www.chiliproject.org/projects/chiliproject/boards
-* Real time chat using IRC - https://www.chiliproject.org/projects/chiliproject/wiki/IRC
-* Commercial support - https://www.chiliproject.org/projects/chiliproject/wiki/Commercial_Offerings
-
-== Contributing
-
-We welcome all help for the project, no task is too small.  Our documentation is editable by anyone on our wiki[https://www.chiliproject.org/projects/chiliproject/wiki], we accept patches on our {issue tracker}[https://www.chiliproject.org/projects/chiliproject/issues], and everyone is welcome to discuss the project in our forums[https://www.chiliproject.org/projects/chiliproject/boards].
-
-More details can be found on our Contribute page[https://www.chiliproject.org/projects/chiliproject/wiki/Contribute].
 
 == License
 
