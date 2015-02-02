@@ -1,0 +1,15 @@
+<% form_tag({:action => 'edit', :tab => 'welcome_page'}) do %>
+
+<div class="box tabular settings">
+  <p><%= setting_check_box :show_visible_projects %></p>
+  <p><%= setting_multiselect(:visible_projects_links,
+          Redmine::AccessControl.available_project_modules.collect {|m| [l_or_humanize(m, :prefix => "project_module_"), m.to_s]}) %></p>
+</div>
+
+<div class="box tabular settings">
+  <p><%= setting_check_box :show_admin_projects %></p>
+  <p><%= setting_check_box :show_latest_projects %></p>
+</div>
+
+<%= submit_tag l(:button_save) %>
+<% end %>

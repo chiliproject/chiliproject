@@ -374,6 +374,10 @@ en:
   setting_issue_startdate_is_adddate: Use current date as start date for new issues
   setting_mail_handler_confirmation_on_success: "Send confirmation email on successful incoming email"
   setting_mail_handler_confirmation_on_failure: "Send confirmation email on failed incoming email"
+  setting_show_visible_projects: Show visible projects
+  setting_show_admin_projects: Show admin projects
+  setting_visible_projects_links: Visible projects links
+  setting_show_latest_projects: Show lastest projects
 
   permission_add_project: Create project
   permission_add_subprojects: Create subprojects
@@ -783,6 +787,7 @@ en:
   label_document_watchers: Watchers
   label_example: Example
   label_display: Display
+  label_welcome_page: Welcome Page
   label_sort: Sort
   label_ascending: Ascending
   label_descending: Descending
@@ -832,6 +837,8 @@ en:
   label_time_entries: Time entries
   label_new_time_entry: New time entry
   label_time_entry_report: Time entry report
+  label_visible_projects: Visible projects
+  label_admin_projects: Admin projects
 
   button_login: Login
   button_submit: Submit

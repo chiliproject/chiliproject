@@ -17,7 +17,19 @@ class WelcomeController < ApplicationController
 
   def index
     @news = News.latest User.current
-    @projects = Project.latest User.current
+    @latest_projects = Project.latest User.current
+
+    visible_projects = Project.visible().find(:all, :order => "projects.name")
+    @admin_projects = []
+    @my_projects = []
+
+    visible_projects.each do |project|
+      if User.current.member_of?(project)
+        @my_projects << project
+      else
+        @admin_projects << project
+      end
+    end
   end
 
   def robots
