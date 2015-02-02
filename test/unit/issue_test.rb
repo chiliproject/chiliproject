@@ -46,15 +46,15 @@ class IssueTest < ActiveSupport::TestCase
     assert issue.available_custom_fields.include?(field)
     # No value for the custom field
     assert !issue.save
-    assert_equal I18n.translate('activerecord.errors.messages.invalid'), issue.errors.on(:custom_values)
+    assert_equal ["Database can't be blank"], issue.errors.full_messages
     # Blank value
     issue.custom_field_values = { field.id => '' }
     assert !issue.save
-    assert_equal I18n.translate('activerecord.errors.messages.invalid'), issue.errors.on(:custom_values)
+    assert_equal ["Database can't be blank"], issue.errors.full_messages
     # Invalid value
     issue.custom_field_values = { field.id => 'SQLServer' }
     assert !issue.save
-    assert_equal I18n.translate('activerecord.errors.messages.invalid'), issue.errors.on(:custom_values)
+    assert_equal ["Database is not included in the list"], issue.errors.full_messages
     # Valid value
     issue.custom_field_values = { field.id => 'PostgreSQL' }
     assert issue.save
@@ -101,6 +101,16 @@ class IssueTest < ActiveSupport::TestCase
     assert issues.any?
     # Admin should see issues on private projects that he does not belong to
     assert issues.detect {|issue| !issue.project.is_public?}
+  end
+
+  def test_open_scope
+    issues = Issue.open.all
+    assert_nil issues.detect(&:closed?)
+  end
+
+  def test_open_scope_with_arg
+    issues = Issue.open(false).all
+    assert_equal issues, issues.select(&:closed?)
   end
 
   def test_errors_full_messages_should_include_custom_fields_errors
@@ -199,7 +209,7 @@ class IssueTest < ActiveSupport::TestCase
     issue.tracker_id = 2
     issue.subject = 'New subject'
     assert !issue.save
-    assert_not_nil issue.errors.on(:tracker_id)
+    assert issue.errors[:tracker_id].present?
   end
 
   def test_category_based_assignment
@@ -221,13 +231,13 @@ class IssueTest < ActiveSupport::TestCase
     tracker = Tracker.find(1)
     user = User.find(2)
 
-    issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1)
+    issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :author_id => 1)
     assert_equal [1, 2], issue.new_statuses_allowed_to(user).map(&:id)
 
     issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :author => user)
     assert_equal [1, 2, 3], issue.new_statuses_allowed_to(user).map(&:id)
 
-    issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :assigned_to => user)
+    issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :author_id => 1, :assigned_to => user)
     assert_equal [1, 2, 4], issue.new_statuses_allowed_to(user).map(&:id)
 
     issue = Issue.generate!(:tracker => tracker, :status => status, :project_id => 1, :author => user, :assigned_to => user)
@@ -309,13 +319,13 @@ class IssueTest < ActiveSupport::TestCase
   def test_should_not_be_able_to_assign_a_new_issue_to_a_closed_version
     issue = Issue.new(:project_id => 1, :tracker_id => 1, :author_id => 1, :status_id => 1, :fixed_version_id => 1, :subject => 'New issue')
     assert !issue.save
-    assert_not_nil issue.errors.on(:fixed_version_id)
+    assert_not_nil issue.errors[:fixed_version_id].present?
   end
 
   def test_should_not_be_able_to_assign_a_new_issue_to_a_locked_version
     issue = Issue.new(:project_id => 1, :tracker_id => 1, :author_id => 1, :status_id => 1, :fixed_version_id => 2, :subject => 'New issue')
     assert !issue.save
-    assert_not_nil issue.errors.on(:fixed_version_id)
+    assert_not_nil issue.errors[:fixed_version_id].present?
   end
 
   def test_should_be_able_to_assign_a_new_issue_to_an_open_version
@@ -334,7 +344,7 @@ class IssueTest < ActiveSupport::TestCase
     issue = Issue.find(11)
     issue.status_id = 1
     assert !issue.save
-    assert_not_nil issue.errors.on_base
+    assert issue.errors[:base].present?
   end
 
   def test_should_be_able_to_reopen_and_reassign_an_issue_assigned_to_a_closed_version
@@ -637,7 +647,7 @@ class IssueTest < ActiveSupport::TestCase
 
     journal = IssueJournal.first(:order => 'id DESC')
     assert_equal i, journal.journaled
-    assert journal.changes.has_key? "description"
+    assert journal.changed_data.has_key? "description"
     assert_equal old_description, journal.old_value("description")
     assert_equal new_description, journal.value("description")
   end

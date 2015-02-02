@@ -33,8 +33,6 @@ class WikiController < ApplicationController
   before_filter :find_wiki, :authorize
   before_filter :find_existing_page, :only => [:rename, :protect, :history, :diff, :annotate, :add_attachment, :destroy]
 
-  verify :method => :post, :only => [:protect], :redirect_to => { :action => :show }
-
   include AttachmentsHelper
 
   # List of pages, sorted alphabetically and by parent (hierarchy)
@@ -96,7 +94,6 @@ class WikiController < ApplicationController
     @content.lock_version = @page.content.lock_version
   end
 
-  verify :method => :put, :only => :update, :render => {:nothing => true, :status => :method_not_allowed }
   # Creates a new page or updates an existing one
   def update
     @page = @wiki.find_or_new_page(params[:id])
@@ -176,7 +173,6 @@ class WikiController < ApplicationController
     @editable = editable?
   end
 
-  verify :method => :delete, :only => [:destroy], :redirect_to => { :action => :show }
   # Removes a wiki page and its history
   # Children can be either set as root pages, removed or reassigned to another parent page
   def destroy
