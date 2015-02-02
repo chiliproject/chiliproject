@@ -31,7 +31,11 @@ class AutoCompletesController < ApplicationController
                                     :conditions => ["LOWER(#{Issue.table_name}.subject) LIKE :q OR CAST(#{Issue.table_name}.id AS CHAR(13)) LIKE :q", {:q => "%#{q.downcase}%" }])
     end
 
-    render :layout => false
+    respond_to do |format|
+      format.html { render :layout => false }
+      format.js { render :json => @issues.to_json(:include => { :tracker => { :only => :name } },
+                                    :only => [ :id, :subject, :tracker ] ) }
+    end
   end
 
   def users

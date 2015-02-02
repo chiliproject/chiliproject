@@ -1860,6 +1860,10 @@ div.autocomplete ul li span.informal {
   width: 500px;
 }
 
+.ui-autocomplete a {
+  font-weight: normal;
+}
+
 /***** Diff *****/
 .diff_out {
   background: #fcc;
