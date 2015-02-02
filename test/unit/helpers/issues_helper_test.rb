@@ -16,6 +16,7 @@ require File.expand_path('../../../test_helper', __FILE__)
 class IssuesHelperTest < HelperTestCase
   include ApplicationHelper
   include IssuesHelper
+  include ERB::Util
 
   include ActionController::Assertions::SelectorAssertions
   fixtures :all

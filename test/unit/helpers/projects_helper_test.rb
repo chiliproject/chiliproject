@@ -16,6 +16,7 @@ require File.expand_path('../../../test_helper', __FILE__)
 class ProjectsHelperTest < HelperTestCase
   include ApplicationHelper
   include ProjectsHelper
+  include ERB::Util
 
   fixtures :all
 

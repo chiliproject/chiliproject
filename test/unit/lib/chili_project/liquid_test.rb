@@ -15,6 +15,7 @@ require File.expand_path('../../../../test_helper', __FILE__)
 
 class ChiliProject::LiquidTest < ActionView::TestCase
   include ApplicationHelper
+  include ERB::Util
 
   context "hello_world tag" do
     should "render 'Hello world!'" do
