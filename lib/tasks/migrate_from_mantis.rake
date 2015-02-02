@@ -19,8 +19,32 @@ require 'active_record'
 require 'iconv'
 require 'pp'
 
+#ActiveRecord::Base.record_timestamps = false
+
 namespace :redmine do
 task :migrate_from_mantis => :environment do
+
+  module ActiveSupport
+    module Dependencies
+      extend self
+
+      #def load_missing_constant(from_mod, const_name)
+
+      def forgiving_load_missing_constant( from_mod, const_name )
+        begin
+          old_load_missing_constant(from_mod, const_name)
+        rescue ArgumentError => arg_err
+          if arg_err.message == "#{from_mod} is not missing constant #{const_name}!"
+            return from_mod.const_get(const_name)
+          else
+            raise
+          end
+        end
+      end
+      alias :old_load_missing_constant :load_missing_constant
+      alias :load_missing_constant :forgiving_load_missing_constant
+    end
+  end
 
   module MantisMigrate
 
@@ -39,13 +63,13 @@ task :migrate_from_mantis => :environment do
                         }
 
       priorities = IssuePriority.all
-      DEFAULT_PRIORITY = priorities[2]
-      PRIORITY_MAPPING = {10 => priorities[1], # none
-                          20 => priorities[1], # low
-                          30 => priorities[2], # normal
-                          40 => priorities[3], # high
-                          50 => priorities[4], # urgent
-                          60 => priorities[5]  # immediate
+      DEFAULT_PRIORITY = priorities[1]
+      PRIORITY_MAPPING = {10 => priorities[0], # none
+                          20 => priorities[0], # low
+                          30 => priorities[1], # normal
+                          40 => priorities[2], # high
+                          50 => priorities[3], # urgent
+                          60 => priorities[4]  # immediate
                           }
 
       TRACKER_BUG = Tracker.find_by_position(1)
@@ -81,16 +105,23 @@ task :migrate_from_mantis => :environment do
                                4 => IssueRelation::TYPE_DUPLICATES  # has duplicate
                                }
 
+      HISTORY_MAPPING = {'handler_id' => ['assigned_to_id'],
+                         'status' => ['status_id', STATUS_MAPPING],
+                         'priority' => ['priority_id', PRIORITY_MAPPING]
+                        }
+
     class MantisUser < ActiveRecord::Base
       set_table_name :mantis_user_table
 
       def firstname
         @firstname = realname.blank? ? username : realname.split.first[0..29]
+        @firstname.gsub!(/[^\w\s\'\-]/i, '')
         @firstname
       end
 
       def lastname
         @lastname = realname.blank? ? '-' : realname.split[1..-1].join(' ')[0..29]
+        @lastname.gsub!(/[^\w\s\'\-]/i, '')
         @lastname = '-' if @lastname.blank?
         @lastname
       end
@@ -116,9 +147,17 @@ task :migrate_from_mantis => :environment do
       has_many :news, :class_name => "MantisNews", :foreign_key => :project_id
       has_many :members, :class_name => "MantisProjectUser", :foreign_key => :project_id
 
-      def identifier
-        read_attribute(:name).gsub(/[^a-z0-9\-]+/, '-').slice(0, Project::IDENTIFIER_MAX_LENGTH)
+      def name
+        read_attribute(:name)[0..29]
       end
+
+      def identifier
+        read_attribute(:name).slice(0, Project::IDENTIFIER_MAX_LENGTH).downcase.gsub(/[^a-z0-9\-]+/, '-')
+      end
+    end
+
+    class MantisProjectHierarchy < ActiveRecord::Base
+      set_table_name :mantis_project_hierarchy_table
     end
 
     class MantisVersion < ActiveRecord::Base
@@ -134,7 +173,10 @@ task :migrate_from_mantis => :environment do
     end
 
     class MantisCategory < ActiveRecord::Base
-      set_table_name :mantis_project_category_table
+      set_table_name :mantis_category_table
+      def category
+        read_attribute(:name).slice(0,30)
+      end
     end
 
     class MantisProjectUser < ActiveRecord::Base
@@ -147,6 +189,8 @@ task :migrate_from_mantis => :environment do
       has_many :bug_notes, :class_name => "MantisBugNote", :foreign_key => :bug_id
       has_many :bug_files, :class_name => "MantisBugFile", :foreign_key => :bug_id
       has_many :bug_monitors, :class_name => "MantisBugMonitor", :foreign_key => :bug_id
+      has_many :bug_history, :class_name => "MantisBugHistory", :foreign_key => :bug_id
+      belongs_to :category, :class_name => "MantisCategory", :foreign_key => :category_id
     end
 
     class MantisBugText < ActiveRecord::Base
@@ -170,6 +214,12 @@ task :migrate_from_mantis => :environment do
 
     class MantisBugNoteText < ActiveRecord::Base
       set_table_name :mantis_bugnote_text_table
+    end
+
+    class MantisBugHistory < ActiveRecord::Base
+      set_table_name :mantis_bug_history_table
+      set_inheritance_column :none
+      belongs_to :bug, :class_name => "MantisBug", :foreign_key => :bug_id
     end
 
     class MantisBugFile < ActiveRecord::Base
@@ -220,7 +270,7 @@ task :migrate_from_mantis => :environment do
       end
 
       def name
-        read_attribute(:name)[0..29]
+        read_attribute(:name)[0..29].gsub(/[^\w\s\'\-]/, '-')
       end
     end
 
@@ -253,6 +303,7 @@ task :migrate_from_mantis => :environment do
     	users_migrated += 1
     	users_map[user.id] = u.id
     	print '.'
+        STDOUT.flush
       end
       puts
 
@@ -264,14 +315,16 @@ task :migrate_from_mantis => :environment do
       categories_map = {}
       MantisProject.find(:all).each do |project|
     	p = Project.new :name => encode(project.name),
-                        :description => encode(project.description)
+                        :description => encode(project.description),
+                        :trackers => [TRACKER_BUG, TRACKER_FEATURE]
     	p.identifier = project.identifier
+        p.is_public = (project.view_state == 10)
     	next unless p.save
     	projects_map[project.id] = p.id
     	p.enabled_module_names = ['issue_tracking', 'news', 'wiki']
-        p.trackers << TRACKER_BUG
-        p.trackers << TRACKER_FEATURE
+        p.save
     	print '.'
+        STDOUT.flush
 
     	# Project members
     	project.members.each do |member|
@@ -285,7 +338,7 @@ task :migrate_from_mantis => :environment do
     	project.versions.each do |version|
           v = Version.new :name => encode(version.version),
                           :description => encode(version.description),
-                          :effective_date => (version.date_order ? version.date_order.to_date : nil)
+                          :effective_date => Time.at(version.date_order).to_date
           v.project = p
           v.save
           versions_map[version.id] = v.id
@@ -293,13 +346,22 @@ task :migrate_from_mantis => :environment do
 
     	# Project categories
     	project.categories.each do |category|
-          g = IssueCategory.new :name => category.category[0,30]
-          g.project = p
-          g.save
-          categories_map[category.category] = g.id
+         g = IssueCategory.new :name => category.name[0,30]
+         g.project = p
+         g.save
+         categories_map[category.name] = g.id
     	end
       end
       puts
+
+      # Project Hierarchy
+      print "Making Project Hierarchy"
+      MantisProjectHierarchy.find(:all).each do |link|
+        next unless p = Project.find_by_id(projects_map[link.child_id])
+        p.set_parent!(projects_map[link.parent_id])
+        print '.'
+      end
+      puts	
 
       # Bugs
       print "Migrating bugs"
@@ -312,39 +374,77 @@ task :migrate_from_mantis => :environment do
                       :subject => encode(bug.summary),
                       :description => encode(bug.bug_text.full_description),
                       :priority => PRIORITY_MAPPING[bug.priority] || DEFAULT_PRIORITY,
-                      :created_on => bug.date_submitted,
-                      :updated_on => bug.last_updated
+                      :created_on => DateTime.strptime(bug.date_submitted.to_s, "%s"),
+                      :updated_on => DateTime.strptime(bug.last_updated.to_s, "%s")
     	i.author = User.find_by_id(users_map[bug.reporter_id])
-    	i.category = IssueCategory.find_by_project_id_and_name(i.project_id, bug.category[0,30]) unless bug.category.blank?
+    	i.category = IssueCategory.find_by_project_id_and_id(i.project_id, bug.category_id) unless bug.category_id.blank?
     	i.fixed_version = Version.find_by_project_id_and_name(i.project_id, bug.fixed_in_version) unless bug.fixed_in_version.blank?
     	i.status = STATUS_MAPPING[bug.status] || DEFAULT_STATUS
     	i.tracker = (bug.severity == 10 ? TRACKER_FEATURE : TRACKER_BUG)
     	i.id = bug.id if keep_bug_ids
-    	next unless i.save
-    	issues_map[bug.id] = i.id
-    	print '.'
-      STDOUT.flush
-
+        i.updated_on = Time.at(bug.last_updated)
         # Assignee
         # Redmine checks that the assignee is a project member
         if (bug.handler_id && users_map[bug.handler_id])
           i.assigned_to = User.find_by_id(users_map[bug.handler_id])
-          i.save_with_validation(false)
         end
+    	next unless i.save_with_validation(false)
+    	issues_map[bug.id] = i.id
+    	print '.'
+        STDOUT.flush
 
+        Journal.class_exec {
+          def touch_journaled_after_creation
+          end
+        }
     	# Bug notes
     	bug.bug_notes.each do |note|
     	  next unless users_map[note.reporter_id]
-          n = Journal.new :notes => encode(note.bug_note_text.note),
-                          :created_on => note.date_submitted
-          n.user = User.find_by_id(users_map[note.reporter_id])
+          n = Journal.new(:user => User.find_by_id(users_map[note.reporter_id]),
+                          :notes => encode(note.bug_note_text.note))
+          n.created_at = Time.at(note.date_submitted)
+          n.version = i.journals.last.version + 1
+          n.activity_type = 'issues'
+          n.journaled_id = i.id
+          n.changes = '--- {}'
+          n.type = 'IssueJournal'
+          n.journalized = i
+          n.save unless n.notes.blank?
+    	end
+
+    	# Bug history
+    	bug.bug_history.each do |hist|
+    	  next unless HISTORY_MAPPING.has_key? hist.field_name
+          field = HISTORY_MAPPING[hist.field_name][0]
+          if HISTORY_MAPPING[hist.field_name][1]
+            m = HISTORY_MAPPING[hist.field_name][1]
+            old = m[hist.old_value.to_i].id
+            new = m[hist.new_value.to_i].id
+          else
+            if hist.field_name = 'handler_id'
+              m = users_map
+              old = m[hist.old_value.to_i]
+              new = m[hist.new_value.to_i]
+            else
+              old = hist.old_value
+              new = hist.new_value
+            end
+          end
+          n = Journal.new(:user => User.find_by_id(users_map[hist.user_id]))
+          n.created_at = Time.at(hist.date_modified)
+          n.version = i.journals.last.version + 1
+          n.notes = ""
+          n.activity_type = 'issues'
+          n.journaled_id = i.id
+          n.changes = "--- \n#{field}:\n- #{old}\n- #{new}"
+          n.type = 'IssueJournal'
           n.journalized = i
           n.save
     	end
 
         # Bug files
         bug.bug_files.each do |file|
-          a = Attachment.new :created_on => file.date_added
+          a = Attachment.new :created_on => Time.at(file.date_added)
           a.file = file
           a.author = User.find :first
           a.container = i
@@ -383,7 +483,7 @@ task :migrate_from_mantis => :environment do
         n = News.new :project_id => projects_map[news.project_id],
                      :title => encode(news.headline[0..59]),
                      :description => encode(news.body),
-                     :created_on => news.date_posted
+                     :created_on => Time.at(news.date_posted)
         n.author = User.find_by_id(users_map[news.poster_id])
         n.save
         print '.'
