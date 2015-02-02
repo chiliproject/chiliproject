@@ -97,39 +97,6 @@ h5,
   margin-right: -500px;
 }
 
-#main-menu ul {
-  margin: 0;
-  padding: 0;
-}
-
-#main-menu li {
-  float: none;
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px 0px 0px 0px;
-  white-space: nowrap;
-}
-
-#main-menu li a {
-  display: block;
-  text-decoration: none;
-  font-weight: normal;
-  background: none;
-  margin: 0;
-  padding: 0 0 0 24px;
-
-  /* Cap long menu entries with an ellipsis. TODO: http://www.bramstein.com/projects/text-overflow/ */
-  text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-#main-menu li a:hover {
-  color: #555;
-  text-decoration: none;
-}
-
 #content {
   width: 75%;
   background-color: #fff;
@@ -2679,9 +2646,7 @@ a:hover {
   color: #222222;
 }
 
-#header li.drop-down li > a:hover,
-#main-menu li a.selected,
-#main-menu li a:hover {
+#header li.drop-down li > a:hover {
   -moz-border-radius-topleft: 5px;
   -moz-border-radius-topright: 5px;
   -webkit-border-top-left-radius: 5px;
@@ -2893,148 +2858,85 @@ div#optional_login_fields {
 }
 
 #main-menu ul {
+  background-color: #E9E9E9;
+}
+
+#main-menu ul li {
   border-top: 1px solid #ddd;
-  border-bottom: 1px solid #fff;
-}
-
-#main-menu ul ul {
-  display: none;
-  background-color: white;
-  padding-top: 1px;
-  padding-bottom: 1px;
-}
-
-#main-menu ul ul.menu-children.unattached {
-  border-top: 1px solid #ddd;
-}
-
-#main-menu ul ul ul {
-  position: absolute;
-  left: 185px;
-  z-index: 20;
-  width: 100%;
-  top: 0;
-  border: 1px solid #AFAFAF;
-  background: #f3f3f3;
-}
-
-#main-menu li {
-  border-top: 1px solid #e2e2e2;
   border-bottom: 1px solid #f5f5f5;
   position: relative;
-  min-height: 23px;
-  background-color: #e9e9e9;
 }
 
-#main-menu li li {
+#main-menu .menu-children {
+  background: #fff;
+  display: none;
+  border-top: 1px solid #ddd;
+}
+
+#main-menu .menu-children li {
   border: 0;
-  background-color: white;
 }
 
-#main-menu li li li {
-  padding: 0;
-  width: 100%;
-  border-bottom: 1px solid #DDDDDD;
-  border-top: 1px solid #FFFFFF;
-}
-
-#main-menu li li li: first-child {
-  border-top: 0;
+#main-menu .open .menu-children {
+  display: block;
 }
 
 #main-menu a {
-  text-decoration: none;
-  line-height: 23px;
-  display: block;
-  position: relative;
-  height: 23px;
-  color: #333333;
+  color: #333;
+  font-size: 12px;
   font-weight: normal;
-  font-size: 13px;
-  font-family: "Arial", Arial, sans-serif;
-  font-style: normal;
+  padding: 6px 0 6px 20px;
+  display: block;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-#main-menu li a {
-  margin: 6px;
-  font-weight: bold;
-  padding: 0 0 0 20px;
+#main-menu .selected + .toggler,
+#main-menu .selected {
+  background-color: #7f7f7f;
+}
+
+#main-menu .toggler:hover,
+#main-menu a:hover {
+  background-color: #999 !important;
 }
 
 #main-menu a.selected,
 #main-menu a:hover {
-  ;
+  color: #fff;
 }
 
-#main-menu li li a {
+#main-menu ul.menu-children a {
+  margin: 0;
   font-weight: normal;
-}
-
-#main-menu li li.current a {
-  font-weight: bold;
-}
-
-#main-menu li li a span {
-  font-weight: normal;
-  color: #999;
-  float: right;
-  padding-right: 9px;
-}
-
-#main-menu li li li a span {
-  padding: 0;
 }
 
 #main-menu .toggler {
+  width: 20%;
   position: absolute;
-  right: 0px;
-  top: 0px;
-  background: url(../images/double_arrow_toggle_down.png) no-repeat 32px 7px;
-  width: 50px;
-  height: 25px;
+  top: 0;
+  right: 0;
+  background: #e9e9e9 url(../images/double_arrow_toggle_down.png) no-repeat center center;
+  display: block;
+  cursor: pointer;
+  border-left: 1px solid #ccc;
 }
 
-#main-menu li .open .toggler {
+#main-menu .toggler:hover,
+#main-menu .selected + .toggler {
+  background-image: url(../images/double_arrow_toggle_down_white.png);
+}
+
+#main-menu .open + .toggler {
   background-image: url(../images/double_arrow_toggle_up.png);
 }
 
-#main-menu li .open:hover .toggler {
+#main-menu .open + .toggler:hover,
+#main-menu .selected.open + .toggler {
   background-image: url(../images/double_arrow_toggle_up_white.png);
-}
-
-#main-menu li .selected .toggler {
-  background-image: url(../images/double_arrow_toggle_down_white.png);
-}
-
-#main-menu li .selected.open .toggler {
-  background-image: url(../images/double_arrow_toggle_up_white.png);
-}
-
-#main-menu li a:hover .toggler {
-  background-image: url(../images/double_arrow_toggle_down_white.png);
-}
-
-#main-menu li li .toggler {
-  display: none;
-}
-
-#main-menu li li li a {
-  padding: 0 12px;
-}
-
-#main-menu li li ul.profile-box li {
-  padding: 6px 12px;
-}
-
-#main-menu li li ul.profile-box li a {
-  display: inline;
-  padding: 0;
-  color: #226D81;
-  line-height: 1.5;
-}
-
-#main-menu li li ul.profile-box li a:hover {
-  text-decoration: underline;
 }
 
 /* Mimic ".icon .icon-time" */
@@ -3881,13 +3783,6 @@ ul.projects div.root a.project {
   padding: 0px;
 }
 
-#main-menu li li a {
-  padding-left: 30px;
-  padding-right: 3px;
-  text-indent: -6px;
-  letter-spacing: -.01em;
-}
-
 #main-menu li a.time-details,
 #main-menu li a.overhead-time-details,
 #main-menu li a.billable-time-details {
@@ -4082,11 +3977,6 @@ tr.time-entry {
 
 .journal .contextual a[title=Edit] {
   background: url(../images/pencil.png) no-repeat;
-}
-
-/* -- New #main-menu toggle CSS */
-#main-menu .toggle-follow {
-  padding: 5px 5px 5px 0;
 }
 
 /* Weird Safari cascade bug. More specificity */

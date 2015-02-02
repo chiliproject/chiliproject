@@ -518,16 +518,6 @@ jQuery(document).ready(function($) {
 		return this;
 	};
 
-	// open and close the main-menu sub-menus
-	$("#main-menu li:has(ul) > a").not("ul ul a")
-		.append("<span class='toggler'></span>")
-		.click(function() {
-
-			$(this).toggleClass("open").parent().find("ul").not("ul ul ul").mySlide();
-
-			return false;
-	});
-
 	// submenu flyouts
 	$("#main-menu li li:has(ul)").hover(function() {
 		$(this).find(".profile-box").show();
@@ -608,24 +598,17 @@ jQuery(document).ready(function($) {
 	// deal with potentially problematic super-long titles
 	$(".title-bar h2").css({paddingRight: $(".title-bar-actions").outerWidth() + 15 });
 
-	// rejigger the main-menu sub-menu functionality.
-	$("#main-menu .toggler").remove(); // remove the togglers so they're inserted properly later.
+  var anchorHeight = $('#main-menu li > a').eq(0).innerHeight();
+  $("#main-menu li:has(ul) > a").not("ul ul a")
+    .after("<span class='toggler'></span>");
 
-	$("#main-menu li:has(ul) > a").not("ul ul a")
-		// 1. unbind the current click functions
-		.unbind("click")
-		// 2. wrap each in a span that we'll use for the new click element
-		.wrapInner("<span class='toggle-follow'></span>")
-		// 3. reinsert the <span class="toggler"> so that it sits outside of the above
-		.append("<span class='toggler'></span>")
-		// 4. attach a new click function that will follow the link if you clicked on the span itself and toggle if not
-		.click(function(event) {
-
-			if (!$(event.target).hasClass("toggle-follow") ) {
-				$(this).toggleClass("open").parent().find("ul").not("ul ul ul").mySlide();
-				return false;
-			}
-		});
+  $('#main-menu .toggler')
+    .height(anchorHeight)
+    .click(function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).prev('a').toggleClass("open").parent().find(">ul").mySlide();
+    });
 
   // Do not close the login window when using it
   $('#nav-login-content').click(function(event){
