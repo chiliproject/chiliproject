@@ -83,8 +83,9 @@ module Redmine
             end
           end
           @branches.sort!
-        rescue ScmCommandAborted
-          nil
+        rescue ScmCommandAborted => exception
+          logger.error exception
+          raise
         end
 
         def tags
@@ -93,8 +94,9 @@ module Redmine
           scm_cmd(*cmd_args) do |io|
             @tags = io.readlines.sort!.map{|t| t.strip}
           end
-        rescue ScmCommandAborted
-          nil
+        rescue ScmCommandAborted => exception
+          logger.error exception
+          raise
         end
 
         def default_branch
@@ -141,8 +143,9 @@ module Redmine
             end
           end
           entries.sort_by_name
-        rescue ScmCommandAborted
-          nil
+        rescue ScmCommandAborted => exception
+          logger.error exception
+          raise
         end
 
         def lastrev(path, rev)
@@ -169,8 +172,9 @@ module Redmine
               logger.error("The revision '#{path}' has a wrong format")
               return nil
           end
-        rescue ScmCommandAborted
-          nil
+        rescue ScmCommandAborted => exception
+          logger.error exception
+          raise
         end
 
         def revisions(path, identifier_from, identifier_to, options={})
@@ -264,8 +268,9 @@ module Redmine
             end
           end
           revisions
-        rescue ScmCommandAborted
-          revisions
+        rescue ScmCommandAborted => exception
+          logger.error exception
+          raise
         end
 
         def diff(path, identifier_from, identifier_to=nil)
@@ -284,8 +289,9 @@ module Redmine
             end
           end
           diff
-        rescue ScmCommandAborted
-          nil
+        rescue ScmCommandAborted => exception
+          logger.error exception
+          raise
         end
 
         def annotate(path, identifier=nil)
@@ -319,8 +325,9 @@ module Redmine
             end
           end
           blame
-        rescue ScmCommandAborted
-          nil
+        rescue ScmCommandAborted => exception
+          logger.error exception
+          raise
         end
 
         def cat(path, identifier=nil)
@@ -335,8 +342,9 @@ module Redmine
             cat = io.read
           end
           cat
-        rescue ScmCommandAborted
-          nil
+        rescue ScmCommandAborted => exception
+          logger.error exception
+          raise
         end
 
         class Revision < Redmine::Scm::Adapters::Revision
