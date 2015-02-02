@@ -40,10 +40,6 @@ class IssuesController < ApplicationController
   include IssuesHelper
   include Redmine::Export::PDF
 
-  verify :method => [:post, :delete],
-         :only => :destroy,
-         :render => { :nothing => true, :status => :method_not_allowed }
-
   verify :method => :post, :only => :create, :render => {:nothing => true, :status => :method_not_allowed }
   verify :method => :post, :only => :bulk_update, :render => {:nothing => true, :status => :method_not_allowed }
   verify :method => :put, :only => :update, :render => {:nothing => true, :status => :method_not_allowed }
@@ -75,7 +71,7 @@ class IssuesController < ApplicationController
       @issue_count_by_group = @query.issue_count_by_group
 
       respond_to do |format|
-        format.html { render :template => 'issues/index.rhtml', :layout => !request.xhr? }
+        format.html { render :template => 'issues/index', :layout => !request.xhr? }
         format.api
         format.atom { render_feed(@issues, :title => "#{@project || Setting.app_title}: #{l(:label_issue_plural)}") }
         format.csv  { send_data(issues_to_csv(@issues, @project), :type => 'text/csv; header=present', :filename => 'export.csv') }
@@ -83,7 +79,7 @@ class IssuesController < ApplicationController
       end
     else
       # Send html if the query is not valid
-      render(:template => 'issues/index.rhtml', :layout => !request.xhr?)
+      render(:template => 'issues/index', :layout => !request.xhr?)
     end
   rescue ActiveRecord::RecordNotFound
     render_404
@@ -100,7 +96,7 @@ class IssuesController < ApplicationController
     @priorities = IssuePriority.all
     @time_entry = TimeEntry.new(:issue => @issue, :project => @issue.project)
     respond_to do |format|
-      format.html { render :template => 'issues/show.rhtml' }
+      format.html { render :template => 'issues/show' }
       format.api
       format.atom { render :template => 'journals/index', :layout => false, :content_type => 'application/atom+xml' }
       format.pdf  { send_data(issue_to_pdf(@issue), :type => 'application/pdf', :filename => "#{@project.identifier}-#{@issue.id}.pdf") }
@@ -204,6 +200,7 @@ class IssuesController < ApplicationController
     redirect_back_or_default({:controller => 'issues', :action => 'index', :project_id => @project})
   end
 
+  verify :method => :delete, :only => :destroy, :render => { :nothing => true, :status => :method_not_allowed }
   def destroy
     @hours = TimeEntry.sum(:hours, :conditions => ['issue_id IN (?)', @issues]).to_f
     if @hours > 0
