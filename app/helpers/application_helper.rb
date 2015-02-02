@@ -333,6 +333,22 @@ module ApplicationHelper
   def syntax_highlight(name, content)
     Redmine::SyntaxHighlighting.highlight_by_filename(content, name)
   end
+  
+  # Call syntax_highlight and make sure that tags do not spread across
+  # multiple lines.
+  def syntax_highlight_each_line(name, content)
+    highlighted = syntax_highlight(name, content)
+    
+    nesting = []
+    highlighted.scan(/^(.*)\n?/) do |line,|
+      open = nesting.join
+      line.scan(%r!<(/)?span[^>]*>?!) do |is_close_tag,|
+        is_close_tag ? nesting.pop : nesting.push($&)
+      end
+      close = '</span>' * nesting.size
+      yield "#{open}#{line}#{close}\n"
+    end
+  end
 
   def to_path_param(path)
     path.to_s.split(%r{[/\\]}).select {|p| !p.blank?}
