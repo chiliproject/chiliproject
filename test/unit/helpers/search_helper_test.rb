@@ -13,8 +13,9 @@
 #++
 require File.expand_path('../../../test_helper', __FILE__)
 
-class SearchHelperTest < HelperTestCase
+class SearchHelperTest < ActionView::TestCase
   include SearchHelper
+  include ERB::Util
 
   def test_highlight_single_token
     assert_equal 'This is a <span class="highlight token-0">token</span>.',
