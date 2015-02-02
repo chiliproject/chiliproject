@@ -13,6 +13,8 @@
 #++
 
 class CustomField < ActiveRecord::Base
+  include Redmine::SubclassFactory
+
   has_many :custom_values, :dependent => :delete_all
   acts_as_list :scope => 'type = \'#{self.class}\''
   serialize :possible_values
@@ -21,19 +23,22 @@ class CustomField < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :type
   validates_length_of :name, :maximum => 30
   validates_inclusion_of :field_format, :in => Redmine::CustomFieldFormat.available_formats
+  validate :validate_custom_field
 
-  def initialize(attributes = nil)
+  before_validation :set_searchable
+
+  def initialize(attributes=nil, *args)
     super
     self.possible_values ||= []
   end
 
-  def before_validation
+  def set_searchable
     # make sure these fields are not searchable
     self.searchable = false if %w(int float date bool).include?(field_format)
     true
   end
 
-  def validate
+  def validate_custom_field
     if self.field_format == "list"
       errors.add(:possible_values, :blank) if self.possible_values.nil? || self.possible_values.empty?
       errors.add(:possible_values, :invalid) unless self.possible_values.is_a? Array
