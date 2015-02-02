@@ -543,6 +543,32 @@ class MailHandlerTest < ActiveSupport::TestCase
     end
   end
 
+  def test_new_user_from_attributes_should_return_valid_user
+    to_test = {
+      # [address, name] => [login, firstname, lastname]
+      ['jsmith@example.net', nil] => ['jsmith@example.net', 'jsmith', '-'],
+      ['jsmith@example.net', 'John'] => ['jsmith@example.net', 'John', '-'],
+      ['jsmith@example.net', 'John Smith'] => ['jsmith@example.net', 'John', 'Smith'],
+      ['jsmith@example.net', 'John Paul Smith'] => ['jsmith@example.net', 'John', 'Paul Smith'],
+    }
+    to_test.each do |attrs, expected|
+      user = MailHandler.new_user_from_attributes(attrs.first, attrs.last)
+      assert user.valid?
+      assert_equal attrs.first, user.mail
+      assert_equal expected[0], user.login
+      assert_equal expected[1], user.firstname
+      assert_equal expected[2], user.lastname
+    end
+  end
+
+  def test_new_user_from_attributes_should_respect_minimum_password_length
+    with_settings :password_min_length => 15 do
+      user = MailHandler.new_user_from_attributes('jsmith@example.net')
+      assert user.valid?
+      assert user.password.length >= 15
+    end
+  end
+ 
   private
 
   def submit_email(filename, options={})
