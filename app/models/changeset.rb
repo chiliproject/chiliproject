@@ -20,10 +20,10 @@ class Changeset < ActiveRecord::Base
   has_many :changes, :dependent => :delete_all
   has_and_belongs_to_many :issues
 
-  acts_as_journalized :event_title => Proc.new {|o| "#{l(:label_revision)} #{o.format_identifier}" + (o.short_comments.blank? ? '' : (': ' + o.short_comments))},
+  acts_as_journalized :event_title => Proc.new {|o| o.title},
                 :event_description => :long_comments,
                 :event_datetime => :committed_on,
-                :event_url => Proc.new {|o| {:controller => 'repositories', :action => 'revision', :id => o.repository.project, :rev => o.identifier}},
+                :event_url => Proc.new {|o| {:controller => 'repositories', :action => 'revision', :id => o.repository.project, :repository_id => o.repository.identifier_param, :rev => o.identifier}},
                 :event_author => Proc.new {|o| o.author},
                 :activity_timestamp => "#{table_name}.committed_on",
                 :activity_find_options => {:include => [:user, {:repository => :project}]}
@@ -158,6 +158,16 @@ class Changeset < ActiveRecord::Base
     else
       "r#{revision}"
     end
+    if repository && repository.identifier.present?
+      tag = "#{repository.identifier}|#{tag}"
+    end
+  end
+
+  # Returns the title used for the changeset in the activity/search results
+  def title
+    repo = (repository && repository.identifier.present?) ? " (#{repository.identifier})" : ''
+    comm = short_comments.blank? ? '' : (': ' + short_comments)
+    "#{l(:label_revision)} #{format_identifier}#{repo}#{comm}"
   end
 
   # Returns the previous changeset

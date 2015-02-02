@@ -82,6 +82,15 @@ and you will have to use this reposman.rb command line to create repository :
 
   reposman.rb --redmine my.redmine.server --svn-dir /var/svn --owner www-data -u http://svn.server/svn-private/
 
+=head1 REPOSITORIES NAMING
+
+A projet repository must be named with the projet identifier. In case
+of multiple repositories for the same project, use the project identifier
+and the repository identifier separated with a dot:
+
+  /var/svn/foo
+  /var/svn/foo.otherrepo
+
 =head1 MIGRATION FROM OLDER RELEASES
 
 If you use an older reposman.rb (r860 or before), you need to change
@@ -93,91 +102,13 @@ S<them :>
 
 And you need to upgrade at least reposman.rb (after r860).
 
-=head1 GIT SMART HTTP SUPPORT
-
-Git's smart HTTP protocol (available since Git 1.7.0) will not work with the
-above settings. Redmine.pm normally does access control depending on the HTTP
-method used: read-only methods are OK for everyone in public projects and
-members with read rights in private projects. The rest require membership with
-commit rights in the project.
-
-However, this scheme doesn't work for Git's smart HTTP protocol, as it will use
-POST even for a simple clone. Instead, read-only requests must be detected using
-the full URL (including the query string): anything that doesn't belong to the
-git-receive-pack service is read-only.
-
-To activate this mode of operation, add this line inside your <Location /git>
-block:
-
-  RedmineGitSmartHttp yes
-
-Here's a sample Apache configuration which integrates git-http-backend with
-a MySQL database and this new option:
-
-   SetEnv GIT_PROJECT_ROOT /var/www/git/
-   SetEnv GIT_HTTP_EXPORT_ALL
-   ScriptAlias /git/ /usr/libexec/git-core/git-http-backend/
-   <Location /git>
-       Order allow,deny
-       Allow from all
-
-       AuthType Basic
-       AuthName Git
-       Require valid-user
-
-       PerlAccessHandler Apache::Authn::Redmine::access_handler
-       PerlAuthenHandler Apache::Authn::Redmine::authen_handler
-       # for mysql
-       RedmineDSN "DBI:mysql:database=redmine;host=127.0.0.1"
-       RedmineDbUser "redmine"
-       RedmineDbPass "xxx"
-       RedmineGitSmartHttp yes
-    </Location>
-
-Make sure that all the names of the repositories under /var/www/git/ match
-exactly the identifier for some project: /var/www/git/myproject.git won't work,
-due to the way this module extracts the identifier from the URL.
-/var/www/git/myproject will work, though. You can put both bare and non-bare
-repositories in /var/www/git, though bare repositories are strongly
-recommended. You should create them with the rights of the user running Redmine,
-like this:
-
-  cd /var/www/git
-  sudo -u user-running-redmine mkdir myproject
-  cd myproject
-  sudo -u user-running-redmine git init --bare
-
-Once you have activated this option, you have three options when cloning a
-repository:
-
-- Cloning using "http://user@host/git/repo" works, but will ask for the password
-  all the time.
-
-- Cloning with "http://user:pass@host/git/repo" does not have this problem, but
-  this could reveal accidentally your password to the console in some versions
-  of Git, and you would have to ensure that .git/config is not readable except
-  by the owner for each of your projects.
-
-- Use "http://host/git/repo", and store your credentials in the ~/.netrc
-  file. This is the recommended solution, as you only have one file to protect
-  and passwords will not be leaked accidentally to the console.
-
-  IMPORTANT NOTE: It is *very important* that the file cannot be read by other
-  users, as it will contain your password in cleartext. To create the file, you
-  can use the following commands, replacing yourhost, youruser and yourpassword
-  with the right values:
-
-    touch ~/.netrc
-    chmod 600 ~/.netrc
-    echo -e "machine yourhost\nlogin youruser\npassword yourpassword" > ~/.netrc
-
 =cut
 
 use strict;
 use warnings FATAL => 'all', NONFATAL => 'redefine';
 
 use DBI;
-use Digest::SHA1;
+use Digest::SHA;
 # optional module for LDAP authentication
 my $CanUseLDAPAuth = eval("use Authen::Simple::LDAP; 1");
 
@@ -220,11 +151,6 @@ my @directives = (
     args_how => TAKE1,
     errmsg => 'RedmineCacheCredsMax must be decimal number',
   },
-  {
-    name => 'RedmineGitSmartHttp',
-    req_override => OR_AUTHCFG,
-    args_how => TAKE1,
-  },
 );
 
 sub RedmineDSN {
@@ -232,15 +158,16 @@ sub RedmineDSN {
   $self->{RedmineDSN} = $arg;
   my $query = "SELECT
                  hashed_password, salt, auth_source_id, permissions
-              FROM members, projects, users, roles, member_roles
+              FROM projects, users, roles
               WHERE
-                projects.id=members.project_id
-                AND member_roles.member_id=members.id
-                AND users.id=members.user_id
-                AND roles.id=member_roles.role_id
+                users.login=?
+                AND projects.identifier=?
                 AND users.status=1
-                AND login=?
-                AND identifier=? ";
+                AND (
+                  roles.id IN (SELECT member_roles.role_id FROM members, member_roles WHERE members.user_id = users.id AND members.project_id = projects.id AND members.id = member_roles.member_id)
+                  OR
+                  (roles.builtin=1 AND cast(projects.is_public as CHAR) IN ('t', '1'))
+                ) ";
   $self->{RedmineQuery} = trim($query);
 }
 
@@ -261,17 +188,6 @@ sub RedmineCacheCredsMax {
   }
 }
 
-sub RedmineGitSmartHttp {
-  my ($self, $parms, $arg) = @_;
-  $arg = lc $arg;
-
-  if ($arg eq "yes" || $arg eq "true") {
-    $self->{RedmineGitSmartHttp} = 1;
-  } else {
-    $self->{RedmineGitSmartHttp} = 0;
-  }
-}
-
 sub trim {
   my $string = shift;
   $string =~ s/\s{2,}/ /g;
@@ -288,23 +204,6 @@ Apache2::Module::add(__PACKAGE__, \@directives);
 
 my %read_only_methods = map { $_ => 1 } qw/GET HEAD PROPFIND REPORT OPTIONS/;
 
-sub request_is_read_only {
-  my ($r) = @_;
-  my $cfg = Apache2::Module::get_config(__PACKAGE__, $r->server, $r->per_dir_config);
-
-  # Do we use Git's smart HTTP protocol, or not?
-  if (defined $cfg->{RedmineGitSmartHttp} and $cfg->{RedmineGitSmartHttp}) {
-    my $uri = $r->unparsed_uri;
-    my $location = $r->location;
-    my $is_read_only = $uri !~ m{^$location/*[^/]+/+(info/refs\?service=)?git\-receive\-pack$}o;
-    return $is_read_only;
-  } else {
-    # Old behaviour: check the HTTP method
-    my $method = $r->method;
-    return defined $read_only_methods{$method};
-  }
-}
-
 sub access_handler {
   my $r = shift;
 
@@ -313,7 +212,8 @@ sub access_handler {
       return FORBIDDEN;
   }
 
-  return OK unless request_is_read_only($r);
+  my $method = $r->method;
+  return OK unless defined $read_only_methods{$method};
 
   my $project_id = get_project_identifier($r);
 
@@ -436,9 +336,9 @@ sub is_member {
   my $dbh         = connect_database($r);
   my $project_id  = get_project_identifier($r);
 
-  my $pass_digest = Digest::SHA1::sha1_hex($redmine_pass);
+  my $pass_digest = Digest::SHA::sha1_hex($redmine_pass);
 
-  my $access_mode = request_is_read_only($r) ? "R" : "W";
+  my $access_mode = defined $read_only_methods{$r->method} ? "R" : "W";
 
   my $cfg = Apache2::Module::get_config(__PACKAGE__, $r->server, $r->per_dir_config);
   my $usrprojpass;
@@ -454,9 +354,9 @@ sub is_member {
   while (my ($hashed_password, $salt, $auth_source_id, $permissions) = $sth->fetchrow_array) {
 
       unless ($auth_source_id) {
-        my $method = $r->method;
-        my $salted_password = Digest::SHA1::sha1_hex($salt.$pass_digest);
-        if ($hashed_password eq $salted_password && ((request_is_read_only($r) && $permissions =~ /:browse_repository/) || $permissions =~ /:commit_access/) ) {
+	  			my $method = $r->method;
+          my $salted_password = Digest::SHA::sha1_hex($salt.$pass_digest);
+					if ($hashed_password eq $salted_password && (($access_mode eq "R" && $permissions =~ /:browse_repository/) || $permissions =~ /:commit_access/) ) {
               $ret = 1;
               last;
           }
@@ -474,7 +374,9 @@ sub is_member {
                 bindpw  =>      $rowldap[4] ? $rowldap[4] : "",
                 filter  =>      "(".$rowldap[6]."=%s)"
             );
-            $ret = 1 if ($ldap->authenticate($redmine_user, $redmine_pass) && ((request_is_read_only($r) && $permissions =~ /:browse_repository/) || $permissions =~ /:commit_access/));
+            my $method = $r->method;
+            $ret = 1 if ($ldap->authenticate($redmine_user, $redmine_pass) && (($access_mode eq "R" && $permissions =~ /:browse_repository/) || $permissions =~ /:commit_access/));
+
           }
           $sthldap->finish();
           undef $sthldap;
@@ -505,10 +407,8 @@ sub is_member {
 sub get_project_identifier {
     my $r = shift;
 
-    my $cfg = Apache2::Module::get_config(__PACKAGE__, $r->server, $r->per_dir_config);
     my $location = $r->location;
-    my ($identifier) = $r->uri =~ m{$location/*([^/]+)};
-    $identifier =~ s/\.git$// if (defined $cfg->{RedmineGitSmartHttp} and $cfg->{RedmineGitSmartHttp});
+    my ($identifier) = $r->uri =~ m{$location/*([^/.]+)};
     $identifier;
 }
 

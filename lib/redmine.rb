@@ -142,8 +142,8 @@ Redmine::AccessControl.map do |map|
   end
 
   map.project_module :repository do |map|
-    map.permission :manage_repository, {:repositories => [:edit, :committers, :destroy]}, :require => :member
-    map.permission :browse_repository, :repositories => [:show, :browse, :entry, :annotate, :changes, :diff, :stats, :graph]
+    map.permission :manage_repository, {:repositories => [:new, :create, :edit, :update, :committers, :destroy]}, :require => :member
+    map.permission :browse_repository, :repositories => [:show, :list, :browse, :entry, :annotate, :changes, :diff, :stats, :graph]
     map.permission :view_changesets, :repositories => [:show, :revisions, :revision]
     map.permission :commit_access, {}
   end
@@ -368,9 +368,38 @@ Redmine::MenuManager.map :project_menu do |menu|
               :parent => :files,
               :if => Proc.new {|p| User.current.allowed_to?(:manage_files, p) }
             })
+
+  menu.push( :repositories, { :controller => 'repositories', :action => 'list' }, {
+              :if => Proc.new { |p| p.repositories && p.repositories.size > 1 },
+              :children => Proc.new { |p|
+                @project = p
+                @repositories = @project.repositories
+                @repositories.sort.collect do |repo|
+                    
+                    Redmine::MenuManager::MenuItem.new("#{repo.name}",
+                                                     {:controller => 'repositories', 
+                                                      :action => 'show', 
+                                                      :id => @project, 
+                                                      :repository_id => repo.identifier_param, 
+                                                      :rev => nil, 
+                                                      :path => nil}, 
+                                                      {:caption => repo.identifier_param})
+                  end
+              }
+           })
+
   menu.push(:repository, { :controller => 'repositories', :action => 'show' }, {
-              :if => Proc.new { |p| p.repository && !p.repository.new_record? }
+              :if => Proc.new { |p| p.repositories && p.repositories.size == 1 }
             })
+
+
+#   menu.push(:new_repository, { :controller => 'repositories', :action => 'new' }, {
+#                                  :parent => :repositories,
+#                                  :param => :project_id,
+#                                  :if => Proc.new {|p| User.current.allowed_to?(:manage_repositories, p)}
+#                              })
+
+
   menu.push(:settings, { :controller => 'projects', :action => 'settings' }, {
               :last => true,
               :children => Proc.new { |p|

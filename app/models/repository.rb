@@ -19,13 +19,51 @@ class Repository < ActiveRecord::Base
   has_many :changesets, :order => "#{Changeset.table_name}.committed_on DESC, #{Changeset.table_name}.id DESC"
   has_many :changes, :through => :changesets
 
+  before_save :check_default
+
   # Raw SQL to delete changesets and changes in the database
   # has_many :changesets, :dependent => :destroy is too slow for big repositories
   before_destroy :clear_changesets
 
   validates_length_of :password, :maximum => 255, :allow_nil => true
+  validates_length_of :identifier, :maximum => 255, :allow_blank => true
+  validates_presence_of :identifier, :unless => Proc.new { |r| r.is_default? || r.set_as_default? }
+  validates_uniqueness_of :identifier, :scope => :project_id, :allow_blank => true
+  validates_exclusion_of :identifier, :in => %w(show entry raw changes annotate diff show stats graph)
+  # donwcase letters, digits, dashes but not digits only
+  validates_format_of :identifier, :with => /^(?!\d+$)[a-z0-9\-]*$/, :allow_blank => true
   # Checks if the SCM is enabled when creating a repository
   validate_on_create { |r| r.errors.add(:type, :invalid) unless Setting.enabled_scm.include?(r.class.name.demodulize) }
+
+  def self.human_attribute_name(attribute_key_name, *args)
+    attr_name = attribute_key_name
+    if attr_name == "log_encoding"
+      attr_name = "commit_logs_encoding"
+    end
+    super(attr_name, *args)
+  end
+
+  alias :attributes_without_extra_info= :attributes=
+  def attributes=(new_attributes, guard_protected_attributes = true)
+    return if new_attributes.nil?
+    attributes = new_attributes.dup
+    attributes.stringify_keys!
+
+    p       = {}
+    p_extra = {}
+    attributes.each do |k, v|
+      if k =~ /^extra_/
+        p_extra[k] = v
+      else
+        p[k] = v
+      end
+    end
+
+    send :attributes_without_extra_info=, p, guard_protected_attributes
+    if p_extra.keys.any?
+      merge_extra_info(p_extra)
+    end
+  end
 
   # Removes leading and trailing whitespace
   def url=(arg)
@@ -58,6 +96,55 @@ class Repository < ActiveRecord::Base
 
   def scm_name
     self.class.scm_name
+  end
+
+  def name
+    if identifier.present?
+      identifier
+    elsif is_default?
+      l(:field_repository_is_default)
+    else
+      scm_name
+    end
+  end
+
+  def identifier_param
+    if is_default?
+      nil
+    elsif identifier.present?
+      identifier
+    else
+      id.to_s
+    end
+  end
+
+  def <=>(repository)
+    if is_default?
+      -1
+    elsif repository.is_default?
+      1
+    else
+      identifier <=> repository.identifier
+    end
+  end
+
+  def self.find_by_identifier_param(param)
+    if param.to_s =~ /^\d+$/
+      find_by_id(param)
+    else
+      find_by_identifier(param)
+    end
+  end
+
+  def merge_extra_info(arg)
+    h = extra_info || {}
+    return h if arg.nil?
+    h.merge!(arg)
+    write_attribute(:extra_info, h)
+  end
+
+  def report_last_commit
+    true
   end
 
   def supports_cat?
@@ -93,7 +180,7 @@ class Repository < ActiveRecord::Base
   end
 
   def default_branch
-    scm.default_branch
+    nil
   end
 
   def properties(path, identifier=nil)
@@ -212,10 +299,10 @@ class Repository < ActiveRecord::Base
   # Can be called periodically by an external script
   # eg. ruby script/runner "Repository.fetch_changesets"
   def self.fetch_changesets
-    Project.active.has_module(:repository).find(:all, :include => :repository).each do |project|
-      if project.repository
+    Project.active.has_module(:repository).all.each do |project|
+      project.repositories.each do |repository|
         begin
-          project.repository.fetch_changesets
+          repository.fetch_changesets
         rescue Redmine::Scm::Adapters::CommandFailed => e
           logger.error "scm: error during fetching changesets: #{e.message}"
         end
@@ -277,14 +364,22 @@ class Repository < ActiveRecord::Base
     ret
   end
 
-  private
-
-  def before_save
-    # Strips url and root_url
-    url.strip!
-    root_url.strip!
-    true
+  def set_as_default?
+    new_record? && project && !Repository.first(:conditions => {:project_id => project.id})
   end
+
+  protected
+
+  def check_default
+    if !is_default? && set_as_default?
+      self.is_default = true
+    end
+    if is_default? && is_default_changed?
+      Repository.update_all(["is_default = ?", false], ["project_id = ?", project_id])
+    end
+  end
+
+  private
 
   def clear_changesets
     cs, ch, ci = Changeset.table_name, Change.table_name, "#{table_name_prefix}changesets_issues#{table_name_suffix}"

@@ -87,6 +87,7 @@ module RepositoriesHelper
         text = link_to(h(text), :controller => 'repositories',
                              :action => 'show',
                              :id => @project,
+                             :repository_id => @repository.identifier_param,
                              :path => path_param,
                              :rev => @changeset.identifier)
         output << "<li class='#{style}'>#{text}</li>"
@@ -97,12 +98,14 @@ module RepositoriesHelper
         text = link_to(h(text), :controller => 'repositories',
                              :action => 'entry',
                              :id => @project,
+                             :repository_id => @repository.identifier_param,
                              :path => path_param,
                              :rev => @changeset.identifier) unless c.action == 'D'
         text << " - #{h(c.revision)}" unless c.revision.blank?
         text << ' (' + link_to(l(:label_diff), :controller => 'repositories',
                                        :action => 'diff',
                                        :id => @project,
+                                       :repository_id => @repository.identifier_param,
                                        :path => path_param,
                                        :rev => @changeset.identifier) + ') ' if c.action == 'M'
         text << ' ' + content_tag('span', h(c.from_path), :class => 'copied-from') unless c.from_path.blank?
@@ -180,17 +183,14 @@ module RepositoriesHelper
       end
     end
     select_tag('repository_scm',
-               options_for_select(scm_options, repository.class.name.demodulize),
-               :disabled => (repository && !repository.new_record?),
-               :onchange => remote_function(
-                  :url => {
-                      :controller => 'repositories',
-                      :action => 'edit',
-                      :id => @project
-                        },
-               :method => :get,
-               :with => "Form.serialize(this.form)")
-               )
+                options_for_select(scm_options, repository.class.name.demodulize),
+                :disabled => (repository && !repository.new_record?),
+                :onchange => remote_function(
+                 :url => new_project_repository_path(@project),
+                 :method => :get,
+                 :update => 'content',
+                 :with   => "Form.serialize(this.form)")
+              )
   end
 
   def with_leading_slash(path)

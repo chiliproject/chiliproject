@@ -255,7 +255,6 @@ private
     @issue_category ||= IssueCategory.new
     @member ||= @project.members.new
     @trackers = Tracker.all
-    @repository ||= @project.repository
     @wiki ||= @project.wiki
   end
 
