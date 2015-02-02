@@ -14,6 +14,9 @@
 
 class SysController < ActionController::Base
   before_filter :check_enabled
+  before_filter :cached_basic_auth, :only => [:auth]
+
+  # TODO: We should probably fully disable sessions here
 
   def projects
     p = Project.active.has_module(:repository).find(:all, :include => :repository, :order => 'identifier')
@@ -33,6 +36,26 @@ class SysController < ActionController::Base
         render :nothing => true, :status => 422
       end
     end
+  end
+
+  # Check a user's permission on a project. The requested permission must be
+  # given as a parameter
+  #
+  # Returns HTTP 200 when the user has the permission
+  # Returns HTTP 401 when the user could not be authenticated
+  # Returns HTTP 403 when the user was correctly authenticated but does not have the permission
+  # Returns HTTP 404 when a parameter was missing or invalid
+  def auth
+    project = Project.find(params[:id])
+    permission = params[:permission] || raise(ActiveRecord::RecordNotFound)
+
+    if User.current.allowed_to?(permission.to_sym, project)
+      render :text => "Access granted"
+    else
+      render :text => "Not allowed", :status => 403 # default to deny
+    end
+  rescue ActiveRecord::RecordNotFound
+    render :nothing => true, :status => 404
   end
 
   def fetch_changesets
@@ -59,6 +82,12 @@ class SysController < ActionController::Base
     unless Setting.sys_api_enabled? && params[:key].to_s == Setting.sys_api_key
       render :text => 'Access denied. Repository management WS is disabled or key is invalid.', :status => 403
       return false
+    end
+  end
+
+  def cached_basic_auth
+    User.current = authenticate_or_request_with_http_basic do |login, password|
+      User.try_to_login(login, password, :cached => true)
     end
   end
 end
