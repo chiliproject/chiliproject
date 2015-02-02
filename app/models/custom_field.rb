@@ -22,7 +22,7 @@ class CustomField < ActiveRecord::Base
   validates_length_of :name, :maximum => 30
   validates_inclusion_of :field_format, :in => Redmine::CustomFieldFormat.available_formats
 
-  def initialize(attributes = nil)
+  def initialize(attributes=nil, *args)
     super
     self.possible_values ||= []
   end
