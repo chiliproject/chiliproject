@@ -107,15 +107,7 @@ ActionController::Routing::Routes.draw do |map|
     reports.connect 'projects/:id/issues/report/:detail', :action => 'issue_report_details'
   end
 
-  # Following two routes conflict with the resources because #index allows POST
-  map.connect '/issues', :controller => 'issues', :action => 'index', :conditions => { :method => :post }
-  map.connect '/issues/create', :controller => 'issues', :action => 'index', :conditions => { :method => :post }
-
-  map.resources :issues, :member => { :edit => :post }, :collection => {} do |issues|
-    issues.resources :time_entries, :controller => 'timelog'
-  end
-
-  map.resources :issues, :path_prefix => '/projects/:project_id', :collection => { :create => :post } do |issues|
+  map.resources :issues do |issues|
     issues.resources :time_entries, :controller => 'timelog'
   end
 
@@ -158,6 +150,9 @@ ActionController::Routing::Routes.draw do |map|
     :unarchive => :post
   } do |project|
     project.resource :project_enumerations, :as => 'enumerations', :only => [:update, :destroy]
+    project.resources :issues, :only => [:index, :new, :create] do |issues|
+      issues.resources :time_entries, :controller => 'timelog'
+    end
     project.resources :files, :only => [:index, :new, :create]
     project.resources :versions, :collection => {:close_completed => :put}, :member => {:status_by => :post}
     project.resources :news, :shallow => true
@@ -232,7 +227,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :groups
 
   #left old routes at the bottom for backwards compat
-  map.connect 'projects/:project_id/issues/:action', :controller => 'issues'
   map.connect 'projects/:project_id/documents/:action', :controller => 'documents'
   map.connect 'projects/:project_id/boards/:action/:id', :controller => 'boards'
   map.connect 'boards/:board_id/topics/:action/:id', :controller => 'messages'
