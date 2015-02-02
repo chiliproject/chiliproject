@@ -39,7 +39,7 @@ class RepositoriesDarcsControllerTest < ActionController::TestCase
   if File.directory?(REPOSITORY_PATH)
     def test_browse_root
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID
       assert_response :success
       assert_template 'show'
@@ -52,7 +52,7 @@ class RepositoriesDarcsControllerTest < ActionController::TestCase
 
     def test_browse_directory
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID, :path => ['images']
       assert_response :success
       assert_template 'show'
@@ -66,7 +66,7 @@ class RepositoriesDarcsControllerTest < ActionController::TestCase
 
     def test_browse_at_given_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID, :path => ['images'], :rev => 1
       assert_response :success
       assert_template 'show'
@@ -76,7 +76,7 @@ class RepositoriesDarcsControllerTest < ActionController::TestCase
 
     def test_changes
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :changes, :id => PRJ_ID, :path => ['images', 'edit.png']
       assert_response :success
       assert_template 'changes'
@@ -85,7 +85,7 @@ class RepositoriesDarcsControllerTest < ActionController::TestCase
 
     def test_diff
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       # Full diff of changeset 5
       get :diff, :id => PRJ_ID, :rev => 5
       assert_response :success
