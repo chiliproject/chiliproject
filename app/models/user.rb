@@ -70,6 +70,7 @@ class User < Principal
   validates_confirmation_of :password, :allow_nil => true
   validates_inclusion_of :mail_notification, :in => MAIL_NOTIFICATION_OPTIONS.collect(&:first), :allow_blank => true
   validates_inclusion_of :status, :in => [STATUS_ANONYMOUS, STATUS_ACTIVE, STATUS_REGISTERED, STATUS_LOCKED]
+  validate :validate_password_length
 
   named_scope :in_group, lambda {|group|
     group_id = group.is_a?(Group) ? group.id : group.to_i
@@ -460,7 +461,7 @@ class User < Principal
 
   protected
 
-  def validate
+  def validate_password_length
     # Password length validation based on setting
     if !password.nil? && password.size < Setting.password_min_length.to_i
       errors.add(:password, :too_short, :count => Setting.password_min_length.to_i)
