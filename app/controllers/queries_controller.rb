@@ -14,8 +14,28 @@
 
 class QueriesController < ApplicationController
   menu_item :issues
-  before_filter :find_query, :except => :new
+  before_filter :find_query, :except => [:new, :index]
   before_filter :find_optional_project, :only => :new
+
+  accept_key_auth :index
+
+  def index
+    case params[:format]
+    when 'xml', 'json'
+      @offset, @limit = api_offset_and_limit
+    else
+      @limit = per_page_option
+    end
+
+    @query_count = Query.visible.count
+    @query_pages = Paginator.new self, @query_count, @limit, params['page']
+    @queries = Query.visible.all(:limit => @limit, :offset => @offset, :order => "#{Query.table_name}.name")
+
+    respond_to do |format|
+      format.html { render :nothing => true }
+      format.api
+    end
+  end
 
   def new
     @query = Query.new(params[:query])
