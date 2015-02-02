@@ -323,13 +323,13 @@ class Mailer < ActionMailer::Base
     render_multipart('mail_handler_missing_information', body)
   end
 
-  def test(user)
+  def test_email(user)
     redmine_headers 'Type' => "Test"
     set_language_if_valid(user.language)
     recipients user.mail
     subject 'ChiliProject test'
     body :url => url_for(:controller => 'welcome')
-    render_multipart('test', body)
+    render_multipart('test_email', body)
   end
 
   # Overrides default deliver! method to prevent from sending an email
@@ -446,11 +446,16 @@ class Mailer < ActionMailer::Base
   def render_multipart(method_name, body)
     if Setting.plain_text_mail?
       content_type "text/plain"
-      body render(:file => "#{method_name}.text.plain.rhtml", :body => body, :layout => 'mailer.text.plain.erb')
+      body render(:file => "#{method_name}.text.erb",
+                  :body => body,
+                  :layout => 'mailer.text.erb')
     else
       content_type "multipart/alternative"
-      part :content_type => "text/plain", :body => render(:file => "#{method_name}.text.plain.rhtml", :body => body, :layout => 'mailer.text.plain.erb')
-      part :content_type => "text/html", :body => render_message("#{method_name}.text.html.rhtml", body)
+      part :content_type => "text/plain",
+           :body => render(:file => "#{method_name}.text.erb",
+                           :body => body, :layout => 'mailer.text.erb')
+      part :content_type => "text/html",
+           :body => render_message("#{method_name}.html.erb", body)
     end
   end
 
@@ -482,7 +487,7 @@ class Mailer < ActionMailer::Base
   end
 
   def mylogger
-    RAILS_DEFAULT_LOGGER
+    Rails.logger
   end
 end
 
