@@ -38,12 +38,13 @@ class Issue < ActiveRecord::Base
   acts_as_journalized :event_title => Proc.new {|o| "#{o.tracker.name} ##{o.journaled_id} (#{o.status}): #{o.subject}"},
                       :event_type => Proc.new {|o|
                                                 t = 'issue'
-                                                if o.changes.empty?
+                                                if o.changed_data.empty?
                                                   t << '-note' unless o.initial?
                                                 else
                                                   t << (IssueStatus.find_by_id(o.new_value_for(:status_id)).try(:is_closed?) ? '-closed' : '-edit')
                                                 end
-                                                t }
+                                                t },
+                      :except => ["root_id"]
 
   register_on_journal_formatter(:id, 'parent_id')
   register_on_journal_formatter(:named_association, 'project_id', 'status_id', 'tracker_id', 'assigned_to_id',
@@ -65,24 +66,28 @@ class Issue < ActiveRecord::Base
   validates_length_of :subject, :maximum => 255
   validates_inclusion_of :done_ratio, :in => 0..100
   validates_numericality_of :estimated_hours, :allow_nil => true
+  validate :validate_issue
 
-  named_scope :visible, lambda {|*args| { :include => :project,
+  scope :visible, lambda {|*args| { :include => :project,
                                           :conditions => Issue.visible_condition(args.first || User.current) } }
 
-  named_scope :open, :conditions => ["#{IssueStatus.table_name}.is_closed = ?", false], :include => :status
+  scope :open, lambda {|*args|
+    is_closed = args.size > 0 ? !args.first : false
+    {:conditions => ["#{IssueStatus.table_name}.is_closed = ?", is_closed], :include => :status}
+  }
 
-  named_scope :recently_updated, :order => "#{Issue.table_name}.updated_on DESC"
-  named_scope :with_limit, lambda { |limit| { :limit => limit} }
-  named_scope :on_active_project, :include => [:status, :project, :tracker],
+  scope :recently_updated, :order => "#{Issue.table_name}.updated_on DESC"
+  scope :with_limit, lambda { |limit| { :limit => limit} }
+  scope :on_active_project, :include => [:status, :project, :tracker],
                                   :conditions => ["#{Project.table_name}.status=#{Project::STATUS_ACTIVE}"]
 
-  named_scope :without_version, lambda {
+  scope :without_version, lambda {
     {
       :conditions => { :fixed_version_id => nil}
     }
   }
 
-  named_scope :with_query, lambda {|query|
+  scope :with_query, lambda {|query|
     {
       :conditions => Query.merge_conditions(query.statement)
     }
@@ -107,7 +112,8 @@ class Issue < ActiveRecord::Base
     IssueDrop.new(self)
   end
 
-  def after_initialize
+  def initialize(attributes=nil, *args)
+    super
     if new_record?
       # set default values for new records only
       self.status ||= IssueStatus.default
@@ -311,7 +317,7 @@ class Issue < ActiveRecord::Base
     Setting.issue_done_ratio == 'issue_field'
   end
 
-  def validate
+  def validate_issue
     if self.due_date.nil? && @attributes['due_date'] && !@attributes['due_date'].empty?
       errors.add :due_date, :not_a_date
     end
@@ -328,7 +334,7 @@ class Issue < ActiveRecord::Base
       if !assignable_versions.include?(fixed_version)
         errors.add :fixed_version_id, :inclusion
       elsif reopened? && fixed_version.closed?
-        errors.add_to_base I18n.t(:error_can_not_reopen_issue_on_closed_version)
+        errors.add :base, I18n.t(:error_can_not_reopen_issue_on_closed_version)
       end
     end
 
@@ -368,7 +374,7 @@ class Issue < ActiveRecord::Base
   def attachment_removed(obj)
     init_journal(User.current)
     create_journal
-    last_journal.update_attribute(:changes, {"attachments_" + obj.id.to_s => [obj.filename, nil]})
+    last_journal.update_attribute(:changed_data, {"attachments_" + obj.id.to_s => [obj.filename, nil]})
   end
 
   # Return true if the issue is closed, otherwise false
@@ -472,11 +478,17 @@ class Issue < ActiveRecord::Base
   #   spent_hours => 0.0
   #   spent_hours => 50.2
   def spent_hours
-    @spent_hours ||= self_and_descendants.sum("#{TimeEntry.table_name}.hours", :include => :time_entries).to_f || 0.0
+    @spent_hours ||= self_and_descendants.sum("#{TimeEntry.table_name}.hours",
+      :joins => "LEFT JOIN #{TimeEntry.table_name} ON #{TimeEntry.table_name}.issue_id = #{Issue.table_name}.id").to_f || 0.0
   end
 
   def relations
     (relations_from + relations_to).sort
+  end
+  
+  # Finds an issue relation given its id.
+  def find_relation(relation_id)
+    IssueRelation.find(relation_id, :conditions => ["issue_to_id = ? OR issue_from_id = ?", id, id])
   end
 
   def all_dependent_issues(except=[])
@@ -601,7 +613,7 @@ class Issue < ActiveRecord::Base
           end
         rescue ActiveRecord::StaleObjectError
           attachments[:files].each(&:destroy)
-          errors.add_to_base l(:notice_locking_conflict)
+          errors.add :base, l(:notice_locking_conflict)
           raise ActiveRecord::Rollback
         end
       end
@@ -802,7 +814,7 @@ class Issue < ActiveRecord::Base
       p.estimated_hours = nil if p.estimated_hours == 0.0
 
       # ancestors will be recursively updated
-      p.save(false)
+      p.save(:validate => false)
     end
   end
 
@@ -811,12 +823,12 @@ class Issue < ActiveRecord::Base
   def self.update_versions(conditions=nil)
     # Only need to update issues with a fixed_version from
     # a different project and that is not systemwide shared
-    Issue.all(:conditions => merge_conditions("#{Issue.table_name}.fixed_version_id IS NOT NULL" +
-                                                " AND #{Issue.table_name}.project_id <> #{Version.table_name}.project_id" +
-                                                " AND #{Version.table_name}.sharing <> 'system'",
-                                                conditions),
-              :include => [:project, :fixed_version]
-              ).each do |issue|
+    Issue.scoped(:conditions => conditions).all(
+      :conditions => "#{Issue.table_name}.fixed_version_id IS NOT NULL" +
+        " AND #{Issue.table_name}.project_id <> #{Version.table_name}.project_id" +
+        " AND #{Version.table_name}.sharing <> 'system'",
+      :include => [:project, :fixed_version]
+    ).each do |issue|
       next if issue.project.nil? || issue.fixed_version.nil?
       unless issue.project.shared_versions.include?(issue.fixed_version)
         issue.fixed_version = nil
