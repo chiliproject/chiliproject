@@ -20,7 +20,7 @@ Coveralls.wear!('rails')
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
 require File.expand_path(File.dirname(__FILE__) + '/helper_testcase')
-require File.join(RAILS_ROOT,'test', 'mocks', 'open_id_authentication_mock.rb')
+require Rails.root.join('test', 'mocks', 'open_id_authentication_mock.rb')
 
 require File.expand_path(File.dirname(__FILE__) + '/object_daddy_helpers')
 include ObjectDaddyHelpers
@@ -85,9 +85,9 @@ class ActiveSupport::TestCase
 
   # Use a temporary directory for attachment related tests
   def set_tmp_attachments_directory
-    Dir.mkdir "#{RAILS_ROOT}/tmp/test" unless File.directory?("#{RAILS_ROOT}/tmp/test")
-    Dir.mkdir "#{RAILS_ROOT}/tmp/test/attachments" unless File.directory?("#{RAILS_ROOT}/tmp/test/attachments")
-    Attachment.storage_path = "#{RAILS_ROOT}/tmp/test/attachments"
+    p = Rails.root.join("tmp", "test", "attachments")
+    FileUtils.mkdir_p(p)
+    Attachment.storage_path = p.to_s
   end
 
   def with_settings(options, &block)
@@ -114,7 +114,7 @@ class ActiveSupport::TestCase
 
   # Returns the path to the test +vendor+ repository
   def self.repository_path(vendor)
-    File.join(RAILS_ROOT.gsub(%r{config\/\.\.}, ''), "/tmp/test/#{vendor.downcase}_repository")
+    Rails.root.join("tmp/test/#{vendor.downcase}_repository").to_s
   end
 
   # Returns the url of the subversion test repository
