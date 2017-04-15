@@ -162,6 +162,8 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :versions, :collection => {:close_completed => :put}, :member => {:status_by => :post}
     project.resources :news, :shallow => true
     project.resources :time_entries, :controller => 'timelog', :path_prefix => 'projects/:project_id'
+    project.resources :queries, :only => [:new, :create]
+    project.resources :issue_categories, :shallow => true
 
     project.wiki_start_page 'wiki', :controller => 'wiki', :action => 'show', :conditions => {:method => :get}
     project.wiki_index 'wiki/index', :controller => 'wiki', :action => 'index', :conditions => {:method => :get}
@@ -197,11 +199,6 @@ ActionController::Routing::Routes.draw do |map|
     activity.connect 'projects/:id/activity.:format'
     activity.connect 'activity', :id => nil
     activity.connect 'activity.:format', :id => nil
-  end
-
-
-  map.with_options :controller => 'issue_categories' do |categories|
-    categories.connect 'projects/:project_id/issue_categories/new', :action => 'new'
   end
 
   map.with_options :controller => 'repositories' do |repositories|
