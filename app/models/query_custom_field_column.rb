@@ -36,5 +36,8 @@ class QueryCustomFieldColumn < QueryColumn
     cv = issue.custom_values.detect {|v| v.custom_field_id == @cf.id}
     cv && @cf.cast_value(cv.value)
   end
-end
 
+  def css_classes
+    @css_classes ||= "#{name} #{@cf.field_format}"
+  end
+end
