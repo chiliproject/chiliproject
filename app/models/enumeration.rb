@@ -13,6 +13,8 @@
 #++
 
 class Enumeration < ActiveRecord::Base
+  include Redmine::SubclassFactory
+
   default_scope :order => "#{Enumeration.table_name}.position ASC"
 
   belongs_to :project
@@ -22,13 +24,21 @@ class Enumeration < ActiveRecord::Base
   acts_as_tree :order => 'position ASC'
 
   before_destroy :check_integrity
+  before_save    :check_default
+
+  attr_protected :type
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => [:type, :project_id]
   validates_length_of :name, :maximum => 30
 
-  named_scope :shared, :conditions => { :project_id => nil }
-  named_scope :active, :conditions => { :active => true }
+  def self.shared
+    where(:project_id => nil)
+  end
+
+  def self.active
+    where(:active => true)
+  end
 
   def self.default
     # Creates a fake default scope so Enumeration.default will check
@@ -47,7 +57,7 @@ class Enumeration < ActiveRecord::Base
     nil
   end
 
-  def before_save
+  def check_default
     if is_default? && is_default_changed?
       Enumeration.update_all("is_default = #{connection.quoted_false}", {:type => type})
     end
