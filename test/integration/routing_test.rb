@@ -26,28 +26,15 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/attachments/download/1/filename.ext", :controller => 'attachments', :action => 'download', :id => '1', :filename => 'filename.ext'
   end
 
-  context "boards" do
-    should_route :get, "/projects/world_domination/boards", :controller => 'boards', :action => 'index', :project_id => 'world_domination'
-    should_route :get, "/projects/world_domination/boards/new", :controller => 'boards', :action => 'new', :project_id => 'world_domination'
-    should_route :get, "/projects/world_domination/boards/44", :controller => 'boards', :action => 'show', :project_id => 'world_domination', :id => '44'
-    should_route :get, "/projects/world_domination/boards/44.atom", :controller => 'boards', :action => 'show', :project_id => 'world_domination', :id => '44', :format => 'atom'
-    should_route :get, "/projects/world_domination/boards/44/edit", :controller => 'boards', :action => 'edit', :project_id => 'world_domination', :id => '44'
-
-    should_route :post, "/projects/world_domination/boards/new", :controller => 'boards', :action => 'new', :project_id => 'world_domination'
-    should_route :post, "/projects/world_domination/boards/44/edit", :controller => 'boards', :action => 'edit', :project_id => 'world_domination', :id => '44'
-    should_route :post, "/projects/world_domination/boards/44/destroy", :controller => 'boards', :action => 'destroy', :project_id => 'world_domination', :id => '44'
-
-  end
-
   context "documents" do
     should_route :get, "/projects/567/documents", :controller => 'documents', :action => 'index', :project_id => '567'
     should_route :get, "/projects/567/documents/new", :controller => 'documents', :action => 'new', :project_id => '567'
     should_route :get, "/documents/22", :controller => 'documents', :action => 'show', :id => '22'
     should_route :get, "/documents/22/edit", :controller => 'documents', :action => 'edit', :id => '22'
 
-    should_route :post, "/projects/567/documents/new", :controller => 'documents', :action => 'new', :project_id => '567'
-    should_route :post, "/documents/567/edit", :controller => 'documents', :action => 'edit', :id => '567'
-    should_route :post, "/documents/567/destroy", :controller => 'documents', :action => 'destroy', :id => '567'
+    should_route :post, "/projects/567/documents", :controller => 'documents', :action => 'create', :project_id => '567'
+    should_route :put, "/documents/22", :controller => 'documents', :action => 'update', :id => '22'
+    should_route :delete, "/documents/22", :controller => 'documents', :action => 'destroy', :id => '22'
   end
 
   context "issues" do
@@ -111,12 +98,6 @@ class RoutingTest < ActionController::IntegrationTest
 
   context "journals" do
     should_route :get, "/journals/100/diff/description", :controller => 'journals', :action => 'diff', :id => '100', :field => 'description'
-  end
-
-  context "issue categories" do
-    should_route :get, "/projects/test/issue_categories/new", :controller => 'issue_categories', :action => 'new', :project_id => 'test'
-
-    should_route :post, "/projects/test/issue_categories/new", :controller => 'issue_categories', :action => 'new', :project_id => 'test'
   end
 
   context "issue relations" do
