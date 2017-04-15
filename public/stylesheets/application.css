@@ -342,7 +342,9 @@ tr.issue {
 
 tr.issue td.subject,
 tr.issue td.category,
-td.assigned_to {
+td.assigned_to,
+tr.issue td.string,
+tr.issue td.text {
   white-space: normal;
 }
 
@@ -3065,7 +3067,6 @@ div#optional_login_fields {
 
 #footer {
   color: #aaa;
-  padding-left: 186px;
 }
 
 h1.title {
