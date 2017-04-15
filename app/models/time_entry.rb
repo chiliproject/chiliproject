@@ -40,7 +40,8 @@ class TimeEntry < ActiveRecord::Base
 
   safe_attributes 'hours', 'comments', 'issue_id', 'activity_id', 'spent_on', 'custom_field_values'
 
-  def after_initialize
+  def initialize(attributes=nil, *args)
+    super
     if new_record? && self.activity.nil?
       if default_activity = TimeEntryActivity.default
         self.activity_id = default_activity.id
