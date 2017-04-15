@@ -846,7 +846,7 @@ module ApplicationHelper
   def labelled_tabular_form_for(name, object, options, &proc)
     options[:html] ||= {}
     options[:html][:class] = 'tabular' unless options[:html].has_key?(:class)
-    form_for(name, object, options.merge({ :builder => TabularFormBuilder, :lang => current_language}), &proc)
+    form_for(name, object, options.merge({ :builder => Redmine::Views::LabelledFormBuilder, :lang => current_language}), &proc)
   end
 
   def back_url_hidden_field_tag
