@@ -119,13 +119,12 @@
   <li><%= context_menu_link l(:button_duplicate), {:controller => 'issues', :action => 'new', :project_id => @project, :copy_from => @issue},
 	        :class => 'icon-duplicate', :disabled => !@can[:copy] %></li>
 <% end %>
-
   <li class="move"><%= context_menu_link l(:button_move), new_issue_move_path(:ids => @issues.collect(&:id)),
 	                        :class => 'context_item', :disabled => !@can[:move]  %></li>
   <li class="copy"><%= context_menu_link l(:button_copy), new_issue_move_path(:ids => @issues.collect(&:id), :copy_options => {:copy => 't'}),
                                 :class => 'context_item' %></li>
-  <li class="delete"><%= context_menu_link l(:button_delete), {:controller => 'issues', :action => 'destroy', :ids => @issues.collect(&:id)},
-                            :method => :post, :confirm => l(:text_issues_destroy_confirmation), :class => 'context_item', :disabled => !@can[:delete] %></li>
+  <li class="delete"><%= context_menu_link l(:button_delete), issues_path(:ids => @issues.collect(&:id), :back_url => @back),
+                            :method => :delete, :confirm => l(:text_issues_destroy_confirmation), :class => 'context_item', :disabled => !@can[:delete] %></li>
 
   <%= call_hook(:view_issues_context_menu_end, {:issues => @issues, :can => @can, :back => @back }) %>
 </ul>

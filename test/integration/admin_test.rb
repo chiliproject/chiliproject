@@ -14,14 +14,52 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class AdminTest < ActionController::IntegrationTest
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def test_add_user
     log_user("admin", "admin")
     get "/users/new"
     assert_response :success
     assert_template "users/new"
-    post "/users/create", :user => { :login => "psmith", :firstname => "Paul", :lastname => "Smith", :mail => "psmith@somenet.foo", :language => "en", :password => "psmith09", :password_confirmation => "psmith09" }
+    post "/users", :user => { :login => "psmith", :firstname => "Paul", :lastname => "Smith", :mail => "psmith@somenet.foo", :language => "en", :password => "psmith09", :password_confirmation => "psmith09" }
 
     user = User.find_by_login("psmith")
     assert_kind_of User, user
@@ -38,7 +76,7 @@ class AdminTest < ActionController::IntegrationTest
   end
 
   test "Add a user as an anonymous user should fail" do
-    post '/users/create', :user => { :login => 'psmith', :firstname => 'Paul'}, :password => "psmith09", :password_confirmation => "psmith09"
+    post '/users', :user => { :login => 'psmith', :firstname => 'Paul'}, :password => "psmith09", :password_confirmation => "psmith09"
     assert_response :redirect
     assert_redirected_to "/login?back_url=http%3A%2F%2Fwww.example.com%2Fusers"
   end
