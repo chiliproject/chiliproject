@@ -87,7 +87,6 @@ class UsersController < ApplicationController
     @auth_sources = AuthSource.find(:all)
   end
 
-  verify :method => :post, :only => :create, :render => {:nothing => true, :status => :method_not_allowed }
   def create
     @user = User.new(:language => Setting.default_language, :mail_notification => Setting.default_notification_option)
     @user.safe_attributes = params[:user]
@@ -103,7 +102,7 @@ class UsersController < ApplicationController
       @user.pref.save
       @user.notified_project_ids = (@user.mail_notification == 'selected' ? params[:notified_project_ids] : [])
 
-      Mailer.deliver_account_information(@user, params[:user][:password]) if params[:send_information]
+      Mailer.account_information(@user, params[:user][:password]).deliver if params[:send_information]
 
       respond_to do |format|
         format.html {
@@ -132,7 +131,6 @@ class UsersController < ApplicationController
     @membership ||= Member.new
   end
 
-  verify :method => :put, :only => :update, :render => {:nothing => true, :status => :method_not_allowed }
   def update
     @user.admin = params[:user][:admin] if params[:user][:admin]
     @user.login = params[:user][:login] if params[:user][:login]
@@ -151,9 +149,9 @@ class UsersController < ApplicationController
       @user.notified_project_ids = (@user.mail_notification == 'selected' ? params[:notified_project_ids] : [])
 
       if was_activated
-        Mailer.deliver_account_activated(@user)
+        Mailer.account_activated(@user).deliver
       elsif @user.active? && params[:send_information] && !params[:user][:password].blank? && @user.change_password_allowed?
-        Mailer.deliver_account_information(@user, params[:user][:password])
+        Mailer.account_information(@user, params[:user][:password]).deliver
       end
 
       respond_to do |format|
@@ -178,7 +176,6 @@ class UsersController < ApplicationController
     redirect_to :controller => 'users', :action => 'edit', :id => @user
   end
 
-  verify :method => :delete, :only => :destroy, :render => {:nothing => true, :status => :method_not_allowed }
   def destroy
     # Only allow to delete users with STATUS_REGISTERED for now
     # It is assumed that these users are not yet references in any way
@@ -195,16 +192,15 @@ class UsersController < ApplicationController
     end
   end
 
-
   def edit_membership
     if params[:project_ids] # Multiple memberships, one per project
       params[:project_ids].each do |project_id|
         @membership = Member.edit_membership(params[:membership_id], (params[:membership] || {}).merge(:project_id => project_id), @user)
-        @membership.save if request.post?
+        @membership.save
       end
     else # Single membership
       @membership = Member.edit_membership(params[:membership_id], params[:membership], @user)
-      @membership.save if request.post?
+      @membership.save
     end
 
     respond_to do |format|
@@ -228,7 +224,7 @@ class UsersController < ApplicationController
 
   def destroy_membership
     @membership = Member.find(params[:membership_id])
-    if request.post? && @membership.deletable?
+    if @membership.deletable?
       @membership.destroy
     end
     respond_to do |format|
