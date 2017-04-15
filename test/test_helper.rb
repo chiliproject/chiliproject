@@ -438,6 +438,11 @@ class ActiveSupport::TestCase
     end
   end
 
+  def self.should_route(method, path, route={})
+    should "route" do
+      assert_routing({:method => method, :path => path}, route)
+    end
+  end
 end
 
 class ActionController::IntegrationTest
