@@ -93,7 +93,7 @@ class IssuesTest < ActionController::IntegrationTest
     assert_equal 0, Issue.find(1).attachments.length
   end
 
-  def test_other_formats_links_on_get_index
+  def test_other_formats_links_on_index
     get '/projects/ecookbook/issues'
 
     %w(Atom PDF CSV).each do |format|
@@ -103,8 +103,8 @@ class IssuesTest < ActionController::IntegrationTest
     end
   end
 
-  def test_other_formats_links_on_post_index_without_project_id_in_url
-    post '/issues', :project_id => 'ecookbook'
+  def test_other_formats_links_on_index_without_project_id_in_url
+    get '/issues', :project_id => 'ecookbook'
 
     %w(Atom PDF CSV).each do |format|
       assert_tag :a, :content => format,
@@ -113,7 +113,7 @@ class IssuesTest < ActionController::IntegrationTest
     end
   end
 
-  def test_pagination_links_on_get_index
+  def test_pagination_links_on_index
     Setting.per_page_options = '2'
     get '/projects/ecookbook/issues'
 
@@ -122,9 +122,9 @@ class IssuesTest < ActionController::IntegrationTest
 
   end
 
-  def test_pagination_links_on_post_index_without_project_id_in_url
+  def test_pagination_links_on_index_without_project_id_in_url
     Setting.per_page_options = '2'
-    post '/issues', :project_id => 'ecookbook'
+    get '/issues', :project_id => 'ecookbook'
 
     assert_tag :a, :content => '2',
                    :attributes => { :href => '/projects/ecookbook/issues?page=2' }
