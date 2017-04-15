@@ -17,11 +17,16 @@ class Role < ActiveRecord::Base
   BUILTIN_NON_MEMBER = 1
   BUILTIN_ANONYMOUS  = 2
 
-  named_scope :givable, { :conditions => "builtin = 0", :order => 'position' }
-  named_scope :builtin, lambda { |*args|
-    compare = 'not' if args.first == true
-    { :conditions => "#{compare} builtin = 0" }
-  }
+  def self.givable
+    where(:builtin => 0).order('position ASC')
+  end
+
+  def self.builtin(negate=false)
+    # TODO: Isn't that the wrong way
+    # TODO: Do we even need this here?
+    compare = (negate == true ? 'not' : '')
+    where("#{compare} builtin = 0")
+  end
 
   before_destroy :check_deletable
   has_many :workflows, :dependent => :delete_all do
