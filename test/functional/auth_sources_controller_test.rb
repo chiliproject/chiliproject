@@ -14,102 +14,149 @@
 
 require File.expand_path('../../test_helper', __FILE__)
 
-# Remove to_s on the TreeNode. This would cause an error on Ruby 1.9 as the
-# method has a bug preventing it to return strings. It is implicitly called by
-# shoulda during an inspect on Ruby 1.9 only. The bug is reported at
-# http://rubyforge.org/tracker/index.php?func=detail&aid=29435&group_id=1215&atid=4793
-Tree::TreeNode.class_eval {remove_method :to_s}
-
 class AuthSourcesControllerTest < ActionController::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     @request.session[:user_id] = 1
   end
 
-  context "get :index" do
-    setup do
-      get :index
-    end
+  def test_index
+    get :index
 
-    should_assign_to :auth_sources
-    should_assign_to :auth_source_pages
-    should_respond_with :success
-    should_render_template :index
+    assert_response :success
+    assert_template 'index'
+    assert_not_nil assigns(:auth_sources)
   end
 
-  context "get :new" do
-    setup do
-      get :new
+  def test_new
+    get :new
+
+    assert_response :success
+    assert_template 'new'
+
+    source = assigns(:auth_source)
+    assert_equal AuthSourceLdap, source.class
+    assert source.new_record?
+
+    assert_tag 'input', :attributes => {:name => 'type', :value => 'AuthSourceLdap'}
+    assert_tag 'input', :attributes => {:name => 'auth_source[host]'}
+  end
+
+  def test_create
+    assert_difference 'AuthSourceLdap.count' do
+      post :create, :type => 'AuthSourceLdap', :auth_source => {:name => 'Test', :host => '127.0.0.1', :port => '389', :attr_login => 'cn'}
+      assert_redirected_to '/auth_sources'
     end
 
-    should_assign_to :auth_source
-    should_respond_with :success
-    should_render_template :new
+    source = AuthSourceLdap.first(:order => 'id DESC')
+    assert_equal 'Test', source.name
+    assert_equal '127.0.0.1', source.host
+    assert_equal 389, source.port
+    assert_equal 'cn', source.attr_login
+  end
 
-    should "initilize a new AuthSource" do
-      assert_equal AuthSource, assigns(:auth_source).class
-      assert assigns(:auth_source).new_record?
+  def test_create_with_failure
+    assert_no_difference 'AuthSourceLdap.count' do
+      post :create, :type => 'AuthSourceLdap', :auth_source => {:name => 'Test', :host => '', :port => '389', :attr_login => 'cn'}
+      assert_response :success
+      assert_template 'new'
+    end
+    assert_error_tag :content => /Host can&#39;t be blank/i
+  end
+
+  def test_edit
+    get :edit, :id => 1
+
+    assert_response :success
+    assert_template 'edit'
+
+    assert_tag 'input', :attributes => {:name => 'auth_source[host]'}
+  end
+
+  def test_update
+    put :update, :id => 1, :auth_source => {:name => 'Renamed', :host => '192.168.0.10', :port => '389', :attr_login => 'uid'}
+    assert_redirected_to '/auth_sources'
+
+    source = AuthSourceLdap.find(1)
+    assert_equal 'Renamed', source.name
+    assert_equal '192.168.0.10', source.host
+  end
+
+  def test_update_with_failure
+    put :update, :id => 1, :auth_source => {:name => 'Renamed', :host => '', :port => '389', :attr_login => 'uid'}
+    assert_response :success
+    assert_template 'edit'
+    assert_error_tag :content => /Host can&#39;t be blank/i
+  end
+
+  def test_destroy
+    assert_difference 'AuthSourceLdap.count', -1 do
+      delete :destroy, :id => 1
     end
   end
 
-  context "post :create" do
-    setup do
-      post :create, :auth_source => {:name => 'Test'}
-    end
+  def test_destroy_auth_source_in_use
+    User.find(2).update_attribute :auth_source_id, 1
 
-    should_respond_with :redirect
-    should_redirect_to("index") {{:action => 'index'}}
-    should_set_the_flash_to /success/i
+    assert_no_difference 'AuthSourceLdap.count' do
+      delete :destroy, :id => 1
+    end
   end
 
-  context "get :edit" do
-    setup do
-      @auth_source = AuthSource.generate!(:name => 'TestEdit')
-      get :edit, :id => @auth_source.id
-    end
+  def test_test_connection
+    AuthSourceLdap.any_instance.stubs(:test_connection).returns(true)
 
-    should_assign_to(:auth_source) {@auth_source}
-    should_respond_with :success
-    should_render_template :edit
+    get :test_connection, :id => 1
+    assert_redirected_to '/auth_sources'
+    assert_not_nil flash[:notice]
+    assert_match /successful/i, flash[:notice]
   end
 
-  context "post :update" do
-    setup do
-      @auth_source = AuthSource.generate!(:name => 'TestEdit')
-      post :update, :id => @auth_source.id, :auth_source => {:name => 'TestUpdate'}
-    end
+  def test_test_connection_with_failure
+    AuthSourceLdap.any_instance.stubs(:test_connection).raises(Exception.new("Something went wrong"))
 
-    should_respond_with :redirect
-    should_redirect_to("index") {{:action => 'index'}}
-    should_set_the_flash_to /update/i
-  end
-
-  context "post :destroy" do
-    setup do
-      @auth_source = AuthSource.generate!(:name => 'TestEdit')
-    end
-
-    context "without users" do
-      setup do
-        post :destroy, :id => @auth_source.id
-      end
-
-      should_respond_with :redirect
-      should_redirect_to("index") {{:action => 'index'}}
-      should_set_the_flash_to /deletion/i
-    end
-
-    context "with users" do
-      setup do
-        User.generate!(:auth_source => @auth_source)
-        post :destroy, :id => @auth_source.id
-      end
-
-      should_respond_with :redirect
-      should "not destroy the AuthSource" do
-        assert AuthSource.find(@auth_source.id)
-      end
-    end
+    get :test_connection, :id => 1
+    assert_redirected_to '/auth_sources'
+    assert_not_nil flash[:error]
+    assert_include '(Something went wrong)', flash[:error]
   end
 end

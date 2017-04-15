@@ -20,8 +20,7 @@ class RepositoriesController; def rescue_action(e) raise e end; end
 class RepositoriesGitControllerTest < ActionController::TestCase
   fixtures :projects, :users, :roles, :members, :member_roles, :repositories, :enabled_modules
 
-  # No '..' in the repository path
-  REPOSITORY_PATH = RAILS_ROOT.gsub(%r{config\/\.\.}, '') + '/tmp/test/git_repository'
+  REPOSITORY_PATH = Rails.root.join('tmp/test/git_repository').to_s
   REPOSITORY_PATH.gsub!(/\//, "\\") if Redmine::Platform.mswin?
 
   def setup
@@ -29,8 +28,9 @@ class RepositoriesGitControllerTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     User.current = nil
+    @project = Project.find(3)
     @repository = Repository::Git.create(
-                      :project => Project.find(3),
+                      :project => @project,
                       :url     => REPOSITORY_PATH,
                       :path_encoding => 'ISO-8859-1'
                       )
@@ -38,9 +38,19 @@ class RepositoriesGitControllerTest < ActionController::TestCase
   end
 
   if File.directory?(REPOSITORY_PATH)
+    def test_get_new
+      @request.session[:user_id] = 1
+      @project.repository.destroy
+      get :new, :project_id => 'subproject1', :repository_scm => 'Git'
+      assert_response :success
+      assert_template 'new'
+      assert_kind_of Repository::Git, assigns(:repository)
+      assert assigns(:repository).new_record?
+    end
+
     def test_browse_root
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => 3
       assert_response :success
       assert_template 'show'
@@ -61,7 +71,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_browse_branch
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => 3, :rev => 'test_branch'
       assert_response :success
       assert_template 'show'
@@ -77,7 +87,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_browse_tag
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
        [
         "tag00.lightweight",
         "tag01.annotated",
@@ -94,7 +104,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_browse_directory
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => 3, :path => ['images']
       assert_response :success
       assert_template 'show'
@@ -110,7 +120,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_browse_at_given_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => 3, :path => ['images'], :rev => '7234cb2750b63f47bff735edc50a1c0a433c2518'
       assert_response :success
       assert_template 'show'
@@ -155,7 +165,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_diff
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       # Full diff of changeset 2f9c0091
       get :diff, :id => 3, :rev => '2f9c0091c754a91af7a9c478e36556b4bde8dcf7'
@@ -172,7 +182,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_diff_two_revs
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
 
       get :diff, :id => 3, :rev    => '61b685fbe55ab05b5ac68402d5720c1a6ac973d1',
                            :rev_to => '2f9c0091c754a91af7a9c478e36556b4bde8dcf7'
@@ -197,7 +207,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_annotate_at_given_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :annotate, :id => 3, :rev => 'deff7', :path => ['sources', 'watchers_controller.rb']
       assert_response :success
       assert_template 'annotate'
@@ -213,7 +223,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       ['61b685fbe55ab05b5ac68402d5720c1a6ac973d1', '61b685f'].each do |r|
         get :revision, :id => 3, :rev => r
         assert_response :success
@@ -223,7 +233,7 @@ class RepositoriesGitControllerTest < ActionController::TestCase
 
     def test_empty_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       ['', ' ', nil].each do |r|
         get :revision, :id => 3, :rev => r
         assert_response 404
