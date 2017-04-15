@@ -1,6 +1,6 @@
 <% if projects.any? %>
 <fieldset><legend><%=l(:label_project_new)%></legend>
-<% remote_form_for(:membership, :url => { :action => 'edit_membership', :id => principal }) do %>
+<%= form_for(:membership, :remote => true, :url => { :action => 'edit_membership', :id => principal }) do %>
   <p><%= text_field_tag 'project_search', nil, :size => "40" %></p>
   <%= observe_field(:project_search,
                    :frequency => 0.5,

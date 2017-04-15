@@ -23,13 +23,6 @@ before_script:
   - "rake ci:travis:prepare"
   - "rm -rf tmp/test/darcs_repository" # Don't test Darcs on Travis. It breaks there :(
 script: "bundle exec rake test:$TEST_SUITE"
-branches:
-  only:
-    - unstable
-    - master
-    - stable
-    - /^stable-.*$/
-    - /^release-.*$/
 notifications:
   email: false
   irc: "irc.freenode.org#chiliproject"
