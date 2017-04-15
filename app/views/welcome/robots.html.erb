@@ -1,0 +1,10 @@
+User-agent: *
+<% @projects.each do |p| -%>
+Disallow: <%= project_repository_path(p) %>
+Disallow: <%= project_issues_path(p) %>
+Disallow: <%= project_gantt_path(p) %>
+Disallow: <%= project_activity_path(p) %>
+<% end -%>
+Disallow: <%= activity_path %>
+Disallow: <%= gantt_path %>
+Disallow: <%= calendar_path %>

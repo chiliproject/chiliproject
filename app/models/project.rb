@@ -78,16 +78,28 @@ class Project < ActiveRecord::Base
 
   before_destroy :delete_all_members
 
-  named_scope :has_module, lambda { |mod| { :conditions => ["#{Project.table_name}.id IN (SELECT em.project_id FROM #{EnabledModule.table_name} em WHERE em.name=?)", mod.to_s] } }
-  named_scope :active, { :conditions => "#{Project.table_name}.status = #{STATUS_ACTIVE}"}
-  named_scope :all_public, { :conditions => { :is_public => true } }
-  named_scope :visible, lambda { { :conditions => Project.visible_by(User.current) } }
-  named_scope :like, lambda {|q|
+  def self.has_module(mod)
+    joins(:enabled_modules).where(:enabled_modules => {:name => mod.to_s})
+  end
+
+  def self.active
+    where(:status => STATUS_ACTIVE)
+  end
+
+  def self.all_public
+    where(:is_public => true)
+  end
+
+  def self.visible
+    # TODO: merge visible and visible_by
+    where(visible_by(User.current))
+  end
+
+  def self.like(q)
     s = "%#{q.to_s.strip.downcase}%"
-    {
-      :conditions => ["LOWER(name) LIKE ?", s]
-    }
-  }
+
+    where(["LOWER(name) LIKE ?", s])
+  end
 
   def to_liquid
     ProjectDrop.new(self)
