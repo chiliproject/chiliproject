@@ -149,7 +149,7 @@ Redmine::AccessControl.map do |map|
   end
 
   map.project_module :boards do |map|
-    map.permission :manage_boards, {:boards => [:new, :edit, :destroy]}, :require => :member
+    map.permission :manage_boards, {:boards => [:new, :create, :edit, :update, :destroy]}, :require => :member
     map.permission :view_messages, {:boards => [:index, :show], :messages => [:show]}, :public => true
     map.permission :add_messages, {:messages => [:new, :reply, :quote]}
     map.permission :edit_messages, {:messages => :edit}, :require => :member
@@ -342,14 +342,18 @@ Redmine::MenuManager.map :project_menu do |menu|
               :caption => :label_board_plural,
               :if => Proc.new { |p| p.boards.any? },
               :children => Proc.new {|project|
+                children = []
                 project.boards.collect do |board|
-                  Redmine::MenuManager::MenuItem.new(
+                  if !board.new_record?
+                    children << Redmine::MenuManager::MenuItem.new(
                                                      "board-#{board.id}".to_sym,
                                                      { :controller => 'boards', :action => 'show', :project_id => project, :id => board },
                                                      {
                                                        :caption => board.name # is h() in menu_helper.rb
                                                      })
+                   end
                 end
+                children
               }
             })
   menu.push(:new_board, { :controller => 'boards', :action => 'new' }, {
