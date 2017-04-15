@@ -1,0 +1,51 @@
+<div class="contextual">
+<%= link_to(l(:label_news_new),
+            new_project_news_path(@project),
+            :class => 'icon icon-add',
+            :onclick => 'Element.show("add-news"); Form.Element.focus("news_title"); return false;') if @project && User.current.allowed_to?(:manage_news, @project) %>
+</div>
+
+<div id="add-news" style="display:none;">
+<h2><%=l(:label_news_new)%></h2>
+<%= labelled_form_for @news, :url => project_news_index_path(@project),
+                                           :html => { :id => 'news-form' } do |f| %>
+<%= render :partial => 'news/form', :locals => { :f => f } %>
+<%= submit_tag l(:button_create) %>
+<%= link_to_remote l(:label_preview),
+                   { :url => preview_news_path(:project_id => @project),
+                     :method => 'get',
+                     :update => 'preview',
+                     :with => "Form.serialize('news-form')"
+                   }, :accesskey => accesskey(:preview) %> |
+<%= link_to l(:button_cancel), "#", :onclick => 'Element.hide("add-news")' %>
+<% end if @project %>
+<div id="preview" class="wiki"></div>
+</div>
+
+<h2><%=l(:label_news_plural)%></h2>
+
+<% if @newss.empty? %>
+<p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+<% @newss.each do |news| %>
+    <h3><%= avatar(news.author, :size => "24") %><%= link_to_project(news.project) + ': ' unless news.project == @project %>
+    <%= link_to h(news.title), news_path(news) %>
+    <%= "(#{l(:label_x_comments, :count => news.comments_count)})" if news.comments_count > 0 %></h3>
+    <p class="author"><%= authoring news.created_on, news.author %></p>
+    <div class="wiki">
+    <%= textilizable(news.description) %>
+    </div>
+<% end %>
+<% end %>
+<p class="pagination"><%= pagination_links_full @news_pages %></p>
+
+<%= other_formats_links do |f| %>
+	<%= f.link_to 'Atom', :url => {:project_id => @project, :key => User.current.rss_key} %>
+<% end %>
+
+<% content_for :header_tags do %>
+  <%= auto_discovery_link_tag(:atom, params.merge({:format => 'atom', :page => nil, :key => User.current.rss_key})) %>
+  <%= stylesheet_link_tag 'scm' %>
+<% end %>
+
+<% html_title(l(:label_news_plural)) -%>
