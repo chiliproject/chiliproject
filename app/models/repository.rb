@@ -25,7 +25,13 @@ class Repository < ActiveRecord::Base
 
   validates_length_of :password, :maximum => 255, :allow_nil => true
   # Checks if the SCM is enabled when creating a repository
-  validate_on_create { |r| r.errors.add(:type, :invalid) unless Setting.enabled_scm.include?(r.class.name.demodulize) }
+  validate :repo_create_validation, :on => :create
+
+  def repo_create_validation
+    unless Setting.enabled_scm.include?(self.class.name.demodulize)
+      errors.add(:type, :invalid)
+    end
+  end
 
   # Removes leading and trailing whitespace
   def url=(arg)
@@ -278,13 +284,6 @@ class Repository < ActiveRecord::Base
   end
 
   private
-
-  def before_save
-    # Strips url and root_url
-    url.strip!
-    root_url.strip!
-    true
-  end
 
   def clear_changesets
     cs, ch, ci = Changeset.table_name, Change.table_name, "#{table_name_prefix}changesets_issues#{table_name_suffix}"

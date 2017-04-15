@@ -23,8 +23,8 @@ class Repository::Cvs < Repository
       "root_url"     => "Module",
       "log_encoding" => "Commit messages encoding",
     }
-  def self.human_attribute_name(attribute_key_name)
-    ATTRIBUTE_KEY_NAMES[attribute_key_name] || super
+  def self.human_attribute_name(attribute_key_name, *args)
+    ATTRIBUTE_KEY_NAMES[attribute_key_name.to_s] || super
   end
 
   def self.scm_adapter_class
@@ -157,8 +157,9 @@ class Repository::Cvs < Repository
       end
 
       # Renumber new changesets in chronological order
-      changesets.find(
-              :all, :order => 'committed_on ASC, id ASC', :conditions => "revision LIKE 'tmp%'"
+      Changeset.all(
+              :order => 'committed_on ASC, id ASC',
+              :conditions => ["repository_id = ? AND revision LIKE 'tmp%'", id]
            ).each do |changeset|
         changeset.update_attribute :revision, next_revision_number
       end
