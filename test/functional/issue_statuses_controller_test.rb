@@ -93,7 +93,7 @@ class IssueStatusesControllerTest < ActionController::TestCase
       end
 
       should_set_the_flash_to /not updated/
-      should_redirect_to('the index') { '/issue_statuses' }
+      should redirect_to('the index') { '/issue_statuses' }
     end
 
     context "with Setting.issue_done_ratio using the issue_status" do
@@ -103,7 +103,7 @@ class IssueStatusesControllerTest < ActionController::TestCase
       end
 
       should_set_the_flash_to /Issue done ratios updated/
-      should_redirect_to('the index') { '/issue_statuses' }
+      should redirect_to('the index') { '/issue_statuses' }
     end
   end
 
