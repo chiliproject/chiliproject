@@ -45,9 +45,9 @@ class RoutingTest < ActionController::IntegrationTest
     should_route :get, "/documents/22", :controller => 'documents', :action => 'show', :id => '22'
     should_route :get, "/documents/22/edit", :controller => 'documents', :action => 'edit', :id => '22'
 
-    should_route :post, "/projects/567/documents/new", :controller => 'documents', :action => 'new', :project_id => '567'
-    should_route :post, "/documents/567/edit", :controller => 'documents', :action => 'edit', :id => '567'
-    should_route :post, "/documents/567/destroy", :controller => 'documents', :action => 'destroy', :id => '567'
+    should_route :post, "/projects/567/documents", :controller => 'documents', :action => 'create', :project_id => '567'
+    should_route :put, "/documents/22", :controller => 'documents', :action => 'update', :id => '22'
+    should_route :delete, "/documents/22", :controller => 'documents', :action => 'destroy', :id => '22'
   end
 
   context "issues" do
@@ -111,12 +111,6 @@ class RoutingTest < ActionController::IntegrationTest
 
   context "journals" do
     should_route :get, "/journals/100/diff/description", :controller => 'journals', :action => 'diff', :id => '100', :field => 'description'
-  end
-
-  context "issue categories" do
-    should_route :get, "/projects/test/issue_categories/new", :controller => 'issue_categories', :action => 'new', :project_id => 'test'
-
-    should_route :post, "/projects/test/issue_categories/new", :controller => 'issue_categories', :action => 'new', :project_id => 'test'
   end
 
   context "issue relations" do
