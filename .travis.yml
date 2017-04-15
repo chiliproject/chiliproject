@@ -3,6 +3,7 @@ rvm:
   - 1.9.3
   - rbx-19mode
 env:
+  - "TEST_SUITE=rdm_routing RAILS_ENV=test DB=sqlite BUNDLE_WITHOUT=rmagick:mysql2:postgres"
   - "TEST_SUITE=units       RAILS_ENV=test DB=mysql2 BUNDLE_WITHOUT=rmagick:postgres:sqlite"
   - "TEST_SUITE=units       RAILS_ENV=test DB=postgres BUNDLE_WITHOUT=rmagick:mysql2:sqlite"
   - "TEST_SUITE=units       RAILS_ENV=test DB=sqlite BUNDLE_WITHOUT=rmagick:mysql2:postgres"

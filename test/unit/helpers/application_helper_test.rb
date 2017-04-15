@@ -14,7 +14,7 @@
 require File.expand_path('../../../test_helper', __FILE__)
 
 class ApplicationHelperTest < ActionView::TestCase
-
+  include ERB::Util
   fixtures :projects, :roles, :enabled_modules, :users,
                       :repositories, :changesets,
                       :trackers, :issue_statuses, :issues, :versions, :documents,
@@ -267,7 +267,7 @@ RAW
       'invalid:document:"Test document"'      => 'invalid:document:"Test document"',
       # versions
       'version:"1.0"'                         => 'version:"1.0"',
-      'ecookbook:version:"1.0"'               => '<a href="/versions/show/2" class="version">1.0</a>',
+      'ecookbook:version:"1.0"'               => '<a href="/versions/2" class="version">1.0</a>',
       'invalid:version:"1.0"'                 => 'invalid:version:"1.0"',
       # changeset
       'r2'                                    => 'r2',

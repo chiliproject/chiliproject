@@ -18,7 +18,45 @@ require 'groups_controller'
 class GroupsController; def rescue_action(e) raise e end; end
 
 class GroupsControllerTest < ActionController::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     @controller = GroupsController.new
@@ -79,7 +117,7 @@ class GroupsControllerTest < ActionController::TestCase
 
   def test_remove_user
     assert_difference 'Group.find(10).users.count', -1 do
-      post :remove_user, :id => 10, :user_id => '8'
+      delete :remove_user, :id => 10, :user_id => '8'
     end
   end
 
