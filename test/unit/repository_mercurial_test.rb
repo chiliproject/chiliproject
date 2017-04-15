@@ -16,9 +16,7 @@ require File.expand_path('../../test_helper', __FILE__)
 class RepositoryMercurialTest < ActiveSupport::TestCase
   fixtures :projects
 
-  # No '..' in the repository path
-  REPOSITORY_PATH = RAILS_ROOT.gsub(%r{config\/\.\.}, '') + '/tmp/test/mercurial_repository'
-
+  REPOSITORY_PATH = Rails.root.join('tmp/test/mercurial_repository'
   CHAR_1_HEX = "\xc3\x9c"
 
   def setup
