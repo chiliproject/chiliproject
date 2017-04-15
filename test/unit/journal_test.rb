@@ -38,7 +38,6 @@ class JournalTest < ActiveSupport::TestCase
   def test_create_should_send_email_notification
     ActionMailer::Base.deliveries.clear
     issue = issues :issues_001
-
     assert_equal 0, ActionMailer::Base.deliveries.size
     issue.update_attribute(:subject, "New subject to trigger automatic journal entry")
     assert_equal 2, ActionMailer::Base.deliveries.size
@@ -72,9 +71,9 @@ class JournalTest < ActiveSupport::TestCase
     end
 
     journal = issue.reload.journals.first
-    assert_equal ["","Test initial journal"], journal.changes["subject"]
-    assert_equal [0, @project.id], journal.changes["project_id"]
-    assert_equal [nil, "Some content"], journal.changes["description"]
+    assert_equal ["","Test initial journal"], journal.changed_data["subject"]
+    assert_equal [0, @project.id], journal.changed_data["project_id"]
+    assert_equal [nil, "Some content"], journal.changed_data["description"]
   end
 
   test "creating a journal should update the updated_on value of the parent record (touch)" do
