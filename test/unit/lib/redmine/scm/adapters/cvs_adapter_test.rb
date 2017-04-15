@@ -18,7 +18,7 @@ begin
 
   class CvsAdapterTest < ActiveSupport::TestCase
 
-    REPOSITORY_PATH = RAILS_ROOT.gsub(%r{config\/\.\.}, '') + '/tmp/test/cvs_repository'
+    REPOSITORY_PATH = Rails.root.join('tmp/test/cvs_repository').to_s
     REPOSITORY_PATH.gsub!(/\//, "\\") if Redmine::Platform.mswin?
     MODULE_NAME = 'test'
 
