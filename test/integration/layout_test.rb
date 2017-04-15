@@ -15,7 +15,45 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class LayoutTest < ActionController::IntegrationTest
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   test "browsing to a missing page should render the base layout" do
     get "/users/100000000"
@@ -60,7 +98,7 @@ class LayoutTest < ActionController::IntegrationTest
   end
 
   test "page titles should be properly escaped" do
-    project = Project.generate(:name => "C&A")
+    project = Project.generate!(:name => "C&A")
 
     with_settings :app_title => '<3' do
       get "/projects/#{project.to_param}"
@@ -68,5 +106,15 @@ class LayoutTest < ActionController::IntegrationTest
       assert_select "title", /C&amp;A/
       assert_select "title", /&lt;3/
     end
+  end
+
+  def test_search_field_outside_project_should_link_to_global_search
+    get '/'
+    assert_select 'div#quick-search form[action=/search]'
+  end
+
+  def test_search_field_inside_project_should_link_to_project_search
+    get '/projects/ecookbook'
+    assert_select 'div#quick-search form[action=/projects/ecookbook/search]'
   end
 end
