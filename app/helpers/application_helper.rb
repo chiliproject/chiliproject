@@ -849,6 +849,27 @@ module ApplicationHelper
     form_for(name, object, options.merge({ :builder => TabularFormBuilder, :lang => current_language}), &proc)
   end
 
+  def labelled_form_for(*args, &proc)
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    options.merge!({:builder => TabularFormBuilder})
+    form_for(*args, &proc)
+  end
+
+  def labelled_fields_for(*args, &proc)
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    options.merge!({:builder => TabularFormBuilder})
+    fields_for(*args, &proc)
+  end
+
+  def labelled_remote_form_for(*args, &proc)
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    options.merge!({:builder => TabularFormBuilder})
+    remote_form_for(*args, &proc)
+  end
+
   def back_url_hidden_field_tag
     back_url = params[:back_url] || request.env['HTTP_REFERER']
     back_url = CGI.unescape(back_url.to_s)
