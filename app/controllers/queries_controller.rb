@@ -14,50 +14,77 @@
 
 class QueriesController < ApplicationController
   menu_item :issues
-  before_filter :find_query, :except => :new
-  before_filter :find_optional_project, :only => :new
+  before_filter :find_query, :except => [:new, :create, :index]
+  before_filter :find_optional_project, :only => [:new, :create]
+
+  accept_key_auth :index
+
+  include QueriesHelper
+
+  def index
+    case params[:format]
+    when 'xml', 'json'
+      @offset, @limit = api_offset_and_limit
+    else
+      @limit = per_page_option
+    end
+
+    @query_count = Query.visible.count
+    @query_pages = Paginator.new self, @query_count, @limit, params['page']
+    @queries = Query.visible.all(:limit => @limit, :offset => @offset, :order => "#{Query.table_name}.name")
+
+    respond_to do |format|
+      format.html { render :nothing => true }
+      format.api
+    end
+  end
 
   def new
+    @query = Query.new
+    @query.user = User.current
+    @query.project = @project
+    @query.is_public = false unless User.current.allowed_to?(:manage_public_queries, @project) || User.current.admin?
+    build_query_from_params
+  end
+
+  def create
     @query = Query.new(params[:query])
-    @query.project = params[:query_is_for_all] ? nil : @project
     @query.display_subprojects = params[:display_subprojects] if params[:display_subprojects].present?
     @query.user = User.current
+    @query.project = params[:query_is_for_all] ? nil : @project
     @query.is_public = false unless User.current.allowed_to?(:manage_public_queries, @project) || User.current.admin?
-
-    @query.add_filters(params[:fields] || params[:f], params[:operators] || params[:op], params[:values] || params[:v]) if params[:fields] || params[:f]
-    @query.group_by ||= params[:group_by]
-    @query.column_names = params[:c] if params[:c]
+    build_query_from_params
     @query.column_names = nil if params[:default_columns]
 
-    if request.post? && params[:confirm] && @query.save
+    if @query.save
       flash[:notice] = l(:notice_successful_create)
       redirect_to :controller => 'issues', :action => 'index', :project_id => @project, :query_id => @query
-      return
+    else
+      render :action => 'new', :layout => !request.xhr?
     end
-    render :layout => false if request.xhr?
   end
 
   def edit
-    if request.post?
-      @query.filters = {}
-      @query.add_filters(params[:fields] || params[:f], params[:operators] || params[:op], params[:values] || params[:v]) if params[:fields] || params[:f]
-      @query.attributes = params[:query]
-      @query.project = nil if params[:query_is_for_all]
-      @query.display_subprojects = params[:display_subprojects] if params[:display_subprojects].present?
-      @query.is_public = false unless User.current.allowed_to?(:manage_public_queries, @project) || User.current.admin?
-      @query.group_by ||= params[:group_by]
-      @query.column_names = params[:c] if params[:c]
-      @query.column_names = nil if params[:default_columns]
+  end
 
-      if @query.save
-        flash[:notice] = l(:notice_successful_update)
-        redirect_to :controller => 'issues', :action => 'index', :project_id => @project, :query_id => @query
-      end
+  def update
+    @query.attributes = params[:query]
+    @query.project = nil if params[:query_is_for_all]
+    @query.display_subprojects = params[:display_subprojects] if params[:display_subprojects].present?
+    @query.is_public = false unless User.current.allowed_to?(:manage_public_queries, @project) || User.current.admin?
+    build_query_from_params
+    @query.column_names = nil if params[:default_columns]
+
+    if @query.save
+      flash[:notice] = l(:notice_successful_update)
+      redirect_to :controller => 'issues', :action => 'index', :project_id => @project, :query_id => @query
+    else
+      render :action => 'edit'
     end
   end
 
   def destroy
-    @query.destroy if request.post?
+    @query.destroy
     redirect_to :controller => 'issues', :action => 'index', :project_id => @project, :set_filter => 1
   end
 
