@@ -28,13 +28,13 @@ class JournalObserver < ActiveRecord::Observer
       if journal.initial?
         if Setting.notified_events.include?('wiki_content_added')
           (wiki_content.recipients + wiki_page.wiki.watcher_recipients).uniq.each do |recipient|
-            Mailer.deliver_wiki_content_added(wiki_content, recipient)
+            Mailer.wiki_content_added(wiki_content, recipient).deliver
           end
         end
       else
         if Setting.notified_events.include?('wiki_content_updated')
           (wiki_content.recipients + wiki_page.wiki.watcher_recipients + wiki_page.watcher_recipients).uniq.each do |recipient|
-            Mailer.deliver_wiki_content_updated(wiki_content, recipient)
+            Mailer.wiki_content_updated(wiki_content, recipient).deliver
           end
         end
       end
@@ -49,7 +49,7 @@ class JournalObserver < ActiveRecord::Observer
         (Setting.notified_events.include?('issue_priority_updated') && journal.new_value_for('priority_id').present?)
       issue = journal.issue
       (issue.recipients + issue.watcher_recipients).uniq.each do |recipient|
-        Mailer.deliver_issue_edit(journal, recipient)
+        Mailer.issue_edit(journal, recipient).deliver
       end
     end
   end
