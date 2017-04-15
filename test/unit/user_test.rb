@@ -80,7 +80,7 @@ class UserTest < ActiveSupport::TestCase
       u.login = 'NewUser'
       u.password, u.password_confirmation = "password", "password"
       assert !u.save
-      assert_equal I18n.translate('activerecord.errors.messages.taken'), u.errors.on(:login)
+      assert_include I18n.translate('activerecord.errors.messages.taken'), u.errors[:login]
     end
   end
 
@@ -94,7 +94,7 @@ class UserTest < ActiveSupport::TestCase
     u.login = 'newuser2'
     u.password, u.password_confirmation = "password", "password"
     assert !u.save
-    assert_equal I18n.translate('activerecord.errors.messages.taken'), u.errors.on(:mail)
+    assert_include I18n.translate('activerecord.errors.messages.taken'), u.errors[:mail]
   end
 
   def test_update
@@ -121,7 +121,7 @@ class UserTest < ActiveSupport::TestCase
     u = User.new
     u.mail_notification = 'foo'
     u.save
-    assert_not_nil u.errors.on(:mail_notification)
+    assert u.errors[:mail_notification].present?
   end
 
   context "User#try_to_login" do
