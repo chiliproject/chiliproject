@@ -13,7 +13,7 @@
 #++
 require File.expand_path('../../../test_helper', __FILE__)
 
-class ProjectsHelperTest < HelperTestCase
+class ProjectsHelperTest < ActionView::TestCase
   include ApplicationHelper
   include ProjectsHelper
 
@@ -28,12 +28,12 @@ class ProjectsHelperTest < HelperTestCase
   def test_link_to_version_within_project
     @project = Project.find(2)
     User.current = User.find(1)
-    assert_equal '<a href="/versions/show/5">Alpha</a>', link_to_version(Version.find(5))
+    assert_equal '<a href="/versions/5">Alpha</a>', link_to_version(Version.find(5))
   end
 
   def test_link_to_version
     User.current = User.find(1)
-    assert_equal '<a href="/versions/show/5">OnlineStore - Alpha</a>', link_to_version(Version.find(5))
+    assert_equal '<a href="/versions/5">OnlineStore - Alpha</a>', link_to_version(Version.find(5))
   end
 
   def test_link_to_private_version

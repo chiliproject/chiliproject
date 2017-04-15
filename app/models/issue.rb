@@ -107,7 +107,8 @@ class Issue < ActiveRecord::Base
     IssueDrop.new(self)
   end
 
-  def after_initialize
+  def initialize(attributes=nil, *args)
+    super
     if new_record?
       # set default values for new records only
       self.status ||= IssueStatus.default
@@ -477,6 +478,11 @@ class Issue < ActiveRecord::Base
 
   def relations
     (relations_from + relations_to).sort
+  end
+  
+  # Finds an issue relation given its id.
+  def find_relation(relation_id)
+    IssueRelation.find(relation_id, :conditions => ["issue_to_id = ? OR issue_from_id = ?", id, id])
   end
 
   def all_dependent_issues(except=[])
