@@ -13,4 +13,7 @@
 #++
 
 module AuthSourcesHelper
+  def auth_source_partial_name(auth_source)
+    "form_#{auth_source.class.name.underscore}"
+  end
 end
