@@ -13,11 +13,49 @@
 #++
 require File.expand_path('../../../test_helper', __FILE__)
 
-class ProjectsHelperTest < HelperTestCase
+class ProjectsHelperTest < ActionView::TestCase
   include ApplicationHelper
   include ProjectsHelper
-
-  fixtures :all
+  include ERB::Util
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     super
@@ -28,12 +66,12 @@ class ProjectsHelperTest < HelperTestCase
   def test_link_to_version_within_project
     @project = Project.find(2)
     User.current = User.find(1)
-    assert_equal '<a href="/versions/show/5">Alpha</a>', link_to_version(Version.find(5))
+    assert_equal '<a href="/versions/5">Alpha</a>', link_to_version(Version.find(5))
   end
 
   def test_link_to_version
     User.current = User.find(1)
-    assert_equal '<a href="/versions/show/5">OnlineStore - Alpha</a>', link_to_version(Version.find(5))
+    assert_equal '<a href="/versions/5">OnlineStore - Alpha</a>', link_to_version(Version.find(5))
   end
 
   def test_link_to_private_version

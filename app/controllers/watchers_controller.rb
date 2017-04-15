@@ -18,10 +18,6 @@ class WatchersController < ApplicationController
   before_filter :authorize, :only => [:new, :destroy]
   before_filter :authorize_access_to_object, :only => [:new, :destroy]
 
-  verify :method => :post,
-         :only => [ :watch, :unwatch ],
-         :render => { :nothing => true, :status => :method_not_allowed }
-
   def watch
     if @watched.respond_to?(:visible?) && !@watched.visible?(User.current)
       render_403
