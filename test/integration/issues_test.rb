@@ -93,7 +93,7 @@ class IssuesTest < ActionController::IntegrationTest
     assert_equal 0, Issue.find(1).attachments.length
   end
 
-  def test_other_formats_links_on_get_index
+  def test_other_formats_links_on_index
     get '/projects/ecookbook/issues'
 
     %w(Atom PDF CSV).each do |format|
@@ -103,8 +103,8 @@ class IssuesTest < ActionController::IntegrationTest
     end
   end
 
-  def test_other_formats_links_on_post_index_without_project_id_in_url
-    post '/issues', :project_id => 'ecookbook'
+  def test_other_formats_links_on_index_without_project_id_in_url
+    get '/issues', :project_id => 'ecookbook'
 
     %w(Atom PDF CSV).each do |format|
       assert_tag :a, :content => format,
@@ -113,7 +113,7 @@ class IssuesTest < ActionController::IntegrationTest
     end
   end
 
-  def test_pagination_links_on_get_index
+  def test_pagination_links_on_index
     Setting.per_page_options = '2'
     get '/projects/ecookbook/issues'
 
@@ -122,9 +122,9 @@ class IssuesTest < ActionController::IntegrationTest
 
   end
 
-  def test_pagination_links_on_post_index_without_project_id_in_url
+  def test_pagination_links_on_index_without_project_id_in_url
     Setting.per_page_options = '2'
-    post '/issues', :project_id => 'ecookbook'
+    get '/issues', :project_id => 'ecookbook'
 
     assert_tag :a, :content => '2',
                    :attributes => { :href => '/projects/ecookbook/issues?page=2' }
@@ -205,5 +205,24 @@ class IssuesTest < ActionController::IntegrationTest
     @field.destroy
     get "/issues/#{issue.id}"
     assert_response :success
+  end
+
+  def test_update_using_invalid_http_verbs
+    subject = 'Updated by an invalid http verb'
+
+    get '/issues/update/1', {:issue => {:subject => subject}}, credentials('jsmith')
+    assert_response 404
+    assert_not_equal subject, Issue.find(1).subject
+
+    post '/issues/1', {:issue => {:subject => subject}}, credentials('jsmith')
+    assert_response 405
+    assert_not_equal subject, Issue.find(1).subject
+  end
+
+  def test_get_watch_should_be_invalid
+    assert_no_difference 'Watcher.count' do
+      get '/watchers/watch?object_type=issue&object_id=1', {}, credentials('jsmith')
+      assert_response 405
+    end
   end
 end
