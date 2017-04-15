@@ -16,11 +16,11 @@ class Token < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :value
 
-  before_create :delete_previous_tokens
+  before_create :delete_previous_tokens, :generate_new_token
 
   @@validity_time = 1.day
 
-  def before_create
+  def generate_new_token
     self.value = Token.generate_token_value
   end
 
@@ -36,7 +36,7 @@ class Token < ActiveRecord::Base
 
 private
   def self.generate_token_value
-    ActiveSupport::SecureRandom.hex(20)
+    Redmine::Utils.random_hex(20)
   end
 
   # Removes obsolete tokens (same user and action)

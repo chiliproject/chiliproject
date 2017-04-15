@@ -26,6 +26,7 @@ class Attachment < ActiveRecord::Base
   validates_presence_of :container, :filename, :author
   validates_length_of :filename, :maximum => 255
   validates_length_of :disk_filename, :maximum => 255
+  validate :validate_filesize
 
   acts_as_journalized :event_title => :filename,
         :event_url => (Proc.new do |o|
@@ -39,6 +40,9 @@ class Attachment < ActiveRecord::Base
 
   acts_as_activity :type => 'documents', :permission => :view_documents,
         :find_options => { :include => { :document => :project } }
+
+  after_destroy :delete_from_disk
+  before_save :files_to_final_location
 
   # This method is called on save by the AttachmentJournal in order to
   # decide which kind of activity we are dealing with. When that activity
@@ -56,9 +60,9 @@ class Attachment < ActiveRecord::Base
   end
 
   cattr_accessor :storage_path
-  @@storage_path = Redmine::Configuration['attachments_storage_path'] || "#{RAILS_ROOT}/files"
+  @@storage_path = Redmine::Configuration['attachments_storage_path'] || Rails.root.join("files")
 
-  def validate
+  def validate_filesize
     if self.filesize > Setting.attachment_max_size.to_i.kilobytes
       errors.add(:base, :too_long, :count => Setting.attachment_max_size.to_i.kilobytes)
     end
@@ -68,10 +72,13 @@ class Attachment < ActiveRecord::Base
     unless incoming_file.nil?
       @temp_file = incoming_file
       if @temp_file.size > 0
-        self.filename = sanitize_filename(@temp_file.original_filename)
-        self.disk_filename = Attachment.disk_filename(filename)
-        self.content_type = @temp_file.content_type.to_s.chomp
-        if content_type.blank?
+        if @temp_file.respond_to?(:original_filename)
+          self.filename = @temp_file.original_filename
+        end
+        if @temp_file.respond_to?(:content_type)
+          self.content_type = @temp_file.content_type.to_s.chomp
+        end
+        if content_type.blank? && filename.present?
           self.content_type = Redmine::MimeType.of(filename)
         end
         self.filesize = @temp_file.size
@@ -83,17 +90,30 @@ class Attachment < ActiveRecord::Base
     nil
   end
 
+  def filename=(arg)
+    write_attribute :filename, sanitize_filename(arg.to_s)
+    if new_record? && disk_filename.blank?
+      self.disk_filename = Attachment.disk_filename(filename)
+    end
+    filename
+  end
+
   # Copies the temporary file to its final location
   # and computes its MD5 hash
-  def before_save
+  def files_to_final_location
     if @temp_file && (@temp_file.size > 0)
       logger.debug("saving '#{self.diskfile}'")
       md5 = Digest::MD5.new
       File.open(diskfile, "wb") do |f|
-        buffer = ""
-        while (buffer = @temp_file.read(8192))
-          f.write(buffer)
-          md5.update(buffer)
+        if @temp_file.respond_to?(:read)
+          buffer = ""
+          while (buffer = @temp_file.read(8192))
+            f.write(buffer)
+            md5.update(buffer)
+          end
+        else
+          f.write(@temp_file)
+          md5.update(@temp_file)
         end
       end
       self.digest = md5.hexdigest
@@ -105,7 +125,7 @@ class Attachment < ActiveRecord::Base
   end
 
   # Deletes file on the disk
-  def after_destroy
+  def delete_from_disk
     File.delete(diskfile) if !filename.blank? && File.exist?(diskfile)
   end
 
