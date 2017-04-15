@@ -22,7 +22,7 @@ class ProjectsTest < ActionController::IntegrationTest
     get "admin/projects"
     assert_response :success
     assert_template "admin/projects"
-    post "projects/archive", :id => 1
+    post "projects/1/archive"
     assert_redirected_to "/admin/projects"
     assert !Project.find(1).active?
 
@@ -31,7 +31,7 @@ class ProjectsTest < ActionController::IntegrationTest
     get "projects/#{subproject.id}"
     assert_response 403
 
-    post "projects/unarchive", :id => 1
+    post "projects/1/unarchive"
     assert_redirected_to "/admin/projects"
     assert Project.find(1).active?
     get "projects/1"
