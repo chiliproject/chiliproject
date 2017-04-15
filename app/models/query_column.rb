@@ -39,4 +39,8 @@ class QueryColumn
   def value(issue)
     issue.send name
   end
+
+  def css_classes
+    name
+  end
 end
