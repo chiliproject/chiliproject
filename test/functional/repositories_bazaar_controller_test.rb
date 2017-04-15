@@ -20,8 +20,7 @@ class RepositoriesController; def rescue_action(e) raise e end; end
 class RepositoriesBazaarControllerTest < ActionController::TestCase
   fixtures :projects, :users, :roles, :members, :member_roles, :repositories, :enabled_modules
 
-  # No '..' in the repository path
-  REPOSITORY_PATH = RAILS_ROOT.gsub(%r{config\/\.\.}, '') + '/tmp/test/bazaar_repository'
+  REPOSITORY_PATH = Rails.root.join('tmp/test/bazaar_repository')
 
   def setup
     @controller = RepositoriesController.new
@@ -36,12 +35,14 @@ class RepositoriesBazaarControllerTest < ActionController::TestCase
   end
 
   if File.directory?(REPOSITORY_PATH)
-    def test_show
-      get :show, :id => 3
+    def test_get_new
+      @request.session[:user_id] = 1
+      @project.repository.destroy
+      get :new, :project_id => 'subproject1', :repository_scm => 'Bazaar'
       assert_response :success
-      assert_template 'show'
-      assert_not_nil assigns(:entries)
-      assert_not_nil assigns(:changesets)
+      assert_template 'new'
+      assert_kind_of Repository::Bazaar, assigns(:repository)
+      assert assigns(:repository).new_record?
     end
 
     def test_browse_root

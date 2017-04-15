@@ -227,7 +227,7 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response :success
         project = assigns(:project)
         assert_kind_of Project, project
-        assert_not_nil project.errors.on(:parent_id)
+        assert project.errors[:parent_id].present?
       end
     end
 
@@ -262,7 +262,7 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response :success
         project = assigns(:project)
         assert_kind_of Project, project
-        assert_not_nil project.errors.on(:parent_id)
+        assert project.errors[:parent_id].present?
       end
 
       should "fail with unauthorized parent_id" do
@@ -279,7 +279,7 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response :success
         project = assigns(:project)
         assert_kind_of Project, project
-        assert_not_nil project.errors.on(:parent_id)
+        assert project.errors[:parent_id].present?
       end
     end
   end
@@ -298,12 +298,6 @@ class ProjectsControllerTest < ActionController::TestCase
       project = assigns(:project)
       assert_equal %w(issue_tracking news), project.enabled_module_names.sort
     end
-  end
-
-  def test_create_should_not_accept_get
-    @request.session[:user_id] = 1
-    get :create
-    assert_response :method_not_allowed
   end
 
   def test_show_by_id
@@ -393,23 +387,17 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_equal ['documents', 'issue_tracking', 'repository'], Project.find(1).enabled_module_names.sort
   end
 
-  def test_modules_should_not_allow_get
-    @request.session[:user_id] = 1
-    get :modules, :id => 1
-    assert_response :method_not_allowed
-  end
-
-  def test_get_destroy
+  def test_destroy_without_confirmation
     @request.session[:user_id] = 1 # admin
-    get :destroy, :id => 1
+    delete :destroy, :id => 1
     assert_response :success
     assert_template 'destroy'
     assert_not_nil Project.find_by_id(1)
   end
 
-  def test_post_destroy
+  def test_destroy
     @request.session[:user_id] = 1 # admin
-    post :destroy, :id => 1, :confirm => 1
+    delete :destroy, :id => 1, :confirm => 1
     assert_redirected_to '/admin/projects'
     assert_nil Project.find_by_id(1)
   end
@@ -437,13 +425,6 @@ class ProjectsControllerTest < ActionController::TestCase
     assert assigns(:project)
     assert_equal Project.find(1).description, assigns(:project).description
     assert_nil assigns(:project).id
-  end
-
-  def test_copy_without_project
-    @request.session[:user_id] = 1 # admin
-    get :copy
-    assert_response :redirect
-    assert_redirected_to :controller => 'admin', :action => 'projects'
   end
 
   context "POST :copy" do
