@@ -26,12 +26,6 @@ require 'redmine/notifiable'
 require 'redmine/wiki_formatting'
 require 'redmine/scm/base'
 
-begin
-  require_library_or_gem 'RMagick' unless Object.const_defined?(:Magick)
-rescue LoadError
-  # RMagick is not available
-end
-
 if RUBY_VERSION < '1.9'
   require 'faster_csv'
 else
@@ -72,7 +66,7 @@ Redmine::AccessControl.map do |map|
 
   map.project_module :issue_tracking do |map|
     # Issue categories
-    map.permission :manage_categories, {:projects => :settings, :issue_categories => [:new, :edit, :destroy]}, :require => :member
+    map.permission :manage_categories, {:projects => :settings, :issue_categories => [:new, :create, :edit, :update, :destroy]}, :require => :member
     # Issues
     map.permission :view_issues, {:issues => [:index, :show],
                                   :auto_complete => [:issues],
@@ -101,7 +95,7 @@ Redmine::AccessControl.map do |map|
 
   map.project_module :time_tracking do |map|
     map.permission :log_time, {:timelog => [:new, :create]}, :require => :loggedin
-    map.permission :view_time_entries, :timelog => [:index, :show], :time_entry_reports => [:report]
+    map.permission :view_time_entries, :timelog => [:index, :report, :show]
     map.permission :edit_time_entries, {:timelog => [:edit, :update, :destroy]}, :require => :member
     map.permission :edit_own_time_entries, {:timelog => [:edit, :update, :destroy]}, :require => :loggedin
     map.permission :manage_project_activities, {:project_enumerations => [:update, :destroy]}, :require => :member
@@ -114,7 +108,7 @@ Redmine::AccessControl.map do |map|
   end
 
   map.project_module :documents do |map|
-    map.permission :manage_documents, {:documents => [:new, :edit, :destroy, :add_attachment]}, :require => :loggedin
+    map.permission :manage_documents, {:documents => [:new, :create, :edit, :update, :destroy, :add_attachment]}, :require => :loggedin
     map.permission :view_documents, :documents => [:index, :show, :download]
     map.permission :view_document_watchers, {}
     map.permission :add_document_watchers, {:watchers => :new}
@@ -149,7 +143,7 @@ Redmine::AccessControl.map do |map|
   end
 
   map.project_module :boards do |map|
-    map.permission :manage_boards, {:boards => [:new, :edit, :destroy]}, :require => :member
+    map.permission :manage_boards, {:boards => [:new, :create, :edit, :update, :destroy]}, :require => :member
     map.permission :view_messages, {:boards => [:index, :show], :messages => [:show]}, :public => true
     map.permission :add_messages, {:messages => [:new, :reply, :quote]}
     map.permission :edit_messages, {:messages => :edit}, :require => :member
