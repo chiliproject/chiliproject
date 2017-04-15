@@ -31,9 +31,13 @@ class Version < ActiveRecord::Base
   validates_inclusion_of :status, :in => VERSION_STATUSES
   validates_inclusion_of :sharing, :in => VERSION_SHARINGS
 
-  named_scope :open, :conditions => {:status => 'open'}
-  named_scope :visible, lambda {|*args| { :include => :project,
-                                          :conditions => Project.allowed_to_condition(args.first || User.current, :view_issues) } }
+  def self.open
+    where(:status => 'open')
+  end
+
+  def self.visible(user=User.current)
+    joins(:project).where(Project.allowed_to_condition(user, :view_issues))
+  end
 
   safe_attributes 'name',
     'description',
@@ -130,12 +134,12 @@ class Version < ActiveRecord::Base
 
   # Returns the total amount of open issues for this version.
   def open_issues_count
-    @open_issues_count ||= Issue.count(:all, :conditions => ["fixed_version_id = ? AND is_closed = ?", self.id, false], :include => :status)
+    @open_issues_count ||= Issue.open.count(:all, :conditions => ["fixed_version_id = ?", self.id])
   end
 
   # Returns the total amount of closed issues for this version.
   def closed_issues_count
-    @closed_issues_count ||= Issue.count(:all, :conditions => ["fixed_version_id = ? AND is_closed = ?", self.id, true], :include => :status)
+    @closed_issues_count ||= Issue.open(false).count(:all, :conditions => ["fixed_version_id = ?", self.id])
   end
 
   def wiki_page
@@ -235,8 +239,8 @@ class Version < ActiveRecord::Base
         ratio = open ? 'done_ratio' : 100
 
         done = fixed_issues.sum("COALESCE(estimated_hours, #{estimated_average}) * #{ratio}",
-                                  :include => :status,
-                                  :conditions => ["is_closed = ?", !open]).to_f
+                                  :joins => :status,
+                                  :conditions => ["#{IssueStatus.table_name}.is_closed = ?", !open]).to_f
         progress = done / (estimated_average * issues_count)
       end
       progress

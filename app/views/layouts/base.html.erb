@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="<%= current_language %>">
+<head>
+<meta charset="utf-8" />
+<title><%= html_title %></title>
+<meta name="description" content="<%= Redmine::Info.app_name %>" />
+<meta name="keywords" content="issue,bug,tracker" />
+<%= csrf_meta_tag %>
+<%= favicon %>
+<%= stylesheet_link_tag 'reset', :media => 'all' %>
+<%= stylesheet_link_tag 'smoothness/jquery-ui', :media => 'all' %>
+<%= stylesheet_link_tag 'application', :media => 'all' %>
+<%= stylesheet_link_tag 'print', :media => 'print' %>
+<%= stylesheet_link_tag 'rtl', :media => 'all' if l(:direction) == 'rtl' %>
+<!--[if lte IE 6]><%= stylesheet_link_tag 'ie6', :media => 'all' %><![endif]-->
+<!--[if lte IE 7]><%= stylesheet_link_tag 'ie7', :media => 'all' %><![endif]-->
+<!--[if gte IE 8]><![endif]-->
+
+<%= javascript_heads %>
+<%= javascript_include_tag 'jquery.menu_expand.js' %>
+<%= javascript_tag('jQuery.noConflict();') %>
+<%= javascript_include_tag 'modernizr.min.js' %>
+<%= stylesheet_link_tag 'jstoolbar' %>
+<%= heads_for_theme %>
+<% heads_for_wiki_formatter %>
+<%= call_hook :view_layouts_base_html_head %>
+<!-- page specific tags -->
+<%= yield :header_tags -%>
+</head>
+<body class="<%=h body_css_classes %>">
+<div id="wrapper">
+  <div id="top-menu">
+    <div id="header">
+      <div id="logo"><%= link_to(h(Setting.app_title), home_path) %></div>
+      <div id="top-menu-items">
+      <% if User.current.logged? || !Setting.login_required? %>
+      <div id="search">
+        <%= render :partial => 'search/quick_search', :locals => {:search_term => @question} %>
+      </div>
+      <% end %>
+
+      <ul id="account-nav">
+        <% if User.current.logged? || !Setting.login_required? %>
+        <% main_top_menu_items.each do |item| %>
+            <%= render_menu_node(item) %>
+        <% end %>
+        <li class="drop-down">
+          <%= link_to l(:label_project_plural), projects_path, :class => "projects" %>
+          <ul style="display:none;">
+            <li><%= link_to l(:label_project_all), projects_path, :class => "projects separator" %></li>
+            <%
+            project_content = ''
+            project_tree(User.current.projects.all) do |project, level|
+              name_prefix = (level > 0 ? ('&nbsp;' * 2 * level + '&#187; ') : '')
+              project_content << content_tag(:li,
+                                     link_to(name_prefix + h(project), project_path(project, :jump => current_menu_item)))
+            end
+            %>
+            <%= project_content %>
+          </ul>
+        </li>
+        <% if more_top_menu_items.present? || User.current.admin? %>
+        <li class="drop-down" id="more-menu">
+          <a class="more" href="#"><%= l(:label_more) %></a>
+          <ul style="display:none;">
+            <% more_top_menu_items.each do |item| %>
+            <%= render_menu_node(item) %>
+            <% end %>
+            <%# TODO: Extract to helper %>
+            <% if User.current.admin? %>
+              <% menu_items_for(:admin_menu) do |item| -%>
+                <li><%= link_to h(item.caption), item.url, item.html_options %></li>
+              <% end -%>
+            <% end %>
+          </ul>
+        </li>
+        <% end %>
+        <%= render_menu_node(help_menu_item) %>
+        <% end %>
+          <% unless User.current.logged? %>
+            <% if Setting.self_registration? %>
+            <li>
+              <%= link_to l(:label_register), register_account_path %>
+            </li>
+            <% end %>
+            <li id="login-menu" class="drop-down last-child">
+              <%= link_to l(:label_login), signin_path, :class => 'login' %>
+              <div id="nav-login" style="display:none;">
+                <%= render :partial => 'account/login' %>
+              </div>
+            </li>
+          <% else %>
+            <li class="drop-down last-child">
+            <%= link_to_user(User.current) %>
+            <ul style="display:none;">
+            <% menu_items_for(:account_menu) do |item| %>
+              <%= render_menu_node(item) %>
+            <% end %>
+            </ul>
+            </li>
+          <% end %>
+      </ul>
+    </div>
+    </div>
+    <div id="breadcrumb">
+      <%= page_header_title %>
+    </div>
+  </div>
+
+  <% main_menu = render_main_menu(@project) %>
+  <% if (side_displayed = has_content?(:sidebar) || has_content?(:main_menu) || !main_menu.blank?) %>
+  <% display_sidebar = true %>
+  <% else %>
+  <% display_sidebar = false %>
+  <% end %>
+  <div id="main" class="<%= side_displayed ? '' : "nosidebar" %>">
+    <% if (side_displayed) %>
+      <div id="side-container">
+        <div id="main-menu">
+          <%= main_menu %>
+          <%= yield :main_menu %>
+        </div>
+
+      <% if display_sidebar %>
+        <!-- Sidebar -->
+        <div id="sidebar">
+          <%= yield :sidebar %>
+          <%= call_hook :view_layouts_base_sidebar %>
+        </div>
+      <% end %>
+      </div>
+
+      <%= expand_current_menu %>
+    <% end %>
+    <div class="<%= side_displayed ? '' : "nosidebar" %>" id="content">
+      <%= render_flash_messages %>
+      <%= yield %>
+      <%= call_hook :view_layouts_base_content %>
+      <div style="clear:both;">&nbsp;</div>
+    </div>
+  </div>
+
+  <div id="footer">
+    <div class="bgl"><div class="bgr">
+        <%= l(:text_powered_by, :link => link_to(Redmine::Info.app_name, Redmine::Info.url)).html_safe %>
+      </div></div>
+  </div>
+
+  <div id="ajax-indicator" style="display:none;"><span><%= l(:label_loading) %></span></div>
+  <div id="dialog-window" style="display:none;"></div>
+
+</div>
+<%= call_hook :view_layouts_base_body_bottom %>
+</body>
+</html>
