@@ -21,8 +21,8 @@ class Repository::Git < Repository
   ATTRIBUTE_KEY_NAMES = {
       "url"          => "Path to repository",
     }
-  def self.human_attribute_name(attribute_key_name)
-    ATTRIBUTE_KEY_NAMES[attribute_key_name] || super
+  def self.human_attribute_name(attribute_key_name, *args)
+    ATTRIBUTE_KEY_NAMES[attribute_key_name.to_s] || super
   end
 
   def self.scm_adapter_class
