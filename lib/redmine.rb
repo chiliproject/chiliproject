@@ -281,15 +281,18 @@ Redmine::MenuManager.map :project_menu do |menu|
             })
   menu.push(:time_entries, { :controller => 'timelog', :action => 'index' }, {
               :param => :project_id,
+              :caption => :label_timelog_plural,
               :if => Proc.new {|p| User.current.allowed_to?(:view_time_entries, p) }
             });
   menu.push(:new_time_entry, { :controller => 'timelog', :action => 'new' }, {
               :param => :project_id,
+              :caption => :field_new_timelog,
               :if => Proc.new {|p| User.current.allowed_to?(:log_time, p) },
               :parent => :time_entries
             })
   menu.push(:time_entry_report, { :controller => 'time_entry_reports', :action => 'report' }, {
               :param => :project_id,
+              :caption => :field_report_timelog,
               :if => Proc.new {|p| User.current.allowed_to?(:view_time_entries, p) },
               :parent => :time_entries
             })
