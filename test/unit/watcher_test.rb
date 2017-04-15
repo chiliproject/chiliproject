@@ -14,7 +14,45 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class WatcherTest < ActiveSupport::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     @user = User.find(1)
@@ -124,8 +162,8 @@ class WatcherTest < ActiveSupport::TestCase
 
   context "group watch" do
     setup do
-      @group = Group.generate!
-      Member.generate!(:project => Project.find(1), :roles => [Role.find(1)], :principal => @group)
+      @group = Group.create!(:lastname => "test")
+      Member.create!(:project => Project.find(1), :roles => [Role.find(1)], :principal => @group)
       @group.users << @user = User.find(1)
       @group.users << @user2 = User.find(2)
     end
