@@ -51,7 +51,7 @@ namespace :ci do
       # Create and migrate the database
       Rake::Task["db:create"].invoke
       Rake::Task["db:migrate"].invoke
-      Rake::Task["db:migrate:plugins"].invoke
+      # Rake::Task["db:migrate:plugins"].invoke
       Rake::Task["db:schema:dump"].invoke
 
       # Create test repositories

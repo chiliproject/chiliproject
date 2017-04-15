@@ -56,7 +56,7 @@ class Attachment < ActiveRecord::Base
   end
 
   cattr_accessor :storage_path
-  @@storage_path = Redmine::Configuration['attachments_storage_path'] || "#{RAILS_ROOT}/files"
+  @@storage_path = Redmine::Configuration['attachments_storage_path'] || Rails.root.join("files")
 
   def validate
     if self.filesize > Setting.attachment_max_size.to_i.kilobytes
