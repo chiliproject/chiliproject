@@ -14,22 +14,22 @@
 
 class MembersController < ApplicationController
   model_object Member
-  before_filter :find_model_object, :except => [:new, :autocomplete_for_member]
-  before_filter :find_project_from_association, :except => [:new, :autocomplete_for_member]
-  before_filter :find_project, :only => [:new, :autocomplete_for_member]
+  before_filter :find_model_object, :except => [:create, :autocomplete]
+  before_filter :find_project_from_association, :except => [:create, :autocomplete]
+  before_filter :find_project_by_project_id, :only => [:create, :autocomplete]
   before_filter :authorize
 
-  def new
+  def create
     members = []
-    if params[:member]
-      if params[:member][:user_ids]
-        attrs = params[:member].dup
+    if params[:membership]
+      if params[:membership][:user_ids]
+        attrs = params[:membership].dup
         user_ids = attrs.delete(:user_ids)
         user_ids.each do |user_id|
-          members << Member.new(:role_ids => params[:member][:role_ids], :user_id => user_id)
+          members << Member.new(:role_ids => params[:membership][:role_ids], :user_id => user_id)
         end
       else
-        members << Member.new(:role_ids => params[:member][:role_ids], :user_id => params[:member][:user_id])
+        members << Member.new(:role_ids => params[:membership][:role_ids], :user_id => params[:membership][:user_id])
       end
       @project.members << members
     end
@@ -62,8 +62,11 @@ class MembersController < ApplicationController
     end
   end
 
-  def edit
-    if request.post? and @member.update_attributes(params[:member])
+  def update
+    if params[:membership]
+      @member.role_ids = params[:membership][:role_ids]
+    end
+    if request.put? && @member.save
   	 respond_to do |format|
         format.html { redirect_to :controller => 'projects', :action => 'settings', :tab => 'members', :id => @project }
         format.js {
@@ -78,7 +81,7 @@ class MembersController < ApplicationController
   end
 
   def destroy
-    if request.post? && @member.deletable?
+    if request.delete? && @member.deletable?
       @member.destroy
     end
     respond_to do |format|
@@ -91,7 +94,7 @@ class MembersController < ApplicationController
     end
   end
 
-  def autocomplete_for_member
+  def autocomplete
     @principals = Principal.active.like(params[:q]).find(:all, :limit => 100) - @project.principals
     render :layout => false
   end
