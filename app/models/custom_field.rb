@@ -22,12 +22,14 @@ class CustomField < ActiveRecord::Base
   validates_length_of :name, :maximum => 30
   validates_inclusion_of :field_format, :in => Redmine::CustomFieldFormat.available_formats
 
+  before_validation :set_searchable
+
   def initialize(attributes = nil)
     super
     self.possible_values ||= []
   end
 
-  def before_validation
+  def set_searchable
     # make sure these fields are not searchable
     self.searchable = false if %w(int float date bool).include?(field_format)
     true
