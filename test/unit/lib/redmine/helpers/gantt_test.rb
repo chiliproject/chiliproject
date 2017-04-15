@@ -159,7 +159,6 @@ class Redmine::Helpers::GanttHelperTest < ActionView::TestCase
       context "assigned to a shared version of another project" do
         setup do
           p = Project.generate!
-          p.trackers << @tracker
           p.enabled_module_names = [:issue_tracking]
           @shared_version = Version.generate!(:sharing => 'system')
           p.versions << @shared_version
