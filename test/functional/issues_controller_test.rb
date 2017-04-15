@@ -53,7 +53,7 @@ class IssuesControllerTest < ActionController::TestCase
 
     get :index
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_nil assigns(:project)
     assert_tag :tag => 'a', :content => /Can&#39;t print recipes/
@@ -69,7 +69,7 @@ class IssuesControllerTest < ActionController::TestCase
     EnabledModule.delete_all("name = 'issue_tracking' AND project_id = 1")
     get :index
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_nil assigns(:project)
     assert_no_tag :tag => 'a', :content => /Can&#39;t print recipes/
@@ -80,7 +80,7 @@ class IssuesControllerTest < ActionController::TestCase
     EnabledModule.delete_all("name = 'issue_tracking' AND project_id = 1")
     get :index
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_nil assigns(:project)
     assert_no_tag :tag => 'a', :content => /Can&#39;t print recipes/
@@ -91,7 +91,7 @@ class IssuesControllerTest < ActionController::TestCase
     Setting.display_subprojects_issues = 0
     get :index, :project_id => 1
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_tag :tag => 'a', :content => /Can&#39;t print recipes/
     assert_no_tag :tag => 'a', :content => /Subproject issue/
@@ -101,7 +101,7 @@ class IssuesControllerTest < ActionController::TestCase
     Setting.display_subprojects_issues = 1
     get :index, :project_id => 1
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_tag :tag => 'a', :content => /Can&#39;t print recipes/
     assert_tag :tag => 'a', :content => /Subproject issue/
@@ -113,7 +113,7 @@ class IssuesControllerTest < ActionController::TestCase
     Setting.display_subprojects_issues = 1
     get :index, :project_id => 1
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_tag :tag => 'a', :content => /Can&#39;t print recipes/
     assert_tag :tag => 'a', :content => /Subproject issue/
@@ -123,7 +123,7 @@ class IssuesControllerTest < ActionController::TestCase
   def test_index_with_project_and_default_filter
     get :index, :project_id => 1, :set_filter => 1
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
 
     query = assigns(:query)
@@ -138,7 +138,7 @@ class IssuesControllerTest < ActionController::TestCase
       :op => {'tracker_id' => '='},
       :v => {'tracker_id' => ['1']}
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
 
     query = assigns(:query)
@@ -149,7 +149,7 @@ class IssuesControllerTest < ActionController::TestCase
   def test_index_with_project_and_empty_filters
     get :index, :project_id => 1, :set_filter => 1, :fields => ['']
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
 
     query = assigns(:query)
@@ -161,7 +161,7 @@ class IssuesControllerTest < ActionController::TestCase
   def test_index_with_query
     get :index, :project_id => 1, :query_id => 5
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_nil assigns(:issue_count_by_group)
   end
@@ -169,7 +169,7 @@ class IssuesControllerTest < ActionController::TestCase
   def test_index_with_query_grouped_by_tracker
     get :index, :project_id => 1, :query_id => 6
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_not_nil assigns(:issue_count_by_group)
   end
@@ -177,7 +177,7 @@ class IssuesControllerTest < ActionController::TestCase
   def test_index_with_query_grouped_by_list_custom_field
     get :index, :project_id => 1, :query_id => 9
     assert_response :success
-    assert_template 'index.rhtml'
+    assert_template 'index'
     assert_not_nil assigns(:issues)
     assert_not_nil assigns(:issue_count_by_group)
   end
@@ -193,13 +193,13 @@ class IssuesControllerTest < ActionController::TestCase
     get :index, :format => 'csv'
     assert_response :success
     assert_not_nil assigns(:issues)
-    assert_equal 'text/csv', @response.content_type
+    assert_equal 'text/csv; header=present', @response.content_type
     assert @response.body.starts_with?("#,")
 
     get :index, :project_id => 1, :format => 'csv'
     assert_response :success
     assert_not_nil assigns(:issues)
-    assert_equal 'text/csv', @response.content_type
+    assert_equal 'text/csv; header=present', @response.content_type
   end
 
   def test_index_pdf
@@ -260,7 +260,7 @@ class IssuesControllerTest < ActionController::TestCase
   def test_show_by_anonymous
     get :show, :id => 1
     assert_response :success
-    assert_template 'show.rhtml'
+    assert_template 'show'
     assert_not_nil assigns(:issue)
     assert_equal Issue.find(1), assigns(:issue)
 
@@ -844,9 +844,9 @@ class IssuesControllerTest < ActionController::TestCase
         :category_id => '1' # no change
       }
     end
-    assert issue.current_journal.changes.has_key? "subject"
-    assert issue.current_journal.changes.has_key? "priority_id"
-    assert !issue.current_journal.changes.has_key?("category_id")
+    assert issue.current_journal.changed_data.has_key? "subject"
+    assert issue.current_journal.changed_data.has_key? "priority_id"
+    assert !issue.current_journal.changed_data.has_key?("category_id")
 
     assert_redirected_to :action => 'show', :id => '1'
     issue.reload
@@ -855,9 +855,9 @@ class IssuesControllerTest < ActionController::TestCase
     assert_equal '125', issue.custom_value_for(2).value
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
     assert mail.subject.starts_with?("[#{issue.project.name} - #{issue.tracker.name} ##{issue.id}]")
-    assert mail.body.include?("Subject changed from #{old_subject} to #{new_subject}")
+    assert_mail_body_match "Subject changed from #{old_subject} to #{new_subject}", mail
   end
 
   def test_put_update_with_custom_field_change
@@ -873,18 +873,18 @@ class IssuesControllerTest < ActionController::TestCase
         :custom_field_values => { '2' => 'New custom value' }
       }
     end
-    assert issue.current_journal.changes.has_key? "subject"
-    assert issue.current_journal.changes.has_key? "priority_id"
-    assert !issue.current_journal.changes.has_key?("category_id")
-    assert issue.current_journal.changes.has_key? "custom_values2"
+    assert issue.current_journal.changed_data.has_key? "subject"
+    assert issue.current_journal.changed_data.has_key? "priority_id"
+    assert !issue.current_journal.changed_data.has_key?("category_id")
+    assert issue.current_journal.changed_data.has_key? "custom_values2"
 
     assert_redirected_to :action => 'show', :id => '1'
     issue.reload
     assert_equal 'New custom value', issue.custom_value_for(2).value
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
-    assert mail.body.include?("Searchable field changed from 125 to New custom value")
+    assert_not_nil mail
+    assert_mail_body_match "Searchable field changed from 125 to New custom value", mail
   end
 
   def test_put_update_with_status_and_assignee_change
@@ -906,7 +906,7 @@ class IssuesControllerTest < ActionController::TestCase
     assert_equal 2, j.details.size
 
     mail = ActionMailer::Base.deliveries.last
-    assert mail.body.include?("Status changed from New to Assigned")
+    assert_mail_body_match "Status changed from New to Assigned", mail
     # subject should contain the new status
     assert mail.subject.include?("(#{ IssueStatus.find(2).name })")
   end
@@ -924,7 +924,7 @@ class IssuesControllerTest < ActionController::TestCase
     assert_equal User.anonymous, j.user
 
     mail = ActionMailer::Base.deliveries.last
-    assert mail.body.include?(notes)
+    assert_mail_body_match notes, mail
   end
 
   def test_put_update_with_note_and_spent_time
@@ -966,7 +966,7 @@ class IssuesControllerTest < ActionController::TestCase
     assert_equal User.anonymous, j.user
 
     mail = ActionMailer::Base.deliveries.last
-    assert mail.body.include?('testfile.txt')
+    assert_mail_body_match 'testfile.txt', mail
   end
 
   def test_put_update_with_attachment_that_fails_to_save
