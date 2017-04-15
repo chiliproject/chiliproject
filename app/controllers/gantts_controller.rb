@@ -37,9 +37,4 @@ class GanttsController < ApplicationController
       format.pdf  { send_data(@gantt.to_pdf, :type => 'application/pdf', :filename => "#{basename}.pdf") }
     end
   end
-
-  def update
-    show
-  end
-
 end
