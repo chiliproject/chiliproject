@@ -78,11 +78,11 @@ class Project < ActiveRecord::Base
 
   before_destroy :delete_all_members
 
-  named_scope :has_module, lambda { |mod| { :conditions => ["#{Project.table_name}.id IN (SELECT em.project_id FROM #{EnabledModule.table_name} em WHERE em.name=?)", mod.to_s] } }
-  named_scope :active, { :conditions => "#{Project.table_name}.status = #{STATUS_ACTIVE}"}
-  named_scope :all_public, { :conditions => { :is_public => true } }
-  named_scope :visible, lambda { { :conditions => Project.visible_by(User.current) } }
-  named_scope :like, lambda {|q|
+  scope :has_module, lambda { |mod| { :conditions => ["#{Project.table_name}.id IN (SELECT em.project_id FROM #{EnabledModule.table_name} em WHERE em.name=?)", mod.to_s] } }
+  scope :active, { :conditions => "#{Project.table_name}.status = #{STATUS_ACTIVE}"}
+  scope :all_public, { :conditions => { :is_public => true } }
+  scope :visible, lambda { { :conditions => Project.visible_by(User.current) } }
+  scope :like, lambda {|q|
     s = "%#{q.to_s.strip.downcase}%"
     {
       :conditions => ["LOWER(name) LIKE ?", s]
@@ -93,7 +93,7 @@ class Project < ActiveRecord::Base
     ProjectDrop.new(self)
   end
 
-  def initialize(attributes = nil)
+  def initialize(attributes=nil, *args)
     super
 
     initialized = (attributes || {}).stringify_keys
@@ -774,7 +774,7 @@ class Project < ActiveRecord::Base
   # Copies queries from +project+
   def copy_queries(project)
     project.queries.each do |query|
-      new_query = Query.new
+      new_query = ::Query.new
       new_query.attributes = query.attributes.dup.except("id", "project_id", "sort_criteria")
       new_query.sort_criteria = query.sort_criteria if query.sort_criteria
       new_query.project = self
