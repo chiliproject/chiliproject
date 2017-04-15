@@ -1,0 +1,7 @@
+chiliproject_plugins/.gitignore
+plugins/redmine_assets_plugin/
+plugins/redmine_checkout/
+plugins/redmine_time_tracker/
+plugins/redmine_wiki_issue_details/
+plugins/timesheet_plugin/
+

@@ -1419,6 +1419,7 @@ input#time_entry_comments {
 }
 
 .tabular.settings textarea {
+  font-family: courier, monospace;
   width: 99%;
 }
 
