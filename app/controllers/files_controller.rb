@@ -45,7 +45,7 @@ class FilesController < ApplicationController
       # TODO: refactor
       recipients = attachments[:files].first.container.project.notified_users.select {|user| user.allowed_to?(:view_files, container.project)}.collect  {|u| u.mail}
       recipients.each do |recipient|
-        Mailer.deliver_attachments_added(attachments[:files], recipient)
+        Mailer.attachments_added(attachments[:files], recipient).deliver
       end
     end
     redirect_to project_files_path(@project)
