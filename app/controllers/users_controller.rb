@@ -87,7 +87,6 @@ class UsersController < ApplicationController
     @auth_sources = AuthSource.find(:all)
   end
 
-  verify :method => :post, :only => :create, :render => {:nothing => true, :status => :method_not_allowed }
   def create
     @user = User.new(:language => Setting.default_language, :mail_notification => Setting.default_notification_option)
     @user.safe_attributes = params[:user]
@@ -132,7 +131,6 @@ class UsersController < ApplicationController
     @membership ||= Member.new
   end
 
-  verify :method => :put, :only => :update, :render => {:nothing => true, :status => :method_not_allowed }
   def update
     @user.admin = params[:user][:admin] if params[:user][:admin]
     @user.login = params[:user][:login] if params[:user][:login]
@@ -178,7 +176,6 @@ class UsersController < ApplicationController
     redirect_to :controller => 'users', :action => 'edit', :id => @user
   end
 
-  verify :method => :delete, :only => :destroy, :render => {:nothing => true, :status => :method_not_allowed }
   def destroy
     # Only allow to delete users with STATUS_REGISTERED for now
     # It is assumed that these users are not yet references in any way
