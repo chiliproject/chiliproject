@@ -180,7 +180,7 @@ class UsersControllerTest < ActionController::TestCase
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
     assert_equal [user.mail], mail.to
-    assert mail.body.include?('secret')
+    assert_mail_body_match 'secret', mail
   end
 
   def test_create_with_failure
@@ -241,7 +241,7 @@ class UsersControllerTest < ActionController::TestCase
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
     assert_equal ['foo.bar@somenet.foo'], mail.to
-    assert mail.body.include?(ll('fr', :notice_account_activated))
+    assert_mail_body_match ll('fr', :notice_account_activated), mail
   end
 
   def test_update_with_password_change_should_send_a_notification
@@ -255,7 +255,7 @@ class UsersControllerTest < ActionController::TestCase
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
     assert_equal [u.mail], mail.to
-    assert mail.body.include?('newpass')
+    assert_mail_body_match 'newpass', mail
   end
 
   test "put :update with a password change to an AuthSource user switching to Internal authentication" do
@@ -294,10 +294,21 @@ class UsersControllerTest < ActionController::TestCase
     assert !u.reload.destroyed?
   end
 
+  def test_create_membership
+    assert_difference 'Member.count' do
+      post :edit_membership, :id => 7, :membership => { :project_id => 3, :role_ids => [2]}
+    end
+    assert_redirected_to :action => 'edit', :id => '7', :tab => 'memberships'
+    member = Member.first(:order => 'id DESC')
+    assert_equal User.find(7), member.principal
+    assert_equal [2], member.role_ids
+    assert_equal 3, member.project_id
+  end
 
-  def test_edit_membership
-    post :edit_membership, :id => 2, :membership_id => 1,
-                           :membership => { :role_ids => [2]}
+  def test_update_membership
+    assert_no_difference 'Member.count' do
+      put :edit_membership, :id => 2, :membership_id => 1, :membership => { :role_ids => [2]}
+    end
     assert_redirected_to :action => 'edit', :id => '2', :tab => 'memberships'
     assert_equal [2], Member.find(1).role_ids
   end
@@ -310,7 +321,9 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   def test_destroy_membership
-    post :destroy_membership, :id => 2, :membership_id => 1
+    assert_difference 'Member.count', -1 do
+      delete :destroy_membership, :id => 2, :membership_id => 1
+    end
     assert_redirected_to :action => 'edit', :id => '2', :tab => 'memberships'
     assert_nil Member.find_by_id(1)
   end
