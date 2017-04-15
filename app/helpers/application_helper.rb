@@ -18,6 +18,7 @@ require 'cgi'
 module ApplicationHelper
   include Redmine::I18n
   include Gravatarify::Helper
+  include ERB::Util
 
   extend Forwardable
   def_delegators :wiki_helper, :wikitoolbar_for, :heads_for_wiki_formatter
@@ -59,7 +60,7 @@ module ApplicationHelper
 
   # Show a sorted linkified (if active) comma-joined list of users
   def list_users(users, options={})
-    users.sort.collect{|u| link_to_user(u, options)}.join(", ")
+    users.sort.collect{|u| link_to_user(u, options)}.join(", ".html_safe)
   end
 
   # Displays a link to +issue+ with its subject.
@@ -96,8 +97,10 @@ module ApplicationHelper
   def link_to_attachment(attachment, options={})
     text = options.delete(:text) || attachment.filename
     action = options.delete(:download) ? 'download' : 'show'
-
-    link_to(h(text), {:controller => 'attachments', :action => action, :id => attachment, :filename => attachment.filename }, options)
+    link_to(h(text),
+           {:controller => 'attachments', :action => action,
+            :id => attachment, :filename => attachment.filename }.merge(options),
+           options)
   end
 
   # Generates a link to a SCM revision
@@ -318,7 +321,7 @@ module ApplicationHelper
   end
 
   def authoring(created, author, options={})
-    l(options[:label] || :label_added_time_by, :author => link_to_user(author), :age => time_tag(created))
+    l(options[:label] || :label_added_time_by, :author => link_to_user(author), :age => time_tag(created)).html_safe
   end
 
   def time_tag(time)
@@ -342,8 +345,6 @@ module ApplicationHelper
     page_param = options.delete(:page_param) || :page
     per_page_links = options.delete(:per_page_links)
     url_param = params.dup
-    # don't reuse query params if filters are present
-    url_param.merge!(:fields => nil, :values => nil, :operators => nil) if url_param.delete(:set_filter)
 
     html = ''
     if paginator.current.previous
@@ -375,11 +376,19 @@ module ApplicationHelper
     links.size > 1 ? l(:label_display_per_page, links.join(', ')) : nil
   end
 
-  def reorder_links(name, url)
-    link_to(image_tag('2uparrow.png',   :alt => l(:label_sort_highest)), url.merge({"#{name}[move_to]" => 'highest'}), :method => :post, :title => l(:label_sort_highest)) +
-    link_to(image_tag('1uparrow.png',   :alt => l(:label_sort_higher)),  url.merge({"#{name}[move_to]" => 'higher'}),  :method => :post, :title => l(:label_sort_higher)) +
-    link_to(image_tag('1downarrow.png', :alt => l(:label_sort_lower)),   url.merge({"#{name}[move_to]" => 'lower'}),   :method => :post, :title => l(:label_sort_lower)) +
-    link_to(image_tag('2downarrow.png', :alt => l(:label_sort_lowest)),  url.merge({"#{name}[move_to]" => 'lowest'}),  :method => :post, :title => l(:label_sort_lowest))
+  def reorder_links(name, url, method = :post)
+    link_to(image_tag('2uparrow.png', :alt => l(:label_sort_highest)),
+            url.merge({"#{name}[move_to]" => 'highest'}),
+            :method => method, :title => l(:label_sort_highest)) +
+    link_to(image_tag('1uparrow.png',   :alt => l(:label_sort_higher)),
+            url.merge({"#{name}[move_to]" => 'higher'}),
+           :method => method, :title => l(:label_sort_higher)) +
+    link_to(image_tag('1downarrow.png', :alt => l(:label_sort_lower)),
+            url.merge({"#{name}[move_to]" => 'lower'}),
+            :method => method, :title => l(:label_sort_lower)) +
+    link_to(image_tag('2downarrow.png', :alt => l(:label_sort_lowest)),
+            url.merge({"#{name}[move_to]" => 'lowest'}),
+           :method => method, :title => l(:label_sort_lowest))
   end
 
   def breadcrumb(*args)
@@ -843,10 +852,56 @@ module ApplicationHelper
     content_tag("label", label_text)
   end
 
-  def labelled_tabular_form_for(name, object, options, &proc)
+  def labelled_tabular_form_for(*args, &proc)
+    ActiveSupport::Deprecation.warn "ApplicationHelper#labelled_tabular_form_for is deprecated and will be removed in Redmine 1.5. Use #labelled_form_for instead."
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    if args.first.is_a?(Symbol)
+      options.merge!(:as => args.shift)
+    end
     options[:html] ||= {}
     options[:html][:class] = 'tabular' unless options[:html].has_key?(:class)
-    form_for(name, object, options.merge({ :builder => TabularFormBuilder, :lang => current_language}), &proc)
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
+    form_for(*args, &proc)
+  end
+
+  def labelled_form_for(*args, &proc)
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    if args.first.is_a?(Symbol)
+      options.merge!(:as => args.shift)
+    end
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
+    form_for(*args, &proc)
+  end
+
+  def labelled_fields_for(*args, &proc)
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
+    fields_for(*args, &proc)
+  end
+
+  def labelled_remote_form_for(*args, &proc)
+    ActiveSupport::Deprecation.warn "ApplicationHelper#labelled_remote_form_for is deprecated and will be removed in Redmine 2.2."
+    args << {} unless args.last.is_a?(Hash)
+    options = args.last
+    options.merge!({:builder => Redmine::Views::LabelledFormBuilder, :remote => true})
+    form_for(*args, &proc)
+  end
+
+  def error_messages_for(*objects)
+    html = ""
+    objects = objects.map {|o| o.is_a?(String) ? instance_variable_get("@#{o}") : o}.compact
+    errors = objects.map {|o| o.errors.full_messages}.flatten
+    if errors.any?
+      html << "<div id='errorExplanation'><ul>\n"
+      errors.each do |error|
+        html << "<li>#{h error}</li>\n"
+      end
+      html << "</ul></div>\n"
+    end
+    html.html_safe
   end
 
   def back_url_hidden_field_tag
@@ -985,14 +1040,14 @@ module ApplicationHelper
   def javascript_heads
     tags = javascript_include_tag(:defaults)
     unless User.current.pref.warn_on_leaving_unsaved == '0'
-      tags << "\n" + javascript_tag("Event.observe(window, 'load', function(){ new WarnLeavingUnsaved('#{escape_javascript( l(:text_warn_on_leaving_unsaved) )}'); });")
+      tags << javascript_tag("Event.observe(window, 'load', function(){ new WarnLeavingUnsaved('#{escape_javascript( l(:text_warn_on_leaving_unsaved) )}'); });")
     end
     tags << jquery_datepicker_settings
     tags
   end
 
   def favicon
-    "<link rel='shortcut icon' href='#{image_path('/favicon.ico')}' />"
+    favicon_link_tag('/favicon.ico')
   end
 
   # Add a HTML meta tag to control robots (web spiders)
