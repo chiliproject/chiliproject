@@ -15,7 +15,45 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class FilesControllerTest < ActionController::TestCase
-  fixtures :all
+  fixtures :attachments,
+           :auth_sources,
+           :boards,
+           :changes,
+           :changesets,
+           :comments,
+           :custom_fields,
+           :custom_fields_projects,
+           :custom_fields_trackers,
+           :custom_values,
+           :documents,
+           :enabled_modules,
+           :enumerations,
+           :groups_users,
+           :issue_categories,
+           :issue_relations,
+           :issue_statuses,
+           :issues,
+           :journals,
+           :member_roles,
+           :members,
+           :messages,
+           :news,
+           :projects,
+           :projects_trackers,
+           :queries,
+           :repositories,
+           :roles,
+           :time_entries,
+           :tokens,
+           :trackers,
+           :user_preferences,
+           :users,
+           :versions,
+           :watchers,
+           :wiki_contents,
+           :wiki_pages,
+           :wikis,
+           :workflows
 
   def setup
     @controller = FilesController.new
@@ -57,9 +95,9 @@ class FilesControllerTest < ActionController::TestCase
     assert_equal Project.find(1), a.container
 
     mail = ActionMailer::Base.deliveries.last
-    assert_kind_of TMail::Mail, mail
+    assert_not_nil mail
     assert_equal "[eCookbook] New file", mail.subject
-    assert mail.body.include?('testfile.txt')
+    assert_mail_body_match 'testfile.txt', mail
   end
 
   def test_create_version_file
