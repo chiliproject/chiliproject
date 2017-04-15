@@ -17,7 +17,8 @@ class ProjectsController < ApplicationController
   menu_item :roadmap, :only => :roadmap
   menu_item :settings, :only => :settings
 
-  before_filter :find_project, :except => [ :index, :new, :create, :copy ]
+  before_filter :find_project, :only => [:edit, :show, :update, :destroy]
+  before_filter :find_project_by_project_id, :only => [:archive, :copy, :modules, :settings, :unarchive]
   before_filter :authorize, :only => [ :show, :settings, :edit, :update, :modules ]
   before_filter :authorize_global, :only => [:new, :create]
   before_filter :require_admin, :only => [ :copy, :archive, :unarchive, :destroy ]
@@ -63,7 +64,6 @@ class ProjectsController < ApplicationController
     @project.safe_attributes = params[:project]
   end
 
-  verify :method => :post, :only => :create, :render => {:nothing => true, :status => :method_not_allowed }
   def create
     @issue_custom_fields = IssueCustomField.find(:all, :order => "#{CustomField.table_name}.position")
     @trackers = Tracker.all
@@ -157,8 +157,6 @@ class ProjectsController < ApplicationController
   def edit
   end
 
-  # TODO: convert to PUT only
-  verify :method => [:post, :put], :only => :update, :render => {:nothing => true, :status => :method_not_allowed }
   def update
     @project.safe_attributes = params[:project]
     if validate_parent_id && @project.save
@@ -181,7 +179,6 @@ class ProjectsController < ApplicationController
     end
   end
 
-  verify :method => :post, :only => :modules, :render => {:nothing => true, :status => :method_not_allowed }
   def modules
     @project.enabled_module_names = params[:enabled_module_names]
     flash[:notice] = l(:notice_successful_update)
@@ -205,15 +202,11 @@ class ProjectsController < ApplicationController
   # Delete @project
   def destroy
     @project_to_destroy = @project
-    if request.get?
-      # display confirmation view
-    else
-      if api_request? || params[:confirm]
-        @project_to_destroy.destroy
-        respond_to do |format|
-          format.html { redirect_to :controller => 'admin', :action => 'projects' }
-          format.api  { head :ok }
-        end
+    if api_request? || params[:confirm]
+      @project_to_destroy.destroy
+      respond_to do |format|
+        format.html { redirect_to :controller => 'admin', :action => 'projects' }
+        format.api  { head :ok }
       end
     end
     hide_project_in_layout
