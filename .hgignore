@@ -1,11 +1,15 @@
 syntax: glob
 
+.bundle
+Gemfile.lock
+.rvmrc*
 .project
 .loadpath
 config/additional_environment.rb
 config/configuration.yml
 config/database.yml
 config/email.yml
+config/setup_load_paths.rb
 config/initializers/session_store.rb
 coverage
 db/*.db
@@ -25,9 +29,14 @@ tmp/sockets/*
 tmp/test/*
 vendor/rails
 *.rbc
+doc/app
+.bundle
+Gemfile.lock
+Gemfile.local
+.rvmrc*
+*.iml
+.idea
+.rbx
+
 .svn/
 .git/
-doc/app
-/.bundle
-/Gemfile.lock
-/.rvmrc*
