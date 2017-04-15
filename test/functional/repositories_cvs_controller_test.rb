@@ -20,8 +20,7 @@ class RepositoriesController; def rescue_action(e) raise e end; end
 class RepositoriesCvsControllerTest < ActionController::TestCase
   fixtures :projects, :users, :roles, :members, :member_roles, :repositories, :enabled_modules
 
-  # No '..' in the repository path
-  REPOSITORY_PATH = RAILS_ROOT.gsub(%r{config\/\.\.}, '') + '/tmp/test/cvs_repository'
+  REPOSITORY_PATH = Rails.root.join('tmp/test/cvs_repository').to_s
   REPOSITORY_PATH.gsub!(/\//, "\\") if Redmine::Platform.mswin?
   # CVS module
   MODULE_NAME = 'test'
@@ -45,7 +44,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
   if File.directory?(REPOSITORY_PATH)
     def test_browse_root
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID
       assert_response :success
       assert_template 'show'
@@ -64,7 +63,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
 
     def test_browse_directory
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID, :path => ['images']
       assert_response :success
       assert_template 'show'
@@ -78,7 +77,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
 
     def test_browse_at_given_revision
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :show, :id => PRJ_ID, :path => ['images'], :rev => 1
       assert_response :success
       assert_template 'show'
@@ -88,7 +87,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
 
     def test_entry
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :entry, :id => PRJ_ID, :path => ['sources', 'watchers_controller.rb']
       assert_response :success
       assert_template 'entry'
@@ -99,7 +98,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
     def test_entry_at_given_revision
       # changesets must be loaded
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :entry, :id => PRJ_ID, :path => ['sources', 'watchers_controller.rb'], :rev => 2
       assert_response :success
       assert_template 'entry'
@@ -110,7 +109,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
 
     def test_entry_not_found
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :entry, :id => PRJ_ID, :path => ['sources', 'zzz.c']
       assert_tag :tag => 'p', :attributes => { :id => /errorExplanation/ },
                                 :content => /The entry or revision was not found in the repository/
@@ -118,14 +117,14 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
 
     def test_entry_download
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :entry, :id => PRJ_ID, :path => ['sources', 'watchers_controller.rb'], :format => 'raw'
       assert_response :success
     end
 
     def test_directory_entry
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :entry, :id => PRJ_ID, :path => ['sources']
       assert_response :success
       assert_template 'show'
@@ -135,7 +134,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
 
     def test_diff
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :diff, :id => PRJ_ID, :rev => 3, :type => 'inline'
       assert_response :success
       assert_template 'diff'
@@ -147,7 +146,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
 
     def test_diff_new_files
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :diff, :id => PRJ_ID, :rev => 1, :type => 'inline'
       assert_response :success
       assert_template 'diff'
@@ -165,7 +164,7 @@ class RepositoriesCvsControllerTest < ActionController::TestCase
 
     def test_annotate
       @repository.fetch_changesets
-      @repository.reload
+      @project.reload
       get :annotate, :id => PRJ_ID, :path => ['sources', 'watchers_controller.rb']
       assert_response :success
       assert_template 'annotate'
