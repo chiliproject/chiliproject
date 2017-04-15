@@ -18,7 +18,7 @@ class IssueObserver < ActiveRecord::Observer
   def after_create(issue)
     if self.send_notification
       (issue.recipients + issue.watcher_recipients).uniq.each do |recipient|
-        Mailer.deliver_issue_add(issue, recipient)
+        Mailer.issue_add(issue, recipient).deliver
       end
     end
     clear_notification
